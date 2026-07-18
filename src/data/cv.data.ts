@@ -88,17 +88,6 @@ export const cv: CV = {
         'Conducting training sessions focusing on Laravel and its modern ecosystem.',
         'Guiding members through hands-on development workflows and architecture best practices.'
       ]
-    },
-    {
-      organization: 'PEMBURU LOMBA SKADAKU',
-      position: 'Web Developer',
-      location: 'Kudus, Indonesia',
-      startDate: '2022-09',
-      endDate: '2024-05',
-      summary: 'Active in system development to assist school and department administration.',
-      highlights: [
-        'Competed in website-technology contests spanning UI/UX, RESTful APIs, and software engineering.'
-      ]
     }
   ],
   skills: [
