@@ -3,6 +3,7 @@ import SectionHeader from '../molecules/SectionHeader.astro';
 import ProjectCard from '../molecules/ProjectCard.astro';
 import { cv } from '../../data/cv.data';
 const { projects } = cv;
+projects.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 ---
 
 <section class="projects shell" aria-labelledby="projects-title">

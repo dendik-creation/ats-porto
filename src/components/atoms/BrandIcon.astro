@@ -38,6 +38,12 @@ import Jne from './icons/Jne.astro'
 import Upwork from './icons/Upwork.astro';
 import Fiverr from './icons/Fiverr.astro';
 import Gmail from './icons/Gmail.astro';
+import Caddy from './icons/Caddy.astro'
+import Deepseek from './icons/Deepseek.astro'
+import Posthog from './icons/Posthog.astro'
+import Prisma from './icons/Prisma.astro'
+import Redis from './icons/Redis.astro'
+import BullMQ from './icons/BullMQ.astro'
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -63,6 +69,7 @@ const REGISTRY: Record<string, typeof Typescript> = {
   react: React,
   reactts: React,
   illustrator: Illustrator,
+  adobeillustrator: Illustrator,
   fcm: Firebase,
   firebase: Firebase,
   meta: Meta,
@@ -82,6 +89,13 @@ const REGISTRY: Record<string, typeof Typescript> = {
   upwork: Upwork,
   fiverr: Fiverr,
   gmail: Gmail,
+  redis : Redis,
+  posthog : Posthog,
+  deepseekapi : Deepseek,
+  deepseek : Deepseek,
+  prisma : Prisma,
+  caddy : Caddy,
+  bullmq : BullMQ
 };
 
 interface Props {
@@ -103,10 +117,11 @@ const Icon = REGISTRY[key];
 }
 
 <style is:global>
-  .brand-icon {
-    display: inline-block;
-    flex: none;
-    vertical-align: middle;
-    color: ;
-  }
+.brand-icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+  filter: grayscale(100%);
+  color: currentColor;
+}
 </style>
