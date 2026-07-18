@@ -1,4 +1,5 @@
 ---
+import ArrowLink from '../atoms/ArrowLink.astro';
 import { cv } from '../../data/cv.data';
 const { basics } = cv;
 const first = "Dendi'";
@@ -29,12 +30,17 @@ const last = 'Setiawan';
     <span>SOFT · WONK</span>
   </p>
 
-  <div class="hero__foot">
-    <p class="hero__summary">{basics.summary}</p>
-    <p class="hero__avail">
-      <span class="hero__pulse" aria-hidden="true"></span>
-      Open to fullstack work
-    </p>
+  <div class="hero__bottom">
+    <div class="hero__foot">
+      <p class="hero__summary">{basics.summary}</p>
+      <p class="hero__avail">
+        <span class="hero__pulse" aria-hidden="true"></span>
+        Open to fullstack work
+      </p>
+    </div>
+    <div class="hero__cv">
+      <ArrowLink href={basics.cvUrl} external>View CV</ArrowLink>
+    </div>
   </div>
 </header>
 
@@ -116,13 +122,18 @@ const last = 'Setiawan';
     color: var(--accent);
   }
 
+  .hero__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-m);
+    margin-top: var(--space-s);
+  }
   .hero__foot {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-s);
     max-width: 54ch;
-    margin-top: var(--space-s);
-    align-self: flex-end;
     text-align: right;
   }
   .hero__summary {
@@ -141,6 +152,10 @@ const last = 'Setiawan';
     font-size: var(--step--1);
     letter-spacing: 0.02em;
     color: var(--muted);
+  }
+  .hero__cv {
+    flex: none;
+    order: -1;
   }
   .hero__pulse {
     width: 0.6em;
@@ -162,12 +177,19 @@ const last = 'Setiawan';
       align-self: flex-start;
       text-align: left;
     }
+    .hero__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-s);
+    }
     .hero__foot {
-      align-self: stretch;
       text-align: left;
     }
     .hero__avail {
       justify-content: flex-start;
+    }
+    .hero__cv {
+      order: 0;
     }
   }
 

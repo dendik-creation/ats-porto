@@ -77,6 +77,7 @@ export interface CV {
     label: string;
     email: string;
     url: string;
+    cvUrl: string; // link to the downloadable/viewable CV file
     summary: string;
     location: { city: string; countryCode: string; region: string };
     profiles: Profile[];
