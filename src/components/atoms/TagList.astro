@@ -1,0 +1,23 @@
+---
+import Tag from './Tag.astro';
+
+interface Props {
+  items: string[];
+  label?: string;
+}
+const { items, label = 'Technologies' } = Astro.props;
+---
+
+<ul class="tags" aria-label={label}>
+  {items.map((item) => <Tag label={item} />)}
+</ul>
+
+<style>
+  .tags {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+</style>

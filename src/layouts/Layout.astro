@@ -1,23 +1,130 @@
+---
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/bricolage-grotesque/wght.css';
+import '@fontsource-variable/bricolage-grotesque/opsz.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+
+import { cv } from '../data/cv.data';
+import Nav from '../components/organisms/Nav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { basics } = cv;
+const {
+  title = `${basics.name} — ${basics.label}`,
+  description = basics.summary,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? basics.url).toString();
+const ogImage = new URL('/og.svg', Astro.site ?? basics.url).toString();
+
+// JSON-LD: Person nested in a ProfilePage for rich results.
+const personLd = {
+  '@type': 'Person',
+  name: basics.name,
+  jobTitle: basics.label,
+  email: `mailto:${basics.email}`,
+  telephone: basics.phone,
+  url: basics.url,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: basics.location.city,
+    addressRegion: basics.location.region,
+    addressCountry: basics.location.countryCode,
+  },
+  sameAs: basics.profiles.map((p) => p.url),
+  knowsAbout: cv.skills.flatMap((g) => g.keywords),
+  knowsLanguage: cv.languages.map((l) => l.name),
+  alumniOf: cv.education.map((e) => ({
+    '@type': 'EducationalOrganization',
+    name: e.institution,
+  })),
+  hasCredential: cv.certificates.map((c) => ({
+    '@type': 'EducationalOccupationalCredential',
+    name: c.name,
+    credentialCategory: 'certificate',
+    recognizedBy: { '@type': 'Organization', name: c.issuer },
+  })),
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  dateModified: new Date().toISOString(),
+  mainEntity: personLd,
+};
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={basics.name} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f0ece1" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="profile:first_name" content="Dendi" />
+    <meta property="profile:last_name" content="Setiawan" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <Nav />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <script>
+      import '../scripts/animate';
+    </script>
+
+    <style>
+      .skip {
+        position: fixed;
+        left: var(--edge);
+        top: -4rem;
+        z-index: 60;
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.6em 1em;
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        transition: top var(--dur-1) var(--ease);
+      }
+      .skip:focus {
+        top: var(--space-s);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skip { transition: none; }
+      }
+    </style>
+  </body>
+</html>

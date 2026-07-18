@@ -1,0 +1,79 @@
+---
+// Section header: a mono margin column (running index + variable-font axis
+// notation) beside a display headline. The axis note is the recurring specimen
+// motif — it names the real Fraunces axes the title is set in.
+interface Props {
+  index: string; // "01"
+  title: string;
+  id: string;
+  kicker?: string;
+  axis?: string; // e.g. "WGHT 460 · OPSZ 60" — marginal specimen note
+}
+const { index, title, id, kicker, axis = 'WGHT 460 · OPSZ 60' } = Astro.props;
+---
+
+<header class="sec-head">
+  <div class="sec-head__margin" aria-hidden="true">
+    <span class="sec-head__index">{index}</span>
+    <span class="sec-head__axis">{axis}</span>
+  </div>
+  <div class="sec-head__body">
+    {kicker && <p class="label">{kicker}</p>}
+    <h2 id={id} class="sec-head__title">{title}</h2>
+  </div>
+</header>
+
+<style>
+  .sec-head {
+    display: grid;
+    grid-template-columns: minmax(7rem, 12rem) 1fr;
+    align-items: start;
+    gap: var(--space-s) var(--space-m);
+    padding-bottom: var(--space-m);
+    border-bottom: 1.5px solid var(--line-strong);
+    margin-bottom: var(--space-l);
+  }
+  .sec-head__margin {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding-top: 0.3em;
+  }
+  .sec-head__index {
+    font-family: var(--font-mono);
+    font-size: var(--step-1);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .sec-head__axis {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+  .sec-head__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .sec-head__title {
+    font-size: var(--step-3);
+    font-variation-settings: 'opsz' 60, 'wght' 460, var(--wonk-off);
+    max-width: 18ch;
+  }
+
+  @media (max-width: 640px) {
+    .sec-head {
+      grid-template-columns: 1fr;
+      gap: var(--space-s);
+    }
+    .sec-head__margin {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-top: 0;
+    }
+  }
+</style>

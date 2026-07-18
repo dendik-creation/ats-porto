@@ -1,0 +1,143 @@
+---
+import TagList from '../atoms/TagList.astro';
+import type { Project } from '../../data/cv';
+import { slugify, projectLinks } from '../../data/format';
+
+interface Props {
+  project: Project;
+  index: number; // 1-based, for the running number motif
+}
+const { project, index } = Astro.props;
+const num = String(index).padStart(2, '0');
+const year = project.date.slice(0, 4);
+const href = `/projects/${slugify(project.name)}`;
+const links = projectLinks(project);
+---
+
+<article class="proj">
+  <div class="proj__top">
+    <span class="proj__num" aria-hidden="true">{num}</span>
+    <span class="proj__year label">{year}</span>
+  </div>
+  <h3 class="proj__title">
+    <a class="proj__link" href={href}>
+      {project.name}
+      <svg class="proj__arrow" viewBox="0 0 24 24" width="0.55em" height="0.55em" aria-hidden="true" focusable="false">
+        <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
+  </h3>
+  <p class="proj__role">{project.role}</p>
+  <p class="proj__desc">{project.description}</p>
+  <TagList items={project.keywords} label={`${project.name} — stack`} />
+  {links.length > 0 && (
+    <ul class="proj__links" aria-label={`${project.name} — links`}>
+      {links.map((l) => (
+        <li>
+          <a class="proj__ext" href={l.href} target="_blank" rel="noopener noreferrer">
+            {l.label}
+            <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
+              <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</article>
+
+<style>
+  .proj {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-m) 0;
+    border-top: 1px solid var(--line);
+  }
+  .proj__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s);
+  }
+  .proj__num {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .proj__title {
+    font-size: var(--step-2);
+    width: fit-content;
+  }
+  .proj__link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25em;
+    font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    transition: font-variation-settings var(--dur-2) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .proj__arrow {
+    color: var(--accent);
+    transform: translateY(-0.05em);
+    transition: transform var(--dur-1) var(--ease);
+  }
+  .proj:hover .proj__link,
+  .proj__link:focus-visible {
+    font-variation-settings: 'opsz' 72, 'wght' 620, var(--wonk-on);
+    color: var(--accent-ink);
+  }
+  .proj:hover .proj__arrow,
+  .proj__link:focus-visible .proj__arrow {
+    transform: translate(0.15em, -0.2em);
+  }
+  .proj__role {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--accent-ink);
+    letter-spacing: 0.01em;
+  }
+  .proj__desc {
+    color: var(--muted);
+    max-width: var(--measure-tight);
+  }
+  .proj__links {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xs);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+  }
+  .proj__ext {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  }
+  .proj__ext:hover,
+  .proj__ext:focus-visible {
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .proj__ext { transition: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .proj__link {
+      transition: color var(--dur-1) var(--ease);
+    }
+    .proj:hover .proj__link {
+      font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    }
+    .proj__arrow { transition: none; }
+  }
+</style>

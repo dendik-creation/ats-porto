@@ -1,0 +1,82 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import { cv } from '../../data/cv.data';
+const { languages } = cv;
+---
+
+<section class="langs shell" aria-labelledby="languages-title">
+  <SectionHeader index="07" id="languages-title" title="Languages" kicker="How I communicate" axis="WGHT 460 · OPSZ 50" />
+
+  <dl class="langs__list">
+    {languages.map((l, i) => (
+      <div class="langs__item">
+        <dt class="langs__name">
+          <span class="langs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          {l.name}
+        </dt>
+        <dd class="langs__body">
+          <span class="langs__level">{l.level}</span>
+          {l.note && <span class="langs__note">{l.note}</span>}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .langs__list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .langs__item {
+    display: grid;
+    grid-template-columns: minmax(9rem, 15rem) 1fr;
+    gap: var(--space-s) var(--space-m);
+    padding: var(--space-m) 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .langs__item:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .langs__name {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-s);
+    font-family: var(--font-display);
+    /* Matches the Experience / Education row-title scale (shared row grid) */
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 520, var(--wonk-off);
+    line-height: 1.1;
+  }
+  .langs__num {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .langs__body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+  .langs__level {
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    color: var(--accent-ink);
+    letter-spacing: 0.02em;
+  }
+  .langs__note {
+    color: var(--muted);
+    max-width: var(--measure);
+    text-wrap: pretty;
+  }
+  @media (max-width: 640px) {
+    .langs__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-xs);
+    }
+  }
+</style>

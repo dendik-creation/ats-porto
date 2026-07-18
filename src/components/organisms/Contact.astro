@@ -1,0 +1,154 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import ArrowLink from '../atoms/ArrowLink.astro';
+import SocialLink from '../atoms/SocialLink.astro';
+import { cv } from '../../data/cv.data';
+import { homeRegion } from '../../data/format';
+const { basics } = cv;
+const year = new Date().getFullYear();
+const place = homeRegion(basics.location);
+---
+
+<footer class="contact shell" id="contact" aria-labelledby="contact-title">
+  <SectionHeader index="08" id="contact-title" title="Let's build something" kicker="Get in touch" axis="WGHT 500 · OPSZ 90" />
+
+  <a class="contact__email" href={`mailto:${basics.email}`}>
+    <span class="contact__email-text">{basics.email}</span>
+  </a>
+
+  <div class="contact__cols">
+    <div class="contact__col">
+      <p class="label">Direct</p>
+      <ArrowLink href={`mailto:${basics.email}`}>Email</ArrowLink>
+      <ArrowLink href={`tel:${basics.phone}`}>{basics.phone}</ArrowLink>
+    </div>
+
+    <div class="contact__col">
+      <p class="label">Elsewhere</p>
+      {basics.profiles.map((p) => (
+        <SocialLink href={p.url} network={p.network} handle={`@${p.username}`} />
+      ))}
+    </div>
+
+    <div class="contact__col contact__col--avail">
+      <p class="label">Availability</p>
+      <ul class="contact__avail">
+        <li>
+          <span class="contact__avail-key">Open to</span>
+          <span class="contact__avail-val">Fullstack roles — remote or {basics.location.region}</span>
+        </li>
+        <li>
+          <span class="contact__avail-key">Based in</span>
+          <span class="contact__avail-val">{place} · GMT+7</span>
+        </li>
+        <li>
+          <span class="contact__avail-key">Reply time</span>
+          <span class="contact__avail-val">Within a day, most days</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="contact__base">
+    <span>© {year} {basics.name}</span>
+    <span class="contact__loc">{place}</span>
+    <span class="contact__built">Astro · variable type · hand-set</span>
+  </div>
+</footer>
+
+<style>
+  .contact {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-l);
+  }
+  .contact__email {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: var(--space-m) 0 var(--space-xl);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 0.5rem + 5vw, 4.5rem);
+    font-variation-settings: 'opsz' 90, 'wght' 460, var(--wonk-off);
+    color: var(--ink);
+    word-break: break-word;
+    line-height: 1;
+    transition: font-variation-settings var(--dur-2) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .contact__email-text {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 3px;
+    transition: background-size var(--dur-2) var(--ease);
+    padding-bottom: 0.1em;
+  }
+  .contact__email:hover {
+    font-variation-settings: 'opsz' 120, 'wght' 620, 'SOFT' 50, 'WONK' 1;
+    color: var(--accent-ink);
+  }
+  .contact__email:hover .contact__email-text {
+    background-size: 100% 3px;
+  }
+
+  .contact__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-l) var(--space-m);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--line);
+  }
+  .contact__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    align-items: flex-start;
+  }
+  .contact__col--avail {
+    grid-column: span 1;
+  }
+  .contact__avail {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .contact__avail li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+  }
+  .contact__avail-key {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--accent-ink);
+  }
+  .contact__avail-val {
+    font-size: var(--step-0);
+    color: var(--ink);
+  }
+
+  .contact__base {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s) var(--space-m);
+    justify-content: space-between;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--faint);
+  }
+
+  @media (max-width: 720px) {
+    .contact__cols {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .contact__email, .contact__email-text { transition: color var(--dur-1) var(--ease); }
+    .contact__email:hover { font-variation-settings: 'opsz' 90, 'wght' 460, var(--wonk-off); }
+  }
+</style>

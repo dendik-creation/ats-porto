@@ -1,0 +1,111 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import { cv } from '../../data/cv.data';
+
+const { basics, awards, certificates } = cv;
+const stats = [
+  { value: '4', unit: 'yrs', label: 'Building software' },
+  { value: String(cv.projects.length), unit: '+', label: 'Shipped projects' },
+  { value: String(awards.length), unit: '', label: 'Competition wins' },
+  { value: String(certificates.length), unit: '', label: 'Certifications' },
+];
+---
+
+<section class="about shell" aria-labelledby="about-title">
+  <SectionHeader index="01" id="about-title" title="About" kicker="Who / Where" axis="WGHT 460 · OPSZ 60" />
+
+  <div class="about__grid">
+    <div class="about__lede">
+      <p>
+        Based in <strong>{basics.location.city}, {basics.location.region}</strong>, I build across the
+        stack — from Laravel and Go services to Astro, Vue, and Flutter front ends. Four years in,
+        my work leans on ownership: I take a feature from database schema to shipped interface.
+      </p>
+      <p>
+        I care about software that earns its keep — enterprise tools that move real numbers, and
+        products people actually reach for. I keep learning in the open, competing and certifying
+        along the way.
+      </p>
+    </div>
+
+    <dl class="about__stats">
+      {stats.map((s) => (
+        <div class="about__stat">
+          <dt class="about__stat-val">
+            {s.value}<span class="about__stat-unit">{s.unit}</span>
+          </dt>
+          <dd class="about__stat-label">{s.label}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-l) var(--space-xl);
+    align-items: start;
+  }
+  .about__lede {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: var(--measure);
+    text-wrap: pretty;
+  }
+  .about__lede strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .about__stats {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m) var(--space-s);
+    border-left: 1px solid var(--line);
+    padding-left: var(--space-m);
+  }
+  .about__stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+  .about__stat-val {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-variation-settings: 'opsz' 80, 'wght' 560, var(--wonk-off);
+    line-height: 1;
+    color: var(--ink);
+  }
+  .about__stat-unit {
+    color: var(--accent);
+    font-size: 0.5em;
+    vertical-align: super;
+    margin-left: 0.1em;
+  }
+  .about__stat-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    color: var(--faint);
+  }
+
+  @media (max-width: 860px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+    }
+    .about__stats {
+      border-left: 0;
+      padding-left: 0;
+      border-top: 1px solid var(--line);
+      padding-top: var(--space-m);
+    }
+  }
+</style>

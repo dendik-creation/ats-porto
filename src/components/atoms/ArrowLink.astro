@@ -1,0 +1,59 @@
+---
+interface Props {
+  href: string;
+  external?: boolean;
+}
+const { href, external = false } = Astro.props;
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+
+<a class="arrow-link" href={href} rel={rel} target={target}>
+  <span class="arrow-link__text"><slot /></span>
+  <svg class="arrow-link__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+    <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</a>
+
+<style>
+  .arrow-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink);
+    width: fit-content;
+  }
+  .arrow-link__text {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 2px;
+    transition: background-size var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+    padding-bottom: 2px;
+  }
+  .arrow-link__icon {
+    transform: translateY(2px);
+    transition: transform var(--dur-1) var(--ease);
+  }
+  .arrow-link:hover .arrow-link__text,
+  .arrow-link:focus-visible .arrow-link__text {
+    background-size: 100% 2px;
+    color: var(--accent-ink);
+  }
+  .arrow-link:hover .arrow-link__icon,
+  .arrow-link:focus-visible .arrow-link__icon {
+    transform: translate(4px, 2px);
+    color: var(--accent-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arrow-link__text,
+    .arrow-link__icon {
+      transition: none;
+    }
+  }
+</style>

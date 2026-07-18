@@ -1,0 +1,185 @@
+---
+import { cv } from '../../data/cv.data';
+import { homeRegion } from '../../data/format';
+const { basics } = cv;
+const first = "Dendi'";
+const last = 'Setiawan';
+const place = homeRegion(basics.location);
+---
+
+<header class="hero shell" data-hero>
+  <p class="hero__eyebrow label">
+    <span>{basics.label}</span>
+    <span class="hero__dot" aria-hidden="true">/</span>
+    <span>{place}</span>
+  </p>
+
+  <h1 class="hero__name" aria-label={basics.name}>
+    <span class="hero__word hero__word--first" aria-hidden="true">
+      {first.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+    </span>
+    <span class="hero__word hero__word--last" aria-hidden="true">
+      {last.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+    </span>
+  </h1>
+
+  <p class="hero__spec" aria-hidden="true">
+    <span>Fraunces Variable</span>
+    <span class="hero__spec-sep">/</span>
+    <span>WGHT 300 → 900</span>
+    <span class="hero__spec-sep">/</span>
+    <span>OPSZ 144</span>
+    <span class="hero__spec-sep">/</span>
+    <span>SOFT · WONK</span>
+  </p>
+
+  <div class="hero__foot">
+    <p class="hero__summary">{basics.summary}</p>
+    <p class="hero__avail">
+      <span class="hero__pulse" aria-hidden="true"></span>
+      Open to fullstack work · Remote or in {basics.location.region}
+    </p>
+  </div>
+</header>
+
+<style>
+  .hero {
+    padding-top: clamp(3.5rem, 8vh, 8rem);
+    padding-bottom: var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+  .hero__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9em;
+    align-items: center;
+  }
+  .hero__dot {
+    color: var(--accent);
+  }
+
+  /* Concrete-poetry name: broken baseline, offset words, per-letter weight ramp */
+  .hero__name {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+  }
+  .hero__word {
+    display: block;
+    max-width: 100%;
+    font-family: var(--font-display);
+    /* Sized so the longest word ("setiawan") fits within the gutter at 360px */
+    font-size: clamp(2.75rem, 16vw, 12rem);
+    text-transform: lowercase;
+  }
+  .hero__word--last {
+    align-self: flex-end;
+    text-align: right;
+    color: var(--accent);
+  }
+  .hero__ch {
+    display: inline-block;
+    /* Weight ramps across the word for a poster-like typographic gradient */
+    font-variation-settings:
+      'opsz' 144,
+      'wght' calc(300 + var(--i) * 90),
+      'SOFT' 0, 'WONK' 0;
+    transition: font-variation-settings var(--dur-2) var(--ease);
+  }
+  .hero__word--last .hero__ch {
+    font-variation-settings:
+      'opsz' 144,
+      'wght' calc(680 - var(--i) * 70),
+      'SOFT' 40, 'WONK' 1;
+  }
+  .hero__ch:hover {
+    font-variation-settings: 'opsz' 144, 'wght' 900, 'SOFT' 100, 'WONK' 1;
+  }
+  /* Last word's base rule outranks the shared :hover, so it needs its own —
+     same axis jump as the first word; color and position stay untouched. */
+  .hero__word--last .hero__ch:hover {
+    font-variation-settings: 'opsz' 144, 'wght' 900, 'SOFT' 100, 'WONK' 1;
+  }
+
+  .hero__spec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em 0.9em;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding-top: var(--space-2xs);
+    border-top: 1px solid var(--line);
+    margin-top: var(--space-2xs);
+  }
+  .hero__spec-sep {
+    color: var(--accent);
+  }
+
+  .hero__foot {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-s);
+    max-width: 54ch;
+    margin-top: var(--space-s);
+    align-self: flex-end;
+    text-align: right;
+  }
+  .hero__summary {
+    font-size: var(--step-1);
+    color: var(--ink);
+    font-variation-settings: 'wght' 380;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+  .hero__avail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    justify-content: flex-end;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .hero__pulse {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 60%, transparent);
+    animation: ring 2.6s var(--ease) infinite;
+  }
+
+  @keyframes ring {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 55%, transparent); }
+    70% { box-shadow: 0 0 0 0.7em transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  @media (max-width: 720px) {
+    .hero__word--last {
+      align-self: flex-start;
+      text-align: left;
+    }
+    .hero__foot {
+      align-self: stretch;
+      text-align: left;
+    }
+    .hero__avail {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__ch { transition: none; }
+    .hero__pulse { animation: none; }
+  }
+</style>

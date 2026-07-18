@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Dendi Setiawan — Fullstack Developer">
+  <rect width="1200" height="630" fill="#f0ece1" />
+  <g fill="none" stroke="#14130f" stroke-opacity="0.12">
+    <line x1="80" y1="120" x2="1120" y2="120" />
+    <line x1="80" y1="510" x2="1120" y2="510" />
+  </g>
+  <text x="80" y="96" font-family="'JetBrains Mono', monospace" font-size="24" letter-spacing="6" fill="#8a8579">FULLSTACK DEVELOPER — KUDUS, ID</text>
+  <text x="72" y="340" font-family="Georgia, serif" font-weight="700" font-size="200" letter-spacing="-6" fill="#14130f">dendi</text>
+  <text x="1120" y="480" text-anchor="end" font-family="Georgia, serif" font-weight="600" font-size="200" letter-spacing="-6" fill="#f0330d">setiawan</text>
+  <circle cx="92" cy="570" r="8" fill="#f0330d" />
+  <text x="118" y="578" font-family="'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#57534a">Open to fullstack work · dendikcreation.dev</text>
+</svg>

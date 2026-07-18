@@ -1,0 +1,105 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import BrandIcon from '../atoms/BrandIcon.astro';
+import { cv } from '../../data/cv.data';
+const { skills } = cv;
+---
+
+<section class="skills shell" aria-labelledby="skills-title">
+  <SectionHeader index="02" id="skills-title" title="Stack" kicker="What I build with" axis="WGHT 440 · OPSZ 50" />
+
+  <div class="skills__grid">
+    {skills.map((group, i) => (
+      <div class="skills__group" style={`--offset:${i % 2}`}>
+        <h3 class="skills__group-name">
+          <span class="skills__group-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          {group.name}
+        </h3>
+        <ul class="skills__list">
+          {group.keywords.map((k) => (
+            <li class="skills__item">
+              <BrandIcon name={k} size={18} />
+              {k}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .skills__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-l) var(--space-xl);
+  }
+  /* Broken grid: nudge alternating columns off a shared baseline */
+  .skills__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding-top: calc(var(--offset) * var(--space-m));
+  }
+  .skills__group-name {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-s);
+    font-size: var(--step-2);
+    font-variation-settings: 'opsz' 50, 'wght' 440, var(--wonk-off);
+    padding-bottom: var(--space-xs);
+    border-bottom: 2px solid var(--ink);
+  }
+  .skills__group-num {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .skills__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+  }
+  .skills__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    color: var(--muted);
+    position: relative;
+    transition: color var(--dur-1) var(--ease);
+  }
+  .skills__item:hover {
+    color: var(--accent-ink);
+  }
+  .skills__item::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.25em;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width var(--dur-1) var(--ease);
+  }
+  .skills__item:hover::after {
+    width: 100%;
+  }
+
+  @media (max-width: 720px) {
+    .skills__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-l);
+    }
+    .skills__group {
+      padding-top: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skills__item, .skills__item::after { transition: none; }
+  }
+</style>

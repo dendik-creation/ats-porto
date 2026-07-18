@@ -1,0 +1,72 @@
+---
+import BrandIcon from './BrandIcon.astro';
+
+interface Props {
+  href: string;
+  network: string;
+  handle?: string;
+}
+const { href, network, handle } = Astro.props;
+---
+
+<a class="social" href={href} target="_blank" rel="noopener noreferrer">
+  <span class="social__icon"><BrandIcon name={network} size={22} /></span>
+  <span class="social__meta">
+    <span class="social__net">{network}</span>
+    {handle && <span class="social__handle">{handle}</span>}
+  </span>
+  <svg class="social__arrow" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false">
+    <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</a>
+
+<style>
+  .social {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.55em 0;
+    color: var(--ink);
+    width: 100%;
+    max-width: 20rem;
+    border-bottom: 1px solid var(--line);
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .social:hover,
+  .social:focus-visible {
+    border-color: var(--accent);
+  }
+  .social__icon {
+    display: inline-flex;
+    width: 1.6rem;
+    justify-content: center;
+  }
+  .social__meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .social__net {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 500, var(--wonk-off);
+  }
+  .social__handle {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--faint);
+  }
+  .social__arrow {
+    margin-left: auto;
+    color: var(--muted);
+    transition: transform var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .social:hover .social__arrow,
+  .social:focus-visible .social__arrow {
+    transform: translate(3px, -3px);
+    color: var(--accent-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .social, .social__arrow { transition: none; }
+  }
+</style>

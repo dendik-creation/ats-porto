@@ -1,0 +1,97 @@
+---
+// Maps a skill / tech / network name to its svgl brand icon.
+// Renders nothing when there's no icon (caller falls back to the label alone).
+import Typescript from './icons/Typescript.astro';
+import Nextjs from './icons/Nextjs.astro';
+import AstroIcon from './icons/Astro.astro';
+import Vue from './icons/Vue.astro';
+import Flutter from './icons/Flutter.astro';
+import Shadcn from './icons/Shadcn.astro';
+import Php from './icons/Php.astro';
+import Laravel from './icons/Laravel.astro';
+import Django from './icons/Django.astro';
+import Nodejs from './icons/Nodejs.astro';
+import Golang from './icons/Golang.astro';
+import Bun from './icons/Bun.astro';
+import Mysql from './icons/Mysql.astro';
+import Sqlite from './icons/Sqlite.astro';
+import Postgresql from './icons/Postgresql.astro';
+import Figma from './icons/Figma.astro';
+import Git from './icons/Git.astro';
+import Github from './icons/Github.astro';
+import Wordpress from './icons/Wordpress.astro';
+import React from './icons/React.astro';
+import Illustrator from './icons/Illustrator.astro';
+import Firebase from './icons/Firebase.astro';
+import Meta from './icons/Meta.astro';
+import Linkedin from './icons/Linkedin.astro';
+import Aws from './icons/Aws.astro';
+import Oracle from './icons/Oracle.astro';
+import Pusher from './icons/Pusher.astro';
+import RestfullApi from './icons/RestfullApi.astro';
+import Construct3 from './icons/Construct3.astro';
+import Docker from './icons/Docker.astro';
+import Godot from './icons/Godot.astro';
+
+const REGISTRY: Record<string, typeof Typescript> = {
+  typescript: Typescript,
+  nextjs: Nextjs,
+  astro: AstroIcon,
+  vue: Vue,
+  flutter: Flutter,
+  shadcnui: Shadcn,
+  php: Php,
+  laravel: Laravel,
+  django: Django,
+  nodejs: Nodejs,
+  go: Golang,
+  golang: Golang,
+  bun: Bun,
+  mysql: Mysql,
+  sqlite: Sqlite,
+  postgresql: Postgresql,
+  figma: Figma,
+  git: Git,
+  github: Github,
+  wordpress: Wordpress,
+  react: React,
+  reactts: React,
+  illustrator: Illustrator,
+  fcm: Firebase,
+  firebase: Firebase,
+  meta: Meta,
+  linkedin: Linkedin,
+  aws: Aws,
+  oracle: Oracle,
+  pusher: Pusher,
+  restapi: RestfullApi,
+  construct3: Construct3,
+  docker: Docker,
+  godot: Godot,
+};
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+}
+const { name, size = 20, class: className } = Astro.props;
+const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+const Icon = REGISTRY[key];
+---
+
+{
+  Icon && (
+    <span class:list={['brand-icon', className]}>
+      <Icon width={size} height={size} role="img" aria-label={name} />
+    </span>
+  )
+}
+
+<style is:global>
+  .brand-icon {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+  }
+</style>

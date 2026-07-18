@@ -1,0 +1,41 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import ProjectCard from '../molecules/ProjectCard.astro';
+import { cv } from '../../data/cv.data';
+const { projects } = cv;
+---
+
+<section class="projects shell" aria-labelledby="projects-title">
+  <SectionHeader
+    index="03"
+    id="projects-title"
+    title="Selected work"
+    kicker={`${projects.length} projects`}
+    axis="WGHT 500 · OPSZ 72"
+  />
+
+  <div class="projects__list">
+    {projects.map((project, i) => <ProjectCard project={project} index={i + 1} />)}
+  </div>
+</section>
+
+<style>
+  .projects__list {
+    /* Two-column broken grid; masonry where supported, safe fallback otherwise */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--space-xl);
+  }
+  .projects__list :global(.proj:last-child),
+  .projects__list :global(.proj:nth-last-child(2)) {
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 720px) {
+    .projects__list {
+      grid-template-columns: 1fr;
+    }
+    .projects__list :global(.proj:nth-last-child(2)) {
+      border-bottom: 0;
+    }
+  }
+</style>

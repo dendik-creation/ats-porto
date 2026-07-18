@@ -1,0 +1,194 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import TagList from '../atoms/TagList.astro';
+import { cv } from '../../data/cv.data';
+import { rangeLabel } from '../../data/format';
+const { work, awards } = cv;
+---
+
+<section class="experience shell" aria-labelledby="experience-title">
+  <SectionHeader index="04" id="experience-title" title="Experience" kicker="Where I've shipped" axis="WGHT 460 · OPSZ 60" />
+
+  <div class="exp__list">
+    {work.map((w) => {
+      const isCurrent = w.endDate === 'Present';
+      return (
+        <article class="exp__item">
+          <div class="exp__meta">
+            <p class="exp__range label">
+              {rangeLabel(w.startDate, w.endDate)}
+              {isCurrent && <span class="exp__now" aria-label="current role">●</span>}
+            </p>
+            <p class="exp__loc">{w.location}</p>
+          </div>
+          <div class="exp__body">
+            <h3 class="exp__role">{w.position}</h3>
+            <p class="exp__company">{w.name}</p>
+            {w.summary && <p class="exp__summary">{w.summary}</p>}
+            <ul class="exp__highlights">
+              {w.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+            {w.keywords.length > 0 && (
+              <div class="exp__stack">
+                <TagList items={w.keywords} label={`${w.name} — stack`} />
+              </div>
+            )}
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+  <div class="experience__awards">
+    <p class="label">Recognition</p>
+    <ul class="awards">
+      {awards.map((a) => (
+        <li class="award">
+          <span class="award__year">{a.date.slice(0, 4)}</span>
+          <span class="award__title">{a.title}</span>
+          <span class="award__by">{a.awarder}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .exp__list {
+    border-bottom: 1px solid var(--line);
+  }
+  .exp__item {
+    display: grid;
+    grid-template-columns: minmax(9rem, 15rem) 1fr;
+    gap: var(--space-s) var(--space-m);
+    padding: var(--space-m) 0;
+    border-top: 1px solid var(--line);
+  }
+  .exp__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    position: sticky;
+    top: var(--space-s);
+    align-self: start;
+    height: fit-content;
+  }
+  .exp__range {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--ink);
+  }
+  .exp__now {
+    color: var(--accent);
+    font-size: 0.7em;
+    animation: pulse 2.4s var(--ease) infinite;
+  }
+  .exp__loc {
+    color: var(--faint);
+    font-size: var(--step--1);
+  }
+  .exp__role {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 520, var(--wonk-off);
+    line-height: 1.1;
+  }
+  .exp__company {
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    color: var(--accent-ink);
+    margin-top: 0.2em;
+    margin-bottom: var(--space-xs);
+  }
+  .exp__summary {
+    color: var(--muted);
+    max-width: var(--measure);
+    margin-bottom: var(--space-s);
+  }
+  .exp__highlights {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-width: var(--measure);
+  }
+  .exp__highlights li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .exp__highlights li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .exp__stack {
+    margin-top: var(--space-s);
+  }
+
+  .experience__awards {
+    margin-top: var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .awards {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .award {
+    display: grid;
+    grid-template-columns: 5rem 1fr auto;
+    gap: var(--space-s);
+    align-items: baseline;
+    padding: var(--space-s) 0;
+    border-top: 1px solid var(--line);
+  }
+  .award__year {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .award__title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 480, var(--wonk-off);
+  }
+  .award__by {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--faint);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .exp__now { animation: none; }
+  }
+  @media (max-width: 640px) {
+    .exp__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-s);
+    }
+    .exp__meta {
+      position: static;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  @media (max-width: 560px) {
+    .award {
+      grid-template-columns: 1fr auto;
+      row-gap: var(--space-2xs);
+    }
+    .award__year { grid-column: 1 / -1; }
+  }
+</style>

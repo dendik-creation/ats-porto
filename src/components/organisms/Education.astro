@@ -1,0 +1,141 @@
+---
+import SectionHeader from '../molecules/SectionHeader.astro';
+import TagList from '../atoms/TagList.astro';
+import { cv } from '../../data/cv.data';
+import { rangeLabel } from '../../data/format';
+const { education } = cv;
+---
+
+<section class="edu shell" aria-labelledby="education-title">
+  <SectionHeader index="05" id="education-title" title="Education" kicker="Foundations" axis="WGHT 520 · OPSZ 30" />
+
+  <div class="edu__list">
+    {education.map((e) => {
+      const range = e.startDate && e.endDate ? rangeLabel(e.startDate, e.endDate) : '';
+      const isCurrent = e.endDate === 'Present';
+      return (
+        <article class="edu__item">
+          <div class="edu__meta">
+            {range && (
+              <p class="edu__range label">
+                {range}
+                {isCurrent && <span class="edu__now" aria-label="current">●</span>}
+              </p>
+            )}
+            <p class="edu__loc">{e.location}</p>
+          </div>
+          <div class="edu__body">
+            <h3 class="edu__role">{e.institution}</h3>
+            <p class="edu__company">{e.studyType} · {e.area}</p>
+            {e.summary && <p class="edu__summary">{e.summary}</p>}
+            <ul class="edu__highlights">
+              {e.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+            {e.keywords.length > 0 && (
+              <div class="edu__stack">
+                <TagList items={e.keywords} label={`${e.institution} — focus`} />
+              </div>
+            )}
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  /* Same layout as Experience — sticky meta column beside the body */
+  .edu__list {
+    border-bottom: 1px solid var(--line);
+  }
+  .edu__item {
+    display: grid;
+    grid-template-columns: minmax(9rem, 15rem) 1fr;
+    gap: var(--space-s) var(--space-m);
+    padding: var(--space-m) 0;
+    border-top: 1px solid var(--line);
+  }
+  .edu__meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    position: sticky;
+    top: var(--space-s);
+    align-self: start;
+    height: fit-content;
+  }
+  .edu__range {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--ink);
+  }
+  .edu__now {
+    color: var(--accent);
+    font-size: 0.7em;
+    animation: pulse 2.4s var(--ease) infinite;
+  }
+  .edu__loc {
+    color: var(--faint);
+    font-size: var(--step--1);
+  }
+  .edu__role {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 520, var(--wonk-off);
+    line-height: 1.1;
+  }
+  .edu__company {
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    color: var(--accent-ink);
+    margin-top: 0.2em;
+    margin-bottom: var(--space-xs);
+  }
+  .edu__summary {
+    color: var(--muted);
+    max-width: var(--measure);
+    margin-bottom: var(--space-s);
+  }
+  .edu__highlights {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-width: var(--measure);
+  }
+  .edu__highlights li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .edu__highlights li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .edu__stack {
+    margin-top: var(--space-s);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .edu__now { animation: none; }
+  }
+  @media (max-width: 640px) {
+    .edu__item {
+      grid-template-columns: 1fr;
+      gap: var(--space-s);
+    }
+    .edu__meta {
+      position: static;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+</style>

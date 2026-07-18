@@ -1,0 +1,62 @@
+/*
+  HALLMARK — brand signature for the Dendi Setiawan portfolio.
+  The single place identity is defined. Components consume these tokens;
+  they never hardcode color, type, or spacing.
+*/
+
+:root {
+  /* ---- Palette: warm bone paper, ink near-black, one signal accent ---- */
+  --paper: #f0ece1;        /* warm bone — primary surface */
+  --paper-deep: #e6e0d1;   /* recessed panels */
+  --ink: #14130f;          /* near-black — text & structure */
+  --accent: #f0330d;       /* vermillion — the color people remember */
+  --accent-ink: #b81f00;   /* accent, text-safe on paper (AA) */
+
+  --muted: color-mix(in oklab, var(--ink) 52%, var(--paper));
+  --faint: color-mix(in oklab, var(--ink) 30%, var(--paper));
+  --line: color-mix(in oklab, var(--ink) 16%, var(--paper));
+  --line-strong: color-mix(in oklab, var(--ink) 32%, var(--paper));
+
+  /* ---- Type families ----
+     Fraunces (serif display) + Bricolage Grotesque (grotesque sans) + JetBrains Mono —
+     the press-01 specimen trio. Fraunces is the voice, Bricolage the workhorse. */
+  --font-display: 'Fraunces Variable', 'Times New Roman', serif;
+  --font-text: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'SFMono-Regular', ui-monospace, monospace;
+
+  /* ---- Type scale (fluid, poster-grade contrast head↔body) ---- */
+  --step--1: clamp(0.78rem, 0.74rem + 0.2vw, 0.88rem);
+  --step-0:  clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem);
+  --step-1:  clamp(1.2rem, 1.05rem + 0.7vw, 1.6rem);
+  --step-2:  clamp(1.6rem, 1.2rem + 1.9vw, 2.8rem);
+  --step-3:  clamp(2.4rem, 1.4rem + 4.6vw, 5rem);
+  --step-4:  clamp(3.4rem, 1rem + 11vw, 9rem);
+
+  /* ---- Spacing rhythm (deliberately uneven, not one uniform gap) ---- */
+  --space-2xs: 0.375rem;
+  --space-xs: 0.75rem;
+  --space-s: 1.25rem;
+  --space-m: 2.25rem;
+  --space-l: clamp(3rem, 2rem + 5vw, 6rem);
+  --space-xl: clamp(5rem, 3rem + 9vw, 11rem);
+
+  --measure: 62ch;
+  --measure-tight: 46ch;                  /* narrower reading column for cards */
+  --edge: clamp(1.25rem, 5vw, 5.5rem);   /* page gutter */
+  --container: 1600px;                    /* one width every section shares */
+  --nav-h: clamp(4.25rem, 4rem + 2vw, 5.5rem); /* fixed nav bar height */
+  /* Anchor scroll clearance: nav bar + the section header's index/kicker rows
+     that sit above the (id-bearing) title, so nothing lands under the bar. */
+  --nav-offset: calc(var(--nav-h) + var(--space-m) + var(--space-xs));
+
+  /* ---- Motion: one curve, two durations ---- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-1: 0.28s;
+  --dur-2: 0.6s;
+
+  /* ---- Variable-font axis presets (the concrete-poetry vocabulary) ---- */
+  --wonk-off: 'SOFT' 0, 'WONK' 0;
+  --wonk-on: 'SOFT' 60, 'WONK' 1;
+
+  color-scheme: light;
+}
