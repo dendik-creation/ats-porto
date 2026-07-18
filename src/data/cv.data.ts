@@ -8,7 +8,6 @@ export const cv: CV = {
     name: "Dendi' Setiawan",
     label: 'Fullstack Developer',
     email: 'setiawandendik0205@gmail.com',
-    phone: '+6289504522341',
     url: 'https://dendikcreation.dev',
     summary:
       'Fullstack developer with four years shipping enterprise web and mobile products end to end — from database schema and REST APIs to the interface people actually use. I work across Laravel, Go, and Node on the backend and Vue, Next.js, Astro, and Flutter on the front, and I take ownership of a feature the whole way through.',
@@ -16,6 +15,8 @@ export const cv: CV = {
     profiles: [
       { network: 'GitHub', username: 'dendik-creation', url: 'https://github.com/dendik-creation' },
       { network: 'LinkedIn', username: 'dendi-setiawan', url: 'https://www.linkedin.com/in/dendi-setiawan/' },
+      { network: 'Upwork', username: 'dendik_creation', url: 'https://www.upwork.com/freelancers/~019a1d14923d5e4999?mp_source=share' },
+      { network: 'Fiverr', username: 'dendik_creation', url: 'https://www.fiverr.com/dendik_creation' },
     ],
   },
   work: [
@@ -32,7 +33,7 @@ export const cv: CV = {
         'Built the broadcasting pipeline that connects consumers to sellers — turning conversation into conversion at scale.',
         'Owned features end to end: data model, REST API, third-party integration, and the operator-facing UI.',
       ],
-      keywords: ['Laravel', 'PHP', 'Vue', 'Meta WhatsApp Cloud API', 'Biteship', 'JNE', 'REST API'],
+      keywords: ['Laravel', 'PHP', 'Vue', 'Meta WhatsApp Cloud API', 'Biteship', 'JNE Shipping API'],
     },
     {
       name: 'PT. Pura Group Indonesia',
@@ -65,8 +66,8 @@ export const cv: CV = {
     { name: 'Front End', keywords: ['TypeScript', 'Next.js', 'Astro', 'Vue', 'React', 'Flutter', 'shadcn/ui'] },
     { name: 'Back End', keywords: ['PHP', 'Laravel', 'Django', 'Node.js', 'Go', 'Bun', 'REST API'] },
     { name: 'Database', keywords: ['MySQL', 'PostgreSQL', 'SQLite', 'Oracle'] },
-    { name: 'Cloud & Realtime', keywords: ['AWS', 'Firebase', 'FCM', 'Pusher'] },
-    { name: 'Tools', keywords: ['Git', 'GitHub', 'Figma', 'WordPress'] },
+    { name: 'Cloud Computing', keywords: ['AWS', 'Firebase', 'FCM', 'Pusher', 'Digital Ocean'] },
+    { name: 'Tools', keywords: ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker'] },
   ],
   projects: [
     {

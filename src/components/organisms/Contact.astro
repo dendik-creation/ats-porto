@@ -2,17 +2,23 @@
 import SectionHeader from '../molecules/SectionHeader.astro';
 import ArrowLink from '../atoms/ArrowLink.astro';
 import SocialLink from '../atoms/SocialLink.astro';
+import BrandIcon from '../atoms/BrandIcon.astro';
 import { cv } from '../../data/cv.data';
 import { homeRegion } from '../../data/format';
 const { basics } = cv;
 const year = new Date().getFullYear();
 const place = homeRegion(basics.location);
+
+const FREELANCE_NETWORKS = new Set(['Upwork', 'Fiverr']);
+const social = basics.profiles.filter((p) => !FREELANCE_NETWORKS.has(p.network));
+const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network));
 ---
 
 <footer class="contact shell" id="contact" aria-labelledby="contact-title">
   <SectionHeader index="08" id="contact-title" title="Let's build something" kicker="Get in touch" axis="WGHT 500 · OPSZ 90" />
 
   <a class="contact__email" href={`mailto:${basics.email}`}>
+    <BrandIcon name="gmail" size={32} class="contact__email-icon" />
     <span class="contact__email-text">{basics.email}</span>
   </a>
 
@@ -20,12 +26,18 @@ const place = homeRegion(basics.location);
     <div class="contact__col">
       <p class="label">Direct</p>
       <ArrowLink href={`mailto:${basics.email}`}>Email</ArrowLink>
-      <ArrowLink href={`tel:${basics.phone}`}>{basics.phone}</ArrowLink>
     </div>
 
     <div class="contact__col">
-      <p class="label">Elsewhere</p>
-      {basics.profiles.map((p) => (
+      <p class="label">Social</p>
+      {social.map((p) => (
+        <SocialLink href={p.url} network={p.network} handle={`@${p.username}`} />
+      ))}
+    </div>
+
+    <div class="contact__col">
+      <p class="label">Freelance</p>
+      {freelance.map((p) => (
         <SocialLink href={p.url} network={p.network} handle={`@${p.username}`} />
       ))}
     </div>
@@ -62,7 +74,9 @@ const place = homeRegion(basics.location);
     padding-bottom: var(--space-l);
   }
   .contact__email {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
     width: fit-content;
     max-width: 100%;
     margin: var(--space-m) 0 var(--space-xl);
@@ -73,6 +87,14 @@ const place = homeRegion(basics.location);
     word-break: break-word;
     line-height: 1;
     transition: font-variation-settings var(--dur-2) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .contact__email-icon {
+    flex: none;
+    color: var(--muted);
+    transition: color var(--dur-1) var(--ease);
+  }
+  .contact__email:hover .contact__email-icon {
+    color: var(--accent-ink);
   }
   .contact__email-text {
     background-image: linear-gradient(var(--accent), var(--accent));
@@ -92,7 +114,7 @@ const place = homeRegion(basics.location);
 
   .contact__cols {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-l) var(--space-m);
     padding-top: var(--space-l);
     border-top: 1px solid var(--line);
@@ -102,9 +124,6 @@ const place = homeRegion(basics.location);
     flex-direction: column;
     gap: var(--space-s);
     align-items: flex-start;
-  }
-  .contact__col--avail {
-    grid-column: span 1;
   }
   .contact__avail {
     list-style: none;
@@ -142,7 +161,12 @@ const place = homeRegion(basics.location);
     color: var(--faint);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 920px) {
+    .contact__cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
     .contact__cols {
       grid-template-columns: 1fr;
     }

@@ -32,6 +32,12 @@ import RestfullApi from './icons/RestfullApi.astro';
 import Construct3 from './icons/Construct3.astro';
 import Docker from './icons/Docker.astro';
 import Godot from './icons/Godot.astro';
+import DigitalOcean from './icons/DigitalOcean.astro';
+import Biteship from './icons/Biteship.astro';
+import Jne from './icons/Jne.astro'
+import Upwork from './icons/Upwork.astro';
+import Fiverr from './icons/Fiverr.astro';
+import Gmail from './icons/Gmail.astro';
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -60,6 +66,7 @@ const REGISTRY: Record<string, typeof Typescript> = {
   fcm: Firebase,
   firebase: Firebase,
   meta: Meta,
+  metawhatsappcloudapi : Meta,
   linkedin: Linkedin,
   aws: Aws,
   oracle: Oracle,
@@ -68,6 +75,13 @@ const REGISTRY: Record<string, typeof Typescript> = {
   construct3: Construct3,
   docker: Docker,
   godot: Godot,
+  digitalocean : DigitalOcean,
+  biteship : Biteship,
+  jne : Jne,
+  jneshippingapi : Jne,
+  upwork: Upwork,
+  fiverr: Fiverr,
+  gmail: Gmail,
 };
 
 interface Props {
@@ -93,5 +107,6 @@ const Icon = REGISTRY[key];
     display: inline-block;
     flex: none;
     vertical-align: middle;
+    color: ;
   }
 </style>

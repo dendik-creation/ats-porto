@@ -78,7 +78,6 @@ export interface CV {
     name: string;
     label: string;
     email: string;
-    phone: string;
     url: string;
     summary: string;
     location: { city: string; countryCode: string; region: string };
