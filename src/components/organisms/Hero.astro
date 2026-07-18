@@ -1,17 +1,13 @@
 ---
 import { cv } from '../../data/cv.data';
-import { homeRegion } from '../../data/format';
 const { basics } = cv;
 const first = "Dendi'";
 const last = 'Setiawan';
-const place = homeRegion(basics.location);
 ---
 
 <header class="hero shell" data-hero>
   <p class="hero__eyebrow label">
     <span>{basics.label}</span>
-    <span class="hero__dot" aria-hidden="true">/</span>
-    <span>{place}</span>
   </p>
 
   <h1 class="hero__name" aria-label={basics.name}>
@@ -37,7 +33,7 @@ const place = homeRegion(basics.location);
     <p class="hero__summary">{basics.summary}</p>
     <p class="hero__avail">
       <span class="hero__pulse" aria-hidden="true"></span>
-      Open to fullstack work · Remote or in {basics.location.region}
+      Open to fullstack work
     </p>
   </div>
 </header>
@@ -55,9 +51,6 @@ const place = homeRegion(basics.location);
     flex-wrap: wrap;
     gap: 0.9em;
     align-items: center;
-  }
-  .hero__dot {
-    color: var(--accent);
   }
 
   /* Concrete-poetry name: broken baseline, offset words, per-letter weight ramp */
