@@ -29,7 +29,7 @@ export const cv: CV = {
       summary: 'Developing and delivering custom web and mobile software solutions for various clients end-to-end.',
       highlights: [
         'Architecting database schemas, crafting optimized RESTful APIs, and building responsive client-facing interfaces.',
-        'Managing cross-platform fullstack applications utilizing modern web stacks.'
+        'Building and deploying cross-platform fullstack applications with Node.js, Go, and modern web stacks.'
       ],
       keywords: ['Laravel', 'Go', 'Node.js', 'React', 'Vue', 'Flutter', 'Docker', 'Next.js']
     },
@@ -96,7 +96,7 @@ export const cv: CV = {
       endDate: '2024-05',
       summary: 'Active in system development to assist school and department administration.',
       highlights: [
-        'Participated in various competitions in the field of website technology ranging from UI/UX, RESTful API, and software engineering.'
+        'Competed in website-technology contests spanning UI/UX, RESTful APIs, and software engineering.'
       ]
     }
   ],
@@ -136,7 +136,7 @@ export const cv: CV = {
         'Laravel',
         'React',
         'Oracle',
-        'RESTful API'
+        'REST API'
       ],
       links: { repo: '', live: '' },
     },
@@ -185,7 +185,7 @@ export const cv: CV = {
     {
       name: 'Bi Booster',
       description:
-        'An AI-powered SaaS instant website builder for MSMEs (UMKM) that generates high-performance static websites in real-time based on structured business profiles[cite: 1]. Features a multi-stage LLM generation pipeline, continuous job queues, automated Midtrans billing workflows, and dynamic reverse-proxy routing[cite: 1].',
+        'An AI-powered SaaS instant website builder for MSMEs (UMKM) that generates high-performance static websites in real-time based on structured business profiles. Features a multi-stage LLM generation pipeline, continuous job queues, automated Midtrans billing workflows, and dynamic reverse-proxy routing.',
       date: '2026-03',
       role: 'Core Systems & DevOps Architect',
       keywords: [
@@ -207,42 +207,26 @@ export const cv: CV = {
       title: '1st Place — AWS Club Competition',
       date: '2023-11',
       awarder: 'Central Java',
-      summary: 'Built a school-profile website surfacing activities and administration; placed first in the field.',
+      summary: 'Built a school-profile website surfacing activities and administration, using WordPress and converting it to a static site via a WordPress plugin.',
     },
     {
       title: '3rd Place — LKS Web Technologies',
       date: '2023-05',
-      awarder: 'Kota Batang',
-      summary: 'Provincial competition: native HTML5/CSS/JS/PHP tasks plus a jobseeker REST API on Laravel and Vue.',
+      awarder: 'Batang City',
+      summary: 'Provincial competitive-programming event: native HTML5/CSS/JS/PHP tasks, a Plants vs. Zombies clone game, and a job-seeker REST API built with Laravel and Vue for the frontend.',
     },
   ],
   certificates: [
-    { name: 'Belajar Dasar Cloud dan Gen AI di AWS', issuer: 'Dicoding', date: '2026', summary: 'Fundamentals of AWS Cloud computing and generative AI prompt engineering models.', credentialId: '', url: '' },
-    { name: 'Spec-Driven Development dengan Kiro', issuer: 'Dicoding', date: '2026', summary: 'Implementing strict spec-driven backend APIs and documentation using modern software development toolkits.', credentialId: '', url: '' },
-    { name: 'Microsoft Office Specialist - Excel 2019', issuer: 'Microsoft', date: '2026', summary: 'Professional competency certification in advanced spreadsheet modeling and data analysis.', credentialId: '', url: '' },
-    { name: 'Junior Web Programmer (BNSP)', issuer: 'LSP Teknologi Digital', date: '2023-11', endDate: '2026-11', summary: 'Nationally certified competency — database administration with the Django framework.', credentialId: '', url: '' },
-    { name: 'AWS Cloud Practitioner Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Cloud fundamentals: core AWS services, pricing, and the shared-responsibility model.', credentialId: '', url: '' },
-    { name: 'AWS Technical Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Hands-on with EC2, VPC, and DynamoDB — compute, networking, and managed data stores.', credentialId: '', url: '' },
-    { name: 'Dasar Pemrograman', issuer: 'Dicoding', date: '2023-08', endDate: '2026-08', summary: 'Programming foundations for software developers.', credentialId: '', url: '' },
-  ],
-  education: [
-    {
-      institution: 'Muria Kudus University',
-      studyType: 'Bachelor of Computer Science',
-      area: 'Teknik Informatika',
-      location: 'Kudus, Indonesia',
-      startDate: '2024',
-      endDate: 'Present',
-      summary: 'Active student focusing on software engineering, distributed systems, and cross-platform architecture.',
-      highlights: [
-        'Honing critical thinking skills to analyze complex technical concepts and solve system integration problems.',
-        'Extensively building full-stack web architectures and multi-tenant database infrastructures.'
-      ],
-      keywords: ['Software Engineering', 'Database Management', 'Cloud Computing'],
-    },
+    { name: 'Belajar Dasar Cloud dan Gen AI di AWS', issuer: 'Dicoding', date: '2026', summary: 'Fundamentals of AWS Cloud computing and generative AI prompt engineering models.', credentialId: '3XE1QNMVZRN', url: 'https://www.dicoding.com/certificates/53XE1QNMVZRN' },
+    { name: 'Spec-Driven Development dengan Kiro', issuer: 'Dicoding', date: '2026', summary: 'Spec-driven backend API design and documentation using modern development toolkits.', credentialId: 'GRX5WOM4KZ0M', url: 'https://www.dicoding.com/certificates/GRX5WOM4KZ0M' },
+    { name: 'Microsoft Office Specialist - Excel 2019', issuer: 'Microsoft', date: '2026', summary: 'Professional competency certification in advanced spreadsheet modeling and data analysis.', credentialId: 'wNMEx-2FNW', url: 'https://www.certiport.com/portal/pages/credentialverification.aspx' },
+    { name: 'Junior Web Programmer (BNSP)', issuer: 'LSP Teknologi Digital', date: '2023-11', endDate: '2026-11', summary: 'Nationally certified competency — database administration with the Django framework.', credentialId: '11843220', url: 'https://drive.google.com/file/d/1YCEHNxRW3Ozu3bG5S3soIc36eec1U09N/view' },
+    { name: 'AWS Cloud Practitioner Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Cloud fundamentals: core AWS services, pricing, and the shared-responsibility model.', credentialId: '', url: 'https://drive.google.com/file/d/1kmqZlREcC-7_XKkVaYcYs3e3anfZKHgw/view?usp=sharing' },
+    { name: 'AWS Technical Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Hands-on with EC2, VPC, and DynamoDB — compute, networking, and managed data stores.', credentialId: '', url: 'https://drive.google.com/file/d/1DPSi0J1MBvLrQ0gFh8OZwuhHBeR0Gs7H/view?usp=sharing' },
+    { name: 'Architecting on AWS', issuer: 'AWS Training', date: '2023-06', summary: 'Cloud architecture patterns for designing and troubleshooting solutions across the AWS ecosystem.', credentialId: '', url: 'https://drive.google.com/file/d/1_AzOVgRNSHhYFN_Hrnxm8Be1X5wKlBHA/view?usp=sharing' },
   ],
   languages: [
-    { name: 'Indonesia', level: 'Native' },
+    { name: 'Indonesian', level: 'Native' },
     {
       name: 'English',
       level: 'Professional — formal',
