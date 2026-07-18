@@ -45,7 +45,8 @@ if (!prefersReduced) {
         )
         .from('.hero__spec', { y: 12, opacity: 0, duration: 0.8 }, '-=0.5')
         .from('.hero__summary', { y: 16, opacity: 0, duration: 0.8 }, '-=0.55')
-        .from('.hero__avail', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6');
+        .from('.hero__avail', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6')
+        .from('.hero__cv', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6');
     }
 
     // ---- Sections: header + item cascade on scroll-in ----
