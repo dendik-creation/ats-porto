@@ -40,10 +40,6 @@ const personLd = {
   sameAs: basics.profiles.map((p) => p.url),
   knowsAbout: cv.skills.flatMap((g) => g.keywords),
   knowsLanguage: cv.languages.map((l) => l.name),
-  alumniOf: cv.education.map((e) => ({
-    '@type': 'EducationalOrganization',
-    name: e.institution,
-  })),
   hasCredential: cv.certificates.map((c) => ({
     '@type': 'EducationalOccupationalCredential',
     name: c.name,

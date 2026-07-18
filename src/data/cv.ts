@@ -55,16 +55,14 @@ export interface Certificate {
   url?: string;
 }
 
-export interface Education {
-  institution: string;
-  studyType: string; // e.g. "Vocational High School — Software Engineering (RPL)"
-  area: string;
+export interface Volunteer {
+  organization: string;
+  position: string;
   location: string;
-  startDate: string; // "YYYY" — leave "" if unconfirmed; the range is hidden when empty
+  startDate: string;
   endDate: string;
-  summary: string;   // optional blurb — hidden when ""
+  summary: string;
   highlights: string[];
-  keywords: string[]; // focus tags — hidden when empty
 }
 
 export interface Language {
@@ -84,10 +82,10 @@ export interface CV {
     profiles: Profile[];
   };
   work: Work[];
+  volunteer: Volunteer[];
   skills: SkillGroup[];
   projects: Project[];
   awards: Award[];
   certificates: Certificate[];
-  education: Education[];
   languages: Language[];
 }
