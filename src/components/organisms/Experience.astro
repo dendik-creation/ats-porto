@@ -47,6 +47,7 @@ const { work, awards } = cv;
           <span class="award__year">{a.date.slice(0, 4)}</span>
           <span class="award__title">{a.title}</span>
           <span class="award__by">{a.awarder}</span>
+          {a.summary && <p class="award__summary">{a.summary}</p>}
         </li>
       ))}
     </ul>
@@ -144,7 +145,8 @@ const { work, awards } = cv;
   .award {
     display: grid;
     grid-template-columns: 5rem 1fr auto;
-    gap: var(--space-s);
+    column-gap: var(--space-s);
+    row-gap: var(--space-2xs);
     align-items: baseline;
     padding: var(--space-s) 0;
     border-top: 1px solid var(--line);
@@ -164,6 +166,11 @@ const { work, awards } = cv;
     font-family: var(--font-mono);
     font-size: var(--step--1);
     color: var(--faint);
+  }
+  .award__summary {
+    grid-column: 2 / -1;
+    color: var(--muted);
+    max-width: var(--measure);
   }
 
   @keyframes pulse {
@@ -190,5 +197,6 @@ const { work, awards } = cv;
       row-gap: var(--space-2xs);
     }
     .award__year { grid-column: 1 / -1; }
+    .award__summary { grid-column: 1 / -1; }
   }
 </style>
