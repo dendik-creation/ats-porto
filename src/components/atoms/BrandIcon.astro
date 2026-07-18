@@ -44,6 +44,7 @@ import Posthog from './icons/Posthog.astro'
 import Prisma from './icons/Prisma.astro'
 import Redis from './icons/Redis.astro'
 import BullMQ from './icons/BullMQ.astro'
+import Cloudflare from './icons/Cloudflare.astro'
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -95,7 +96,8 @@ const REGISTRY: Record<string, typeof Typescript> = {
   deepseek : Deepseek,
   prisma : Prisma,
   caddy : Caddy,
-  bullmq : BullMQ
+  bullmq : BullMQ,
+  cloudflare : Cloudflare,
 };
 
 interface Props {
@@ -121,7 +123,7 @@ const Icon = REGISTRY[key];
   display: inline-block;
   flex: none;
   vertical-align: middle;
-  filter: grayscale(100%);
+  filter: grayscale(60%);
   color: currentColor;
 }
 </style>

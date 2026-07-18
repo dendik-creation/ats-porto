@@ -34,6 +34,7 @@ const facts = [
   { term: 'Stack', value: `${project.keywords.length} technologies` },
 ];
 const links = projectLinks(project);
+const images = project.images ?? [];
 ---
 
 <Layout title={title} description={description}>
@@ -54,6 +55,25 @@ const links = projectLinks(project);
       <h1 class="detail__title">{project.name}</h1>
       <p class="detail__lede">{project.description}</p>
     </header>
+
+    {images.length > 0 && (
+      <section class="detail__gallery" aria-label={`${project.name} screenshots`}>
+        <p class="label">Gallery</p>
+        <ul class="detail__gallery-grid">
+          {images.map((src, i) => (
+            <li class="detail__gallery-item">
+              <img
+                src={src}
+                alt={`${project.name} — screenshot ${i + 1} of ${images.length}`}
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="detail__gallery-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     <section class="detail__body" aria-label="Project details">
       <div class="detail__stack">
@@ -156,6 +176,56 @@ const links = projectLinks(project);
     color: var(--muted);
     max-width: var(--measure);
     text-wrap: pretty;
+  }
+
+  .detail__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .detail__gallery-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    column-count: 1;
+    column-gap: var(--space-s);
+  }
+  @media (min-width: 560px) {
+    .detail__gallery-grid {
+      column-count: 2;
+    }
+  }
+  @media (min-width: 960px) {
+    .detail__gallery-grid {
+      column-count: 3;
+    }
+  }
+  .detail__gallery-item {
+    position: relative;
+    display: block;
+    break-inside: avoid;
+    margin-bottom: var(--space-s);
+    border: 1px solid var(--line);
+    background: var(--paper-deep);
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .detail__gallery-item:hover {
+    border-color: var(--accent);
+  }
+  .detail__gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .detail__gallery-index {
+    position: absolute;
+    left: 0.7em;
+    bottom: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--paper);
+    text-shadow: 0 1px 3px color-mix(in oklab, var(--ink) 70%, transparent);
   }
 
   .detail__body {

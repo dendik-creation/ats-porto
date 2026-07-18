@@ -28,6 +28,10 @@ if (!prefersReduced) {
   ].join(', ');
 
   const start = () => {
+    // Previous page's triggers point at DOM the ClientRouter just swapped
+    // out — kill them before wiring up the incoming page's own targets.
+    ScrollTrigger.getAll().forEach((st) => st.kill());
+
     // ---- Hero: a load timeline, letters rising into place ----
     const hero = document.querySelector('[data-hero]');
     if (hero) {
@@ -97,9 +101,7 @@ if (!prefersReduced) {
     }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  // astro:page-load fires on first paint and after every ClientRouter swap —
+  // the one hook that covers both an initial visit and a page change.
+  document.addEventListener('astro:page-load', start);
 }

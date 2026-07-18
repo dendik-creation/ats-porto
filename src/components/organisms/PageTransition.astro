@@ -1,0 +1,54 @@
+---
+// Page-load / page-change curtain — the same two-layer accent/ink stagger
+// used by the Nav's staggered menu (see Nav.astro), reused here as the
+// site's one transition motif instead of inventing a second unrelated one.
+// Persists across ClientRouter swaps so the covering/uncovering animation
+// is continuous rather than being torn down mid-transition.
+//
+// Covers the viewport by default (see .pt-layer below) so it masks real
+// load time — fonts, images, the lot — rather than playing a flourish once
+// the page is already sitting there ready. page-transition.ts lifts it once
+// astro:page-load actually fires.
+---
+
+<div class="pt-veil" data-pt aria-hidden="true" transition:persist transition:name="page-veil">
+  <div class="pt-layer pt-layer--1"></div>
+  <div class="pt-layer pt-layer--2"></div>
+</div>
+
+<style>
+  .pt-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+  }
+  .pt-veil[data-active] {
+    pointer-events: auto;
+  }
+  .pt-layer {
+    position: absolute;
+    inset: 0;
+    transform: translateX(0); /* covering — the pre-JS, pre-load default */
+  }
+  .pt-layer--1 {
+    background: var(--accent);
+  }
+  .pt-layer--2 {
+    background: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pt-veil {
+      display: none;
+    }
+  }
+</style>
+
+<noscript>
+  <style>
+    .pt-veil {
+      display: none;
+    }
+  </style>
+</noscript>

@@ -6,8 +6,10 @@ import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
 
+import { ClientRouter } from 'astro:transitions';
 import { cv } from '../data/cv.data';
 import Nav from '../components/organisms/Nav.astro';
+import PageTransition from '../components/organisms/PageTransition.astro';
 
 interface Props {
   title?: string;
@@ -88,11 +90,28 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
     <script defer src="https://cloud.umami.is/script.js" data-website-id="24e3a2ab-1ee5-42df-9a72-6446df7fd411" is:inline></script>
+
+    <script is:inline>
+      // Force Astro's ClientRouter onto its plain-swap path in every browser.
+      // The native View Transition API pauses/throttles the page's own rAF
+      // ticks while it captures old/new snapshots — which stutters GSAP's
+      // curtain tween (PageTransition.astro) mid-flight. Our curtain is the
+      // only transition animation this site needs, so the native one is
+      // switched off rather than raced against. (fallback="swap" below
+      // still keeps ClientRouter's SPA routing + lifecycle events active —
+      // fallback="none" would disable routing entirely once this API looks
+      // unsupported.)
+      if ('startViewTransition' in document) {
+        document.startViewTransition = undefined;
+      }
+    </script>
+    <ClientRouter fallback="swap" />
   </head>
 
   <body>
     <a class="skip" href="#main">Skip to content</a>
 
+    <PageTransition />
     <Nav />
 
     <main id="main">
@@ -101,6 +120,7 @@ const jsonLd = {
 
     <script>
       import '../scripts/animate';
+      import '../scripts/page-transition';
     </script>
 
     <style>

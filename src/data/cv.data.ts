@@ -43,11 +43,11 @@ export const cv: CV = {
       summary:
         'Enterprise software helping businesses market products and foundations distribute charitable funds over WhatsApp for Business.',
       highlights: [
-        'Shipped template customization and integrations with Meta WhatsApp Cloud API, Biteship, and JNE for order and shipping flows.',
+        'Shipped template customization and integrations with Meta WhatsApp API, Biteship, and JNE for order and shipping flows.',
         'Built the broadcasting pipeline that connects consumers to sellers — turning conversation into conversion at scale.',
         'Owned features end to end: data model, REST API, third-party integration, and the operator-facing UI.',
       ],
-      keywords: ['Laravel', 'PHP', 'Vue', 'Meta WhatsApp Cloud API', 'Biteship', 'JNE Shipping API'],
+      keywords: ['Laravel', 'PHP', 'Vue', 'Meta WhatsApp API', 'Biteship', 'JNE Shipping API'],
     },
     {
       name: 'PT. Pura Group Indonesia',
@@ -104,6 +104,11 @@ export const cv: CV = {
         'An interactive educational gamification project designed to transform traditional matrix mathematics learning into an engaging digital experience. Developed in a three-member team, it features localized language support, cross-platform compatibility for both web (localhost) and mobile devices, and intuitive game mechanics built to eliminate conventional learning boredom.',
       date: '2022-11',
       role: 'Game Programmer',
+      images: [
+        "https://github.com/dendik-creation/get-the-matrix/raw/main/images/Gameplay-1.png",
+        "https://github.com/dendik-creation/get-the-matrix/raw/main/images/Gameplay-2.png",
+        "https://github.com/dendik-creation/get-the-matrix/raw/main/images/Gameplay-3.png"
+      ],
       keywords: ['Construct 3', 'Figma', 'Adobe Illustrator', 'Game Development', 'Educational Gamification'],
       links: { repo: 'https://github.com/dendik-creation/get-the-matrix', live: 'https://get-the-matrix.projectmendoan.my.id/' },
     },
@@ -114,7 +119,13 @@ export const cv: CV = {
       date: '2023-11',
       role: 'Design & Interactive Build',
       keywords: ['Construct 3', 'Figma', 'Adobe Illustrator', 'Interactive Audio', 'Multimedia Learning'],
-      links: { live: 'https://gamelaneka.projectmendoan.my.id', repo : "https://github.com/dendik-creation/gamelaneka" },
+      links: { live: 'https://gamelaneka.projectmendoan.my.id', repo: "https://github.com/dendik-creation/gamelaneka" },
+      images: [
+        "/projects/gamelaneka/1.png",
+        "/projects/gamelaneka/1.png",
+        "/projects/gamelaneka/3.png",
+        "/projects/gamelaneka/4.png",
+      ],
     },
     {
       name: 'Audit Mutu Internal System',
@@ -137,6 +148,12 @@ export const cv: CV = {
       date: '2024-09',
       role: 'Solo Fullstack — mobile + backend',
       keywords: ['Laravel', 'MySQL', 'PHP', 'Flutter', 'Public Health Tracking'],
+      images: [
+        "/projects/family-care-stunting/1.png",
+        "/projects/family-care-stunting/1.png",
+        "/projects/family-care-stunting/3.png",
+        "/projects/family-care-stunting/4.png",
+      ],
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.familycarestunting' },
     },
     {
@@ -146,6 +163,12 @@ export const cv: CV = {
       date: '2024-10',
       role: 'Solo Fullstack — Laravel API + Flutter app',
       keywords: ['Laravel', 'MySQL', 'PHP', 'Flutter', 'FCM', 'Pusher', 'Digital Reporting'],
+      images: [
+        "/projects/tree-smart-coach/1.png",
+        "/projects/tree-smart-coach/1.png",
+        "/projects/tree-smart-coach/3.png",
+        "/projects/tree-smart-coach/4.png",
+      ],
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.treesmartcoach' },
     },
     {
@@ -155,6 +178,12 @@ export const cv: CV = {
       date: '2025-12',
       role: 'Lead Interactive Developer',
       keywords: ['Godot', 'Figma', 'UI/UX Design', 'Interactive Multimedia'],
+      images: [
+        "/projects/snumaku-pkwu/1.png",
+        "/projects/snumaku-pkwu/1.png",
+        "/projects/snumaku-pkwu/3.png",
+        "/projects/snumaku-pkwu/4.png",
+      ],
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.snumakupkwu' },
     },
     {
@@ -168,7 +197,12 @@ export const cv: CV = {
         'TypeScript',
         'Bun',
         'PostHog',
-        'Docker'
+        'Docker',
+        'Cloudflare',
+      ],
+      images: [
+        "/projects/keras/1.png",
+        "/projects/keras/2.png",
       ],
       links: { repo: 'https://github.com/dendik-creation/keras', live: 'https://keras.dendikcreation.dev' },
     },
@@ -187,9 +221,15 @@ export const cv: CV = {
         'BullMQ',
         'DeepSeek API',
         'Caddy',
-        'Docker'
+        'Docker',
+        'Cloudflare',
       ],
-      links: { repo: '', live: 'https://bibooster.agency' },
+      images: [
+        "/projects/bi-booster/1.png",
+        "/projects/bi-booster/2.png",
+        "/projects/bi-booster/3.png"
+      ],
+      links: { live: 'https://bibooster.agency' },
     },
   ],
   awards: [
