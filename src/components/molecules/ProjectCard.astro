@@ -101,6 +101,10 @@ const links = projectLinks(project);
   .proj__desc {
     color: var(--muted);
     max-width: var(--measure-tight);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
   }
   .proj__links {
     list-style: none;
