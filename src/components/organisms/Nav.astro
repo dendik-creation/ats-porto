@@ -16,6 +16,12 @@ const items = [
   { label: 'Certifications', link: '#certifications-title', ariaLabel: 'Jump to certifications' },
   { label: 'Languages', link: '#languages-title', ariaLabel: 'Jump to languages' },
   { label: 'Contact', link: '#contact', ariaLabel: 'Jump to contact' },
+  {
+    label: 'Visitors',
+    link: 'https://cloud.umami.is/share/132aI2gdoyz9vhLj',
+    ariaLabel: 'View site visitor analytics (opens in a new tab)',
+    external: true,
+  },
 ];
 const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 ---
@@ -59,7 +65,13 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
       <ul class="sm-panel-list" data-numbering role="list">
         {items.map((it, i) => (
           <li class="sm-panel-itemWrap" style={`--i:${i}`}>
-            <a class="sm-panel-item" href={it.link} aria-label={it.ariaLabel}>
+            <a
+              class="sm-panel-item"
+              href={it.link}
+              aria-label={it.ariaLabel}
+              target={it.external ? '_blank' : undefined}
+              rel={it.external ? 'noopener noreferrer' : undefined}
+            >
               <span class="sm-panel-itemLabel">{it.label}</span>
             </a>
           </li>
@@ -83,7 +95,13 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 
   <noscript>
     <ul class="sm-fallback">
-      {items.map((it) => <li><a href={it.link}>{it.label}</a></li>)}
+      {items.map((it) => (
+        <li>
+          <a href={it.link} target={it.external ? '_blank' : undefined} rel={it.external ? 'noopener noreferrer' : undefined}>
+            {it.label}
+          </a>
+        </li>
+      ))}
     </ul>
   </noscript>
 </div>
