@@ -77,6 +77,15 @@ const total = String(items.length).padStart(2, '0');
     z-index: 80;
     visibility: hidden;
     pointer-events: none;
+    /* Invert the active site theme only inside the lightbox surface. */
+    --lb-paper: #1a1814;
+    --lb-ink: #e8e2d3;
+    --lb-accent: #ff5722;
+  }
+  :root[data-theme='dark'] .lb {
+    --lb-paper: #f0ece1;
+    --lb-ink: #14130f;
+    --lb-accent: #f0330d;
   }
   .lb[data-state] {
     visibility: visible;
@@ -96,8 +105,8 @@ const total = String(items.length).padStart(2, '0');
     transform: translateX(100%);
     transition: transform var(--dur-2) var(--ease);
   }
-  .lb-prelayer--1 { background: var(--accent); }
-  .lb-prelayer--2 { background: var(--ink); }
+  .lb-prelayer--1 { background: var(--lb-accent); }
+  .lb-prelayer--2 { background: var(--lb-ink); }
 
   /* Opening: accent leads, ink follows, the panel arrives last on top. */
   .lb[data-state='open'] .lb-prelayer--1 { transform: translateX(0); transition-delay: 0s; }
@@ -115,7 +124,7 @@ const total = String(items.length).padStart(2, '0');
     z-index: 30;
     display: flex;
     flex-direction: column;
-    background: var(--ink);
+    background: var(--lb-ink);
     transform: translateX(100%);
     transition: transform var(--dur-2) var(--ease);
   }
@@ -132,10 +141,10 @@ const total = String(items.length).padStart(2, '0');
     font-family: var(--font-mono);
     font-size: var(--step--1);
     letter-spacing: 0.08em;
-    color: color-mix(in oklab, var(--paper) 65%, transparent);
+    color: color-mix(in oklab, var(--lb-paper) 65%, transparent);
   }
   .lb-count [data-lb-current] {
-    color: var(--paper);
+    color: var(--lb-paper);
     font-weight: 700;
   }
 
@@ -146,7 +155,7 @@ const total = String(items.length).padStart(2, '0');
     background: transparent;
     border: 0;
     cursor: pointer;
-    color: var(--paper);
+    color: var(--lb-paper);
     font-family: var(--font-mono);
     font-size: var(--step-0);
     letter-spacing: 0.08em;
@@ -175,7 +184,7 @@ const total = String(items.length).padStart(2, '0');
   }
   .lb-close:hover,
   .lb-close:focus-visible {
-    color: var(--accent);
+    color: var(--lb-accent);
   }
 
   .lb-stage {
@@ -222,7 +231,7 @@ const total = String(items.length).padStart(2, '0');
     width: auto;
     height: auto;
     object-fit: contain;
-    border: 1px solid color-mix(in oklab, var(--paper) 20%, transparent);
+    border: 1px solid color-mix(in oklab, var(--lb-paper) 20%, transparent);
     -webkit-user-drag: none;
     user-drag: none;
     -webkit-touch-callout: none;
@@ -244,16 +253,16 @@ const total = String(items.length).padStart(2, '0');
     width: 2.75rem;
     height: 2.75rem;
     background: transparent;
-    border: 1px solid color-mix(in oklab, var(--paper) 30%, transparent);
+    border: 1px solid color-mix(in oklab, var(--lb-paper) 30%, transparent);
     border-radius: 999px;
-    color: var(--paper);
+    color: var(--lb-paper);
     cursor: pointer;
     transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
   }
   .lb-arrow:hover,
   .lb-arrow:focus-visible {
-    color: var(--accent);
-    border-color: var(--accent);
+    color: var(--lb-accent);
+    border-color: var(--lb-accent);
   }
   .lb-arrow[hidden] {
     display: none;

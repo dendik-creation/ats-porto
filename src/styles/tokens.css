@@ -60,3 +60,18 @@
 
   color-scheme: light;
 }
+
+/* ---- Dark theme: warm charcoal surface, off-white ink ---- */
+/*
+  All derived tokens (--muted, --faint, --line, --line-strong)
+  recalculate automatically via color-mix(in oklab, …).
+  Nothing else needs overriding.
+*/
+:root[data-theme='dark'] {
+  --paper: #1a1814;
+  --paper-deep: #12100d;
+  --ink: #e8e2d3;
+  --accent: #ff5722;
+  --accent-ink: #ff7a4a;
+  color-scheme: dark;
+}

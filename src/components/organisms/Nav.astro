@@ -90,6 +90,40 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
           </ul>
         </div>
       )}
+
+      <div class="sm-theme">
+        <h3 class="sm-theme-title">Theme</h3>
+        <div class="sm-theme-toggle" role="radiogroup" aria-label="Colour scheme">
+          <button class="sm-theme-btn" data-theme-val="light" role="radio" aria-checked="false" type="button" title="Light">
+            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <span>Light</span>
+          </button>
+          <button class="sm-theme-btn" data-theme-val="dark" role="radio" aria-checked="false" type="button" title="Dark">
+            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <span>Dark</span>
+          </button>
+          <button class="sm-theme-btn" data-theme-val="auto" role="radio" aria-checked="false" type="button" title="Auto (follow device)">
+            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            <span>Auto</span>
+          </button>
+        </div>
+      </div>
     </div>
   </aside>
 
@@ -413,6 +447,74 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     border-color: var(--accent);
   }
 
+  /* ---- Theme toggle ---- */
+  .sm-theme {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .sm-theme-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease);
+  }
+  .nav[data-open] .sm-theme-title {
+    opacity: 1;
+    transition-delay: 0.4s;
+  }
+  .sm-theme-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--line);
+    border-radius: 8px;
+    padding: 2px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .nav[data-open] .sm-theme-toggle {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.45s;
+  }
+  .sm-theme-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    padding: 0.4em 0.5em;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .sm-theme-btn[aria-checked='true'] {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .sm-theme-btn:hover {
+    color: var(--ink);
+  }
+  .sm-theme-icon {
+    width: 1em;
+    height: 1em;
+    flex: 0 0 1em;
+  }
+
   /* ---- No-JS fallback ---- */
   .sm-fallback {
     position: absolute;
@@ -443,6 +545,8 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     .sm-panel-itemWrap::after,
     .sm-socials-title,
     .sm-socials-item,
+    .sm-theme-title,
+    .sm-theme-toggle,
     .sm-toggle-textInner,
     .sm-icon-line {
       transition-duration: 0.001s;
@@ -486,5 +590,76 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  // --- Theme toggle logic ---
+  function initTheme() {
+    const root = document.documentElement;
+    const btns = document.querySelectorAll<HTMLButtonElement>('.sm-theme-btn');
+    const meta = document.getElementById('theme-color-meta');
+
+    if (!btns.length) return;
+
+    const sync = () => {
+      const stored = localStorage.getItem('theme') || 'auto';
+      btns.forEach((b) => {
+        const val = b.getAttribute('data-theme-val');
+        b.setAttribute('aria-checked', String(val === stored));
+      });
+    };
+
+    // Resolve current rendered theme for the meta update
+    const resolveTheme = (): 'light' | 'dark' => {
+      const stored = localStorage.getItem('theme') || 'auto';
+      if (stored === 'light') return 'light';
+      if (stored === 'dark') return 'dark';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const apply = (val: string) => {
+      if (val === 'light') {
+        root.setAttribute('data-theme', 'light');
+        root.style.colorScheme = 'light';
+        localStorage.setItem('theme', 'light');
+      } else if (val === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        root.style.colorScheme = 'dark';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        // auto
+        localStorage.setItem('theme', 'auto');
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+        root.style.colorScheme = 'light dark';
+      }
+      sync();
+      if (meta) {
+        meta.setAttribute(
+          'content',
+          resolveTheme() === 'dark' ? '#1a1814' : '#f0ece1'
+        );
+      }
+    };
+
+    btns.forEach((b) => {
+      b.addEventListener('click', () => {
+        const val = b.getAttribute('data-theme-val');
+        if (val) apply(val);
+      });
+    });
+
+    // Listen for device colour-scheme changes when in auto mode
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    mql.addEventListener('change', () => {
+      if (localStorage.getItem('theme') === 'auto') {
+        root.setAttribute('data-theme', mql.matches ? 'dark' : 'light');
+        if (meta) {
+          meta.setAttribute('content', mql.matches ? '#1a1814' : '#f0ece1');
+        }
+      }
+    });
+
+    sync();
+  }
+
   initNav();
+  initTheme();
 </script>

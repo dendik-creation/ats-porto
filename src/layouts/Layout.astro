@@ -70,7 +70,7 @@ const jsonLd = {
     <meta name="description" content={description} />
     <meta name="author" content={basics.name} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f0ece1" />
+    <meta name="theme-color" id="theme-color-meta" content="#f0ece1" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="profile" />
@@ -104,6 +104,42 @@ const jsonLd = {
       if ('startViewTransition' in document) {
         document.startViewTransition = undefined;
       }
+
+      // Keep the selected theme stable across ClientRouter swaps.
+      (function () {
+        var DARK_META = '#1a1814';
+        var LIGHT_META = '#f0ece1';
+
+        var resolveTheme = function () {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'dark' || stored === 'light') return stored;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+
+        var applyTheme = function (doc) {
+          var theme = resolveTheme();
+          var root = doc.documentElement;
+          var meta = doc.getElementById('theme-color-meta');
+          var stored = localStorage.getItem('theme');
+
+          root.setAttribute('data-theme', theme);
+          root.style.colorScheme = stored === 'dark' || stored === 'light' ? stored : 'light dark';
+
+          if (meta) {
+            meta.setAttribute('content', theme === 'dark' ? DARK_META : LIGHT_META);
+          }
+        };
+
+        if (!localStorage.getItem('theme')) localStorage.setItem('theme', 'auto');
+        applyTheme(document);
+
+        document.addEventListener('astro:before-swap', function (event) {
+          if (event && event.newDocument) applyTheme(event.newDocument);
+        });
+        document.addEventListener('astro:after-swap', function () {
+          applyTheme(document);
+        });
+      })();
     </script>
     <ClientRouter fallback="swap" />
   </head>
