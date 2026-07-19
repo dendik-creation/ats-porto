@@ -122,7 +122,7 @@ export const cv: CV = {
       links: { live: 'https://gamelaneka.projectmendoan.my.id', repo: "https://github.com/dendik-creation/gamelaneka" },
       images: [
         "/projects/gamelaneka/1.png",
-        "/projects/gamelaneka/1.png",
+        "/projects/gamelaneka/2.png",
         "/projects/gamelaneka/3.png",
         "/projects/gamelaneka/4.png",
       ],

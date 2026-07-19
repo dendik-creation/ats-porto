@@ -1,0 +1,621 @@
+---
+// Full-page gallery viewer. Same choreography as Nav's staggered menu —
+// accent, then ink, sweeping in before the surface itself — scaled from a
+// side panel to the whole viewport. One motif, reused instead of invented.
+// Closing plays the identical sequence in reverse (panel leaves first,
+// ink then accent behind it) so it reads as the same gesture undone.
+interface Item {
+  src: string;
+  alt: string;
+}
+interface Props {
+  items: Item[];
+  name: string;
+}
+const { items, name } = Astro.props;
+const total = String(items.length).padStart(2, '0');
+---
+
+{items.length > 0 && (
+  <div class="lb" data-lightbox aria-hidden="true">
+    <div class="lb-prelayers" aria-hidden="true">
+      <div class="lb-prelayer lb-prelayer--1"></div>
+      <div class="lb-prelayer lb-prelayer--2"></div>
+    </div>
+
+    <div class="lb-panel" role="dialog" aria-modal="true" aria-label={`${name} screenshot viewer`}>
+      <header class="lb-head">
+        <span class="lb-count" aria-hidden="true">
+          <span data-lb-current>01</span> / <span data-lb-total>{total}</span>
+        </span>
+        <button type="button" class="lb-close" data-lb-close>
+          <span class="lb-close-text">Close</span>
+          <span class="lb-close-icon" aria-hidden="true">
+            <span class="lb-close-line"></span>
+            <span class="lb-close-line lb-close-line-v"></span>
+          </span>
+        </button>
+      </header>
+
+      <div class="lb-stage">
+        <button type="button" class="lb-arrow lb-arrow--prev" data-lb-prev aria-label="Previous screenshot">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div class="lb-viewport" data-lb-viewport>
+          <div class="lb-track" data-lb-track>
+            <div class="lb-slide" data-lb-slide>
+              <img data-lb-prev-image alt="" />
+            </div>
+            <div class="lb-slide" data-lb-slide>
+              <img data-lb-image alt="" />
+            </div>
+            <div class="lb-slide" data-lb-slide>
+              <img data-lb-next-image alt="" />
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="lb-arrow lb-arrow--next" data-lb-next aria-label="Next screenshot">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="visually-hidden" aria-live="polite" data-lb-live></p>
+    </div>
+  </div>
+)}
+
+<style>
+  .lb {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .lb[data-state] {
+    visibility: visible;
+  }
+  .lb[data-state='open'] {
+    pointer-events: auto;
+  }
+
+  .lb-prelayers {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+  }
+  .lb-prelayer {
+    position: absolute;
+    inset: 0;
+    transform: translateX(100%);
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .lb-prelayer--1 { background: var(--accent); }
+  .lb-prelayer--2 { background: var(--ink); }
+
+  /* Opening: accent leads, ink follows, the panel arrives last on top. */
+  .lb[data-state='open'] .lb-prelayer--1 { transform: translateX(0); transition-delay: 0s; }
+  .lb[data-state='open'] .lb-prelayer--2 { transform: translateX(0); transition-delay: 0.07s; }
+  .lb[data-state='open'] .lb-panel { transform: translateX(0); transition-delay: 0.12s; }
+
+  /* Closing: same leftward sweep continues off-screen — panel leaves first, accent last. */
+  .lb[data-state='closing'] .lb-panel { transform: translateX(-100%); transition-delay: 0s; }
+  .lb[data-state='closing'] .lb-prelayer--2 { transform: translateX(-100%); transition-delay: 0.07s; }
+  .lb[data-state='closing'] .lb-prelayer--1 { transform: translateX(-100%); transition-delay: 0.14s; }
+
+  .lb-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    background: var(--ink);
+    transform: translateX(100%);
+    transition: transform var(--dur-2) var(--ease);
+  }
+
+  .lb-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--edge);
+    flex: 0 0 auto;
+  }
+  .lb-count {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    color: color-mix(in oklab, var(--paper) 65%, transparent);
+  }
+  .lb-count [data-lb-current] {
+    color: var(--paper);
+    font-weight: 700;
+  }
+
+  .lb-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .lb-close-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    display: inline-flex;
+  }
+  .lb-close-line {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .lb-close-line-v {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+  .lb-close:hover,
+  .lb-close:focus-visible {
+    color: var(--accent);
+  }
+
+  .lb-stage {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: 0 var(--edge) var(--space-l);
+    min-height: 0;
+  }
+
+  /* The visible window onto the 3-slide track (prev / current / next). */
+  .lb-viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .lb-track {
+    display: flex;
+    width: 300%;
+    height: 100%;
+    transform: translateX(-33.3333%);
+  }
+  .lb-track[data-animating] {
+    transition: transform var(--dur-1) var(--ease);
+  }
+  .lb-slide {
+    flex: 0 0 33.3333%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+  .lb-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid color-mix(in oklab, var(--paper) 20%, transparent);
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-touch-callout: none;
+  }
+  .lb-slide img[data-lb-image] {
+    cursor: zoom-in;
+  }
+  .lb-slide img[data-lb-image][data-zoomed] {
+    cursor: grab;
+  }
+
+  .lb-arrow {
+    position: relative;
+    z-index: 10;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: transparent;
+    border: 1px solid color-mix(in oklab, var(--paper) 30%, transparent);
+    border-radius: 999px;
+    color: var(--paper);
+    cursor: pointer;
+    transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .lb-arrow:hover,
+  .lb-arrow:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .lb-arrow[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .lb-stage {
+      padding-inline: var(--space-xs);
+    }
+    .lb-arrow {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lb-prelayer,
+    .lb-panel,
+    .lb-track[data-animating] {
+      transition-duration: 0.001s;
+      transition-delay: 0s;
+    }
+  }
+</style>
+
+<script>
+  // Track position, as a % of the 3-slide track's own width — each slide is
+  // exactly one third, so these three values are viewport-size independent.
+  const TRACK_PREV = 0;
+  const TRACK_BASE = -100 / 3;
+  const TRACK_NEXT = -200 / 3;
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 4;
+
+  type GestureMode = 'idle' | 'pan' | 'swipe' | 'pinch' | 'tap';
+
+  function mountLightbox(signal: AbortSignal) {
+    const root = document.querySelector<HTMLElement>('[data-lightbox]');
+    if (!root) return;
+
+    const panel = root.querySelector<HTMLElement>('.lb-panel');
+    const viewport = root.querySelector<HTMLElement>('[data-lb-viewport]');
+    const track = root.querySelector<HTMLElement>('[data-lb-track]');
+    const prevImg = root.querySelector<HTMLImageElement>('[data-lb-prev-image]');
+    const currentImg = root.querySelector<HTMLImageElement>('[data-lb-image]');
+    const nextImg = root.querySelector<HTMLImageElement>('[data-lb-next-image]');
+    const currentEl = root.querySelector<HTMLElement>('[data-lb-current]');
+    const liveEl = root.querySelector<HTMLElement>('[data-lb-live]');
+    const closeBtn = root.querySelector<HTMLButtonElement>('[data-lb-close]');
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-lb-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-lb-next]');
+    const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lightbox-open]'));
+    if (
+      !panel || !viewport || !track || !prevImg || !currentImg || !nextImg ||
+      !currentEl || !closeBtn || !prevBtn || !nextBtn || triggers.length === 0
+    ) return;
+
+    const total = triggers.length;
+    let index = 0;
+    let open = false;
+    let animating = false;
+    let lastFocused: HTMLElement | null = null;
+
+    // Zoom/pan state for the current slide.
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let baseW = 0;
+    let baseH = 0;
+
+    // Gesture tracking.
+    const pointers = new Map<number, { x: number; y: number }>();
+    let mode: GestureMode = 'idle';
+    let moved = false;
+    let startX = 0;
+    let startY = 0;
+    let startPanX = 0;
+    let startPanY = 0;
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
+    let tapTarget: EventTarget | null = null;
+
+    if (total <= 1) {
+      prevBtn.hidden = true;
+      nextBtn.hidden = true;
+    }
+
+    const distance = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      Math.hypot(a.x - b.x, a.y - b.y);
+
+    const applyZoom = () => {
+      currentImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      currentImg.toggleAttribute('data-zoomed', scale > 1);
+    };
+
+    const clampPan = () => {
+      const maxX = Math.max(0, (baseW * (scale - 1)) / 2);
+      const maxY = Math.max(0, (baseH * (scale - 1)) / 2);
+      panX = Math.min(maxX, Math.max(-maxX, panX));
+      panY = Math.min(maxY, Math.max(-maxY, panY));
+    };
+
+    const setScale = (next: number) => {
+      scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, next));
+      if (scale === MIN_SCALE) {
+        panX = 0;
+        panY = 0;
+      }
+      clampPan();
+      applyZoom();
+    };
+
+    // Every slide's src is already a real page image (the gallery thumbnail
+    // it's paired with), so it's essentially always cache-warm by the time
+    // this runs — no opacity fade gate here. That fade used to force a
+    // hide-then-refade on the current slot even when the exact same bitmap
+    // had just been fully visible in the neighboring slot a frame earlier.
+    const setSlideSource = (img: HTMLImageElement, i: number, isCurrent: boolean) => {
+      const idx = ((i % total) + total) % total;
+      const source = triggers[idx].querySelector('img');
+      if (!source) return;
+      img.src = source.src;
+      img.alt = source.alt;
+      if (!isCurrent) return;
+      const captureBase = () => {
+        baseW = img.offsetWidth;
+        baseH = img.offsetHeight;
+      };
+      if (img.complete) captureBase();
+      img.onload = captureBase;
+    };
+
+    const show = (i: number) => {
+      index = ((i % total) + total) % total;
+      delete track.dataset.animating;
+      track.style.transform = `translateX(${TRACK_BASE}%)`;
+      setSlideSource(prevImg, index - 1, false);
+      setSlideSource(currentImg, index, true);
+      setSlideSource(nextImg, index + 1, false);
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      applyZoom();
+      currentEl.textContent = String(index + 1).padStart(2, '0');
+      if (liveEl) liveEl.textContent = triggers[index].querySelector('img')?.alt ?? '';
+    };
+
+    const animateTrackTo = (percent: number, onDone: () => void) => {
+      track.dataset.animating = '';
+      track.style.transform = `translateX(${percent}%)`;
+      const done = (e: TransitionEvent) => {
+        if (e.target !== track || e.propertyName !== 'transform') return;
+        track.removeEventListener('transitionend', done);
+        delete track.dataset.animating;
+        onDone();
+      };
+      track.addEventListener('transitionend', done);
+    };
+
+    const goPrev = () => {
+      if (animating || total <= 1) return;
+      animating = true;
+      animateTrackTo(TRACK_PREV, () => {
+        show(index - 1);
+        animating = false;
+      });
+    };
+
+    const goNext = () => {
+      if (animating || total <= 1) return;
+      animating = true;
+      animateTrackTo(TRACK_NEXT, () => {
+        show(index + 1);
+        animating = false;
+      });
+    };
+
+    // A close schedules a transitionend listener + a fallback timer to clear
+    // data-state once the exit sweep finishes. If the lightbox is reopened
+    // before either fires, both must be cancelled — otherwise the stale
+    // callback lands later and rips data-state off the freshly-opened panel.
+    const accent = root.querySelector<HTMLElement>('.lb-prelayer--1');
+    let closeTimeoutId = 0;
+    let pendingFinish: (() => void) | null = null;
+    const cancelPendingClose = () => {
+      window.clearTimeout(closeTimeoutId);
+      if (pendingFinish) {
+        accent?.removeEventListener('transitionend', pendingFinish);
+        pendingFinish = null;
+      }
+    };
+
+    const setOpen = (v: boolean, i?: number) => {
+      cancelPendingClose();
+      open = v;
+      if (v) {
+        root.setAttribute('data-state', 'open');
+        root.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        lastFocused = document.activeElement as HTMLElement | null;
+        show(i ?? index);
+        closeBtn.focus();
+      } else {
+        root.setAttribute('data-state', 'closing');
+        root.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        lastFocused?.focus();
+
+        const finish = () => {
+          cancelPendingClose();
+          root.removeAttribute('data-state');
+        };
+        pendingFinish = finish;
+        accent?.addEventListener('transitionend', finish, { once: true });
+        closeTimeoutId = window.setTimeout(finish, 900);
+      }
+    };
+
+    triggers.forEach((btn, i) => btn.addEventListener('click', () => setOpen(true, i)));
+    closeBtn.addEventListener('click', () => setOpen(false));
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+
+    document.addEventListener('keydown', (e) => {
+      if (!open) return;
+      if (e.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === '+' || e.key === '=') setScale(scale + 0.25);
+      if (e.key === '-' || e.key === '_') setScale(scale - 0.25);
+      if (e.key === 'Tab') {
+        const focusables = Array.from(panel.querySelectorAll<HTMLElement>('button:not([hidden])'));
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }, { signal });
+
+    // Desktop: wheel zooms the current image instead of scrolling the page.
+    viewport.addEventListener('wheel', (e) => {
+      if (!open) return;
+      e.preventDefault();
+      setScale(scale + (e.deltaY < 0 ? 0.25 : -0.25));
+    }, { passive: false });
+
+    // Touch + mouse: pinch to zoom, drag to pan when zoomed, swipe to
+    // change image when not (mobile, Instagram-style). A stationary
+    // tap/click resolves on release: on the image it toggles zoom
+    // (matching its zoom-in cursor), anywhere else it closes.
+    viewport.addEventListener('pointerdown', (e) => {
+      if (!open || animating) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      moved = false;
+      tapTarget = e.target;
+      viewport.setPointerCapture(e.pointerId);
+
+      if (pointers.size >= 2) {
+        const pts = Array.from(pointers.values());
+        mode = 'pinch';
+        pinchStartDist = distance(pts[0], pts[1]);
+        pinchStartScale = scale;
+        return;
+      }
+
+      startX = e.clientX;
+      startY = e.clientY;
+      if (scale > 1) {
+        mode = 'pan';
+        startPanX = panX;
+        startPanY = panY;
+      } else if (e.pointerType === 'touch' && total > 1) {
+        mode = 'swipe';
+      } else {
+        mode = 'tap';
+      }
+    });
+
+    viewport.addEventListener('pointermove', (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+
+      if (mode === 'pinch' && pointers.size >= 2) {
+        const pts = Array.from(pointers.values());
+        const dist = distance(pts[0], pts[1]);
+        if (pinchStartDist > 0) setScale(pinchStartScale * (dist / pinchStartDist));
+      } else if (mode === 'pan') {
+        panX = startPanX + dx;
+        panY = startPanY + dy;
+        clampPan();
+        applyZoom();
+      } else if (mode === 'swipe') {
+        track.style.transform = `translateX(calc(${TRACK_BASE}% + ${dx}px))`;
+      }
+    });
+
+    const endPointer = (e: PointerEvent) => {
+      if (!pointers.has(e.pointerId)) return;
+      const wasMode = mode;
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) mode = 'idle';
+
+      if (wasMode === 'pinch') {
+        if (pointers.size < 2 && scale < 1.04) setScale(1);
+        return;
+      }
+      if (!moved) {
+        if (wasMode === 'swipe') {
+          delete track.dataset.animating;
+          track.style.transform = `translateX(${TRACK_BASE}%)`;
+        }
+        if (tapTarget === currentImg) setScale(scale > 1 ? 1 : 2);
+        else setOpen(false);
+        return;
+      }
+      if (wasMode === 'swipe') {
+        const dx = e.clientX - startX;
+        const threshold = Math.max(60, viewport.clientWidth * 0.18);
+        if (dx > threshold) goPrev();
+        else if (dx < -threshold) goNext();
+        else {
+          animating = true;
+          animateTrackTo(TRACK_BASE, () => { animating = false; });
+        }
+      }
+    };
+
+    viewport.addEventListener('pointerup', endPointer);
+    viewport.addEventListener('pointercancel', endPointer);
+
+    window.addEventListener('resize', () => {
+      if (open) setScale(1);
+    }, { signal });
+  }
+
+  // Astro's client router dedupes identical <script> chunks across SPA
+  // navigations — this component's script has the same src on every
+  // project page, so past the first one it never re-executes on its own.
+  // astro:page-load fires on every navigation regardless, script rerun or
+  // not, so init from there. Each run's document/window-level listeners
+  // are torn down via the abort signal before the next run adds its own,
+  // since those targets outlive the per-page root/panel they close over.
+  let cleanup: AbortController | null = null;
+  function initLightbox() {
+    cleanup?.abort();
+    cleanup = new AbortController();
+    const signal = cleanup.signal;
+    mountLightbox(signal);
+  }
+
+  document.addEventListener('astro:page-load', initLightbox);
+</script>
