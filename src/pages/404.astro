@@ -1,0 +1,147 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArrowLink from '../components/atoms/ArrowLink.astro';
+import { cv } from '../data/cv.data';
+
+const { basics } = cv;
+const title = `Page not found — ${basics.name}`;
+const description = "This route doesn't exist. Head back home or find the work.";
+---
+
+<Layout title={title} description={description}>
+  <section class="notfound shell">
+    <div class="notfound__digits" aria-hidden="true">
+      <span class="notfound__digit" style="--i:0">4</span>
+      <span class="notfound__digit notfound__digit--accent" style="--i:1">0</span>
+      <span class="notfound__digit" style="--i:2">4</span>
+    </div>
+
+    <p class="notfound__spec label" aria-hidden="true">
+      <span>Fraunces Variable</span>
+      <span class="notfound__spec-sep">/</span>
+      <span>WGHT 320 → 880</span>
+      <span class="notfound__spec-sep">/</span>
+      <span>HTTP 404</span>
+    </p>
+
+    <p class="notfound__meta label">
+      <span class="notfound__pulse" aria-hidden="true"></span>
+      <span>Signal lost</span>
+      <span class="notfound__dot" aria-hidden="true">•</span>
+      <span>Page not found</span>
+    </p>
+
+    <h1 class="notfound__title">This route doesn't exist.</h1>
+    <p class="notfound__lede">
+      Whatever brought you here isn't wired to anything on this site — a bad link, a typo, or a
+      page that moved. Try one of these instead.
+    </p>
+
+    <div class="notfound__actions">
+      <ArrowLink href="/">Back to home</ArrowLink>
+      <ArrowLink href="/#projects-title">See the work</ArrowLink>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notfound {
+    min-height: 100dvh;
+    padding-top: var(--nav-offset);
+    padding-bottom: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-s);
+  }
+
+  /* Concrete-poetry numeral — same weight-ramp motif as the hero name */
+  .notfound__digits {
+    display: flex;
+    line-height: 0.82;
+    letter-spacing: -0.03em;
+  }
+  .notfound__digit {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 26vw, 14rem);
+    font-variation-settings: 'opsz' 144, 'wght' calc(320 + var(--i) * 140), var(--wonk-off);
+    transition: font-variation-settings var(--dur-2) var(--ease);
+  }
+  .notfound__digit--accent {
+    color: var(--accent);
+  }
+  .notfound__digit:hover {
+    font-variation-settings: 'opsz' 144, 'wght' 900, 'SOFT' 100, 'WONK' 1;
+  }
+
+  .notfound__spec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em 0.9em;
+    align-items: baseline;
+    color: var(--faint);
+    padding-top: var(--space-2xs);
+    border-top: 1px solid var(--line);
+  }
+  .notfound__spec-sep {
+    color: var(--accent);
+  }
+
+  .notfound__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7em;
+    align-items: center;
+    margin-top: var(--space-s);
+  }
+  .notfound__pulse {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 60%, transparent);
+    animation: notfound-ring 2.6s var(--ease) infinite;
+  }
+  .notfound__dot {
+    color: var(--accent);
+  }
+
+  .notfound__title {
+    font-size: var(--step-3);
+    font-variation-settings: 'opsz' 60, 'wght' 460, var(--wonk-off);
+    max-width: 16ch;
+    margin-top: var(--space-xs);
+  }
+  .notfound__lede {
+    font-size: var(--step-1);
+    color: var(--muted);
+    max-width: var(--measure-tight);
+    text-wrap: pretty;
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    margin-top: var(--space-s);
+  }
+
+  @keyframes notfound-ring {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 55%, transparent); }
+    70% { box-shadow: 0 0 0 0.7em transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  @media (max-width: 560px) {
+    .notfound__actions {
+      flex-direction: column;
+      gap: var(--space-s);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notfound__digit { transition: none; }
+    .notfound__pulse { animation: none; }
+  }
+</style>
