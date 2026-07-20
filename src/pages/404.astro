@@ -24,13 +24,6 @@ const description = "This route doesn't exist. Head back home or find the work."
       <span>HTTP 404</span>
     </p>
 
-    <p class="notfound__meta label">
-      <span class="notfound__pulse" aria-hidden="true"></span>
-      <span>Signal lost</span>
-      <span class="notfound__dot" aria-hidden="true">•</span>
-      <span>Page not found</span>
-    </p>
-
     <h1 class="notfound__title">This route doesn't exist.</h1>
     <p class="notfound__lede">
       Whatever brought you here isn't wired to anything on this site — a bad link, a typo, or a
@@ -88,25 +81,6 @@ const description = "This route doesn't exist. Head back home or find the work."
     color: var(--accent);
   }
 
-  .notfound__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7em;
-    align-items: center;
-    margin-top: var(--space-s);
-  }
-  .notfound__pulse {
-    width: 0.6em;
-    height: 0.6em;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 60%, transparent);
-    animation: notfound-ring 2.6s var(--ease) infinite;
-  }
-  .notfound__dot {
-    color: var(--accent);
-  }
-
   .notfound__title {
     font-size: var(--step-3);
     font-variation-settings: 'opsz' 60, 'wght' 460, var(--wonk-off);
@@ -142,6 +116,5 @@ const description = "This route doesn't exist. Head back home or find the work."
 
   @media (prefers-reduced-motion: reduce) {
     .notfound__digit { transition: none; }
-    .notfound__pulse { animation: none; }
   }
 </style>
