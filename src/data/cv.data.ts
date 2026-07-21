@@ -150,7 +150,7 @@ export const cv: CV = {
       keywords: ['Laravel', 'MySQL', 'PHP', 'Flutter', 'Public Health Tracking'],
       images: [
         "/projects/family-care-stunting/1.png",
-        "/projects/family-care-stunting/1.png",
+        "/projects/family-care-stunting/2.png",
         "/projects/family-care-stunting/3.png",
         "/projects/family-care-stunting/4.png",
       ],
@@ -165,7 +165,7 @@ export const cv: CV = {
       keywords: ['Laravel', 'MySQL', 'PHP', 'Flutter', 'FCM', 'Pusher', 'Digital Reporting'],
       images: [
         "/projects/tree-smart-coach/1.png",
-        "/projects/tree-smart-coach/1.png",
+        "/projects/tree-smart-coach/2.png",
         "/projects/tree-smart-coach/3.png",
         "/projects/tree-smart-coach/4.png",
       ],
@@ -180,7 +180,7 @@ export const cv: CV = {
       keywords: ['Godot', 'Figma', 'UI/UX Design', 'Interactive Multimedia'],
       images: [
         "/projects/snumaku-pkwu/1.png",
-        "/projects/snumaku-pkwu/1.png",
+        "/projects/snumaku-pkwu/2.png",
         "/projects/snumaku-pkwu/3.png",
         "/projects/snumaku-pkwu/4.png",
       ],
@@ -229,7 +229,7 @@ export const cv: CV = {
         "/projects/bi-booster/2.png",
         "/projects/bi-booster/3.png"
       ],
-      links: { live: 'https://bibooster.agency' },
+      links: { live: 'https://bibooster.id' },
     },
   ],
   awards: [
