@@ -1,0 +1,33 @@
+/* Minimal, feature-scoped atomic utilities — only the primitives the
+   cinematic theme toggle actually composes (ThemeToggle.astro,
+   ThemeTransitionOverlay.astro). Not a sitewide utility framework: every
+   other component in this codebase uses scoped BEM-style <style> blocks,
+   and that convention stays the default everywhere else. */
+
+.fixed {
+  position: fixed;
+}
+.inset-0 {
+  inset: 0;
+}
+.pointer-events-none {
+  pointer-events: none;
+}
+.flex {
+  display: flex;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.rounded-full {
+  border-radius: 999px;
+}
+.opacity-0 {
+  opacity: 0;
+}
+.z-overlay {
+  z-index: var(--z-overlay);
+}

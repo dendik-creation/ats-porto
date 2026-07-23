@@ -31,11 +31,8 @@ export interface NavStrings {
   closeMenuAria: string;
   elsewhere: string;
   theme: {
-    title: string;
-    light: string;
-    dark: string;
-    auto: string;
-    autoTitle: string;
+    toggleToDark: string;
+    toggleToLight: string;
   };
   language: {
     title: string;

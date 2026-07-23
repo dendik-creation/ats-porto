@@ -54,6 +54,11 @@
   --dur-1: 0.28s;
   --dur-2: 0.6s;
 
+  /* ---- Theme-transition overlay (ThemeToggle) ---- */
+  --z-overlay: 100;              /* above PageTransition's veil (z-90) */
+  --reveal-scale: 1.02;          /* small overshoot past farthest-corner so the clip edge never leaves a subpixel seam */
+  --blur-start: 8px;             /* circle-blur variant: start blur, dissipates to 0 */
+
   /* ---- Variable-font axis presets (the concrete-poetry vocabulary) ---- */
   --wonk-off: 'SOFT' 0, 'WONK' 0;
   --wonk-on: 'SOFT' 60, 'WONK' 1;

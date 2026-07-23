@@ -30,11 +30,8 @@ const nav: NavStrings = {
   closeMenuAria: 'Close menu',
   elsewhere: 'Elsewhere',
   theme: {
-    title: 'Theme',
-    light: 'Light',
-    dark: 'Dark',
-    auto: 'Auto',
-    autoTitle: 'Auto (follow device)',
+    toggleToDark: 'Switch to dark mode',
+    toggleToLight: 'Switch to light mode',
   },
   language: {
     title: 'Language',

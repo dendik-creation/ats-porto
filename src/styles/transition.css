@@ -1,0 +1,22 @@
+/* Theme-toggle transition layer. Tokens (--z-overlay, --reveal-scale,
+   --blur-start, --ease, --dur-2) live in tokens.css — this file is only
+   the transition-specific rules that consume them. */
+
+/* The browser's own view-transition cross-fade is disabled everywhere:
+   every reveal variant in scripts/theme/animation.ts drives the
+   ::view-transition-new(root) clip-path/filter itself via the Web
+   Animations API, so the default animation would just be a second,
+   competing transition layered underneath it. Without this rule the new
+   theme would flash in at 25% opacity before our own reveal even starts. */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tt-overlay {
+    display: none;
+  }
+}

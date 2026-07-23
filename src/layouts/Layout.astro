@@ -5,12 +5,15 @@ import '@fontsource-variable/bricolage-grotesque/opsz.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
+import '../styles/atomic.css';
+import '../styles/transition.css';
 
 import { ClientRouter } from 'astro:transitions';
 import { getAbsoluteLocaleUrl } from 'astro:i18n';
 import { getCV, t, resolveLocale } from '../i18n';
 import Nav from '../components/organisms/Nav.astro';
 import PageTransition from '../components/organisms/PageTransition.astro';
+import ThemeTransitionOverlay from '../components/molecules/ThemeTransitionOverlay.astro';
 
 interface Props {
   title?: string;
@@ -134,12 +137,18 @@ const jsonLd = {
       // The native View Transition API pauses/throttles the page's own rAF
       // ticks while it captures old/new snapshots — which stutters GSAP's
       // curtain tween (PageTransition.astro) mid-flight. Our curtain is the
-      // only transition animation this site needs, so the native one is
-      // switched off rather than raced against. (fallback="swap" below
-      // still keeps ClientRouter's SPA routing + lifecycle events active —
+      // only page-navigation transition this site needs, so the native one is
+      // switched off for ClientRouter rather than raced against. (fallback="swap"
+      // below still keeps ClientRouter's SPA routing + lifecycle events active —
       // fallback="none" would disable routing entirely once this API looks
       // unsupported.)
+      //
+      // ThemeToggle's own click-driven transition still needs the real API —
+      // the reference is rescued onto window before nulling the document one,
+      // so scripts/theme/view-transition.ts can call it directly without ever
+      // touching document.startViewTransition (which stays permanently off).
       if ('startViewTransition' in document) {
+        window.__nativeStartViewTransition = document.startViewTransition.bind(document);
         document.startViewTransition = undefined;
       }
 
@@ -186,6 +195,7 @@ const jsonLd = {
     <a class="skip" href="#main">{ui.common.skipToContent}</a>
 
     <PageTransition />
+    <ThemeTransitionOverlay />
     <Nav />
 
     <main id="main">
@@ -196,6 +206,7 @@ const jsonLd = {
       import '../scripts/animate';
       import '../scripts/page-transition';
       import '../scripts/scroll-to-section';
+      import '../scripts/theme/index';
     </script>
 
     <style>

@@ -1,0 +1,96 @@
+---
+// Standalone cinematic theme switch — lives beside the logo in Nav's
+// sm-header. Flips light<->dark only (no separate 'auto' state); a first-time
+// visitor's initial theme still follows the system preference via
+// Layout.astro's pre-paint script, same as before.
+//
+// `data-variant` selects which reveal runs (see scripts/theme/animation.ts's
+// RevealVariant union) — the extension point for adding more later.
+interface Props {
+  toDarkLabel: string;
+  toLightLabel: string;
+  variant?:
+    | 'circle-reveal'
+    | 'circle-blur'
+    | 'rectangle-sweep'
+    | 'polygon-reveal'
+    | 'ripple-reveal'
+    | 'aurora-reveal';
+}
+
+const { toDarkLabel, toLightLabel, variant = 'circle-reveal' } = Astro.props;
+---
+
+<button
+  class="tt-btn flex items-center justify-center rounded-full"
+  type="button"
+  data-tt-toggle
+  data-variant={variant}
+  aria-label={toDarkLabel}
+  data-label-to-dark={toDarkLabel}
+  data-label-to-light={toLightLabel}
+>
+  <svg class="tt-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+    <g class="tt-sun" data-tt-sun>
+      <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2" />
+      <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="12" y1="1.5" x2="12" y2="4" />
+        <line x1="12" y1="20" x2="12" y2="22.5" />
+        <line x1="4.4" y1="4.4" x2="6.1" y2="6.1" />
+        <line x1="17.9" y1="17.9" x2="19.6" y2="19.6" />
+        <line x1="1.5" y1="12" x2="4" y2="12" />
+        <line x1="20" y1="12" x2="22.5" y2="12" />
+        <line x1="4.4" y1="19.6" x2="6.1" y2="17.9" />
+        <line x1="17.9" y1="6.1" x2="19.6" y2="4.4" />
+      </g>
+    </g>
+    <path
+      class="tt-moon"
+      data-tt-moon
+      d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+
+<style>
+  .tt-btn {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease);
+  }
+  .tt-btn:hover {
+    background: var(--line);
+  }
+  .tt-icon {
+    position: relative;
+    display: block;
+  }
+  .tt-sun,
+  .tt-moon {
+    transform-origin: 50% 50%;
+  }
+  /* Pre-JS / reduced-motion baseline: CSS alone shows the correct icon so
+     there's no flash before scripts/theme/index.ts runs its first sync. */
+  :root[data-theme='dark'] .tt-sun {
+    opacity: 0;
+  }
+  :root[data-theme='light'] .tt-moon,
+  :root:not([data-theme]) .tt-moon {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tt-btn {
+      transition: none;
+    }
+  }
+</style>

@@ -30,11 +30,8 @@ const nav: NavStrings = {
   closeMenuAria: 'Tutup menu',
   elsewhere: 'Lainnya',
   theme: {
-    title: 'Tema',
-    light: 'Terang',
-    dark: 'Gelap',
-    auto: 'Otomatis',
-    autoTitle: 'Otomatis (ikuti perangkat)',
+    toggleToDark: 'Ganti ke mode gelap',
+    toggleToLight: 'Ganti ke mode terang',
   },
   language: {
     title: 'Bahasa',

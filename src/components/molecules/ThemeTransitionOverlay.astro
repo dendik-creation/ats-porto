@@ -1,0 +1,47 @@
+---
+// Reused-node overlay for the cinematic theme toggle's overlay-based
+// variants (ripple echoes, aurora glow — see scripts/theme/animation.ts).
+// transition:persist keeps this exact node across ClientRouter swaps, the
+// same way PageTransition.astro's veil does, so it's created once and only
+// ever reset between runs, never recreated or left mid-animation in the DOM.
+---
+
+<div
+  class="tt-overlay fixed inset-0 pointer-events-none z-overlay"
+  data-tt-overlay
+  aria-hidden="true"
+  transition:persist
+  transition:name="theme-overlay"
+>
+  <div class="tt-ring opacity-0 rounded-full" data-tt-ring="1"></div>
+  <div class="tt-ring opacity-0 rounded-full" data-tt-ring="2"></div>
+  <div class="tt-aurora opacity-0 rounded-full" data-tt-aurora></div>
+</div>
+
+<style>
+  .tt-overlay {
+    overflow: hidden;
+  }
+  .tt-overlay > * {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    will-change: transform, opacity;
+  }
+  .tt-ring {
+    width: 5rem;
+    height: 5rem;
+    border: 2px solid var(--accent);
+  }
+  .tt-aurora {
+    width: 34rem;
+    height: 34rem;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--accent) 55%, transparent) 0%,
+      color-mix(in oklab, var(--accent) 20%, transparent) 45%,
+      transparent 72%
+    );
+    filter: blur(4px);
+  }
+</style>
