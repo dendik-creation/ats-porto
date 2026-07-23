@@ -1,14 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ArrowLink from '../components/atoms/ArrowLink.astro';
-import { cv } from '../data/cv.data';
+import { getCV, t } from '../i18n';
 
-const { basics } = cv;
-const title = `Page not found — ${basics.name}`;
-const description = "This route doesn't exist. Head back home or find the work.";
+// The 404 route is built once, statically — Astro.currentLocale can't reflect
+// an arbitrary missing path, so it renders the default (en) copy server-side
+// and a small inline script swaps to the id copy when the path is under /id/.
+const { basics } = getCV('en');
+const en = t('en').meta.notFound;
+const id = t('id').meta.notFound;
+const title = `${en.title} — ${basics.name}`;
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={en.description}>
   <section class="notfound shell">
     <div class="notfound__digits" aria-hidden="true">
       <span class="notfound__digit" style="--i:0">4</span>
@@ -24,18 +28,36 @@ const description = "This route doesn't exist. Head back home or find the work."
       <span>HTTP 404</span>
     </p>
 
-    <h1 class="notfound__title">This route doesn't exist.</h1>
-    <p class="notfound__lede">
-      Whatever brought you here isn't wired to anything on this site — a bad link, a typo, or a
-      page that moved. Try one of these instead.
-    </p>
+    <h1 class="notfound__title" data-notfound-heading>{en.heading}</h1>
+    <p class="notfound__lede" data-notfound-lede>{en.lede}</p>
 
     <div class="notfound__actions">
-      <ArrowLink href="/">Back to home</ArrowLink>
-      <ArrowLink href="/#projects-title">See the work</ArrowLink>
+      <ArrowLink href="/">{en.backHome}</ArrowLink>
+      <ArrowLink href="/#projects-title">{en.seeWork}</ArrowLink>
     </div>
   </section>
 </Layout>
+
+<script define:vars={{ idCopy: id }} is:inline>
+  if (location.pathname.startsWith('/id/') || location.pathname === '/id') {
+    const heading = document.querySelector('[data-notfound-heading]');
+    const lede = document.querySelector('[data-notfound-lede]');
+    const home = document.querySelector('.notfound__actions a[href="/"]');
+    const work = document.querySelector('.notfound__actions a[href="/#projects-title"]');
+    if (heading) heading.textContent = idCopy.heading;
+    if (lede) lede.textContent = idCopy.lede;
+    if (home) {
+      const text = home.querySelector('.arrow-link__text');
+      if (text) text.textContent = idCopy.backHome;
+      home.setAttribute('href', '/id/');
+    }
+    if (work) {
+      const text = work.querySelector('.arrow-link__text');
+      if (text) text.textContent = idCopy.seeWork;
+      work.setAttribute('href', '/id/#projects-title');
+    }
+  }
+</script>
 
 <style>
   .notfound {

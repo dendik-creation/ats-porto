@@ -7,7 +7,8 @@ import '../styles/tokens.css';
 import '../styles/global.css';
 
 import { ClientRouter } from 'astro:transitions';
-import { cv } from '../data/cv.data';
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import { getCV, t, resolveLocale } from '../i18n';
 import Nav from '../components/organisms/Nav.astro';
 import PageTransition from '../components/organisms/PageTransition.astro';
 
@@ -16,6 +17,9 @@ interface Props {
   description?: string;
 }
 
+const locale = resolveLocale(Astro.currentLocale);
+const cv = getCV(locale);
+const ui = t(locale);
 const { basics } = cv;
 const {
   title = `${basics.name} — ${basics.label}`,
@@ -24,6 +28,12 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? basics.url).toString();
 const ogImage = new URL('/og.svg', Astro.site ?? basics.url).toString();
+
+// hreflang alternates computed from the locale-stripped bare pathname, so
+// search engines pair the en/id versions of the same page.
+const barePath = Astro.url.pathname.replace(/^\/id(?=\/|$)/, '') || '/';
+const enUrl = getAbsoluteLocaleUrl('en', barePath);
+const idUrl = getAbsoluteLocaleUrl('id', barePath);
 
 // JSON-LD: Person nested in a ProfilePage for rich results.
 const personLd = {
@@ -54,17 +64,21 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
   dateModified: new Date().toISOString(),
+  inLanguage: locale,
   mainEntity: personLd,
 };
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="id" href={idUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -78,6 +92,8 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={locale === 'id' ? 'id_ID' : 'en_US'} />
+    <meta property="og:locale:alternate" content={locale === 'id' ? 'en_US' : 'id_ID'} />
     <meta property="profile:first_name" content="Dendi" />
     <meta property="profile:last_name" content="Setiawan" />
 
@@ -92,6 +108,28 @@ const jsonLd = {
     <script defer src="https://cloud.umami.is/script.js" data-website-id="24e3a2ab-1ee5-42df-9a72-6446df7fd411" is:inline></script>
 
     <script is:inline>
+      // Respect an explicit language choice forever; otherwise guess from the
+      // browser's language once per visit (not persisted, so it keeps
+      // reflecting the visitor's actual browser setting until they pick one).
+      // Runs once per hard load — ClientRouter dedupes this identical inline
+      // script across soft navigations, which is what prevents redirect loops
+      // on in-site link clicks.
+      (function () {
+        var path = location.pathname;
+        var current = /^\/id(\/|$)/.test(path) ? 'id' : 'en';
+        var stored = localStorage.getItem('lang');
+        var target = stored;
+        if (target !== 'en' && target !== 'id') {
+          var nav = (navigator.language || 'en').toLowerCase();
+          target = nav.indexOf('id') === 0 ? 'id' : 'en';
+        }
+        if (target !== current) {
+          var bare = path.replace(/^\/id(?=\/|$)/, '') || '/';
+          var dest = target === 'id' ? (bare === '/' ? '/id/' : '/id' + bare) : bare;
+          location.replace(dest + location.search + location.hash);
+        }
+      })();
+
       // Force Astro's ClientRouter onto its plain-swap path in every browser.
       // The native View Transition API pauses/throttles the page's own rAF
       // ticks while it captures old/new snapshots — which stutters GSAP's
@@ -145,7 +183,7 @@ const jsonLd = {
   </head>
 
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{ui.common.skipToContent}</a>
 
     <PageTransition />
     <Nav />

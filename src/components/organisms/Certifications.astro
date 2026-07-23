@@ -1,7 +1,9 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import { cv } from '../../data/cv.data';
-const { certificates } = cv;
+import { getCV, t, resolveLocale } from '../../i18n';
+const locale = resolveLocale(Astro.currentLocale);
+const { certificates } = getCV(locale);
+const ui = t(locale);
 
 function validity(date: string, endDate?: string): string {
   const start = date.slice(0, 4);
@@ -10,7 +12,7 @@ function validity(date: string, endDate?: string): string {
 ---
 
 <section class="certs shell" aria-labelledby="certifications-title">
-  <SectionHeader index="06" id="certifications-title" title="Certifications" kicker="Verified skills" axis="WGHT 500 · OPSZ 40" />
+  <SectionHeader index="06" id="certifications-title" title={ui.sections.certifications.title} kicker={ui.sections.certifications.kicker} axis="WGHT 500 · OPSZ 40" />
 
   <ol class="certs__grid">
     {certificates.map((c, i) => (
@@ -24,10 +26,10 @@ function validity(date: string, endDate?: string): string {
         <p class="certs__summary">{c.summary}</p>
         {(c.credentialId || c.url) && (
           <div class="certs__cred">
-            {c.credentialId && <span class="certs__cred-id">ID · {c.credentialId}</span>}
+            {c.credentialId && <span class="certs__cred-id">{ui.certifications.credentialIdLabel} · {c.credentialId}</span>}
             {c.url && (
               <a class="certs__verify" href={c.url} target="_blank" rel="noopener noreferrer">
-                Verify credential
+                {ui.certifications.verifyCredential}
                 <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
                   <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>

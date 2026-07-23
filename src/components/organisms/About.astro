@@ -1,31 +1,30 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import { cv } from '../../data/cv.data';
+import { getCV, t, resolveLocale } from '../../i18n';
+import { homeRegion } from '../../data/format';
 
+const locale = resolveLocale(Astro.currentLocale);
+const cv = getCV(locale);
+const ui = t(locale);
 const { basics, awards, certificates } = cv;
 const stats = [
-  { value: '4', unit: 'yrs', label: 'Building software' },
-  { value: String(cv.projects.length), unit: '+', label: 'Shipped projects' },
-  { value: String(awards.length), unit: '', label: 'Competition wins' },
-  { value: String(certificates.length), unit: '', label: 'Certifications' },
+  { value: '4', unit: ui.about.stats.years, label: ui.about.stats.buildingSoftware },
+  { value: String(cv.projects.length), unit: '+', label: ui.about.stats.shippedProjects },
+  { value: String(awards.length), unit: '', label: ui.about.stats.competitionWins },
+  { value: String(certificates.length), unit: '', label: ui.about.stats.certifications },
 ];
+const place = homeRegion(basics.location, locale);
 ---
 
 <section class="about shell" aria-labelledby="about-title">
-  <SectionHeader index="01" id="about-title" title="About" kicker="Who / Where" axis="WGHT 460 · OPSZ 60" />
+  <SectionHeader index="01" id="about-title" title={ui.sections.about.title} kicker={ui.sections.about.kicker} axis="WGHT 460 · OPSZ 60" />
 
   <div class="about__grid">
     <div class="about__lede">
       <p>
-        Based in <strong>{basics.location.region}, Indonesia</strong>, I build across the
-        stack — from Laravel, Go, and Node services to Next, Vue, Astro, and Flutter front ends. Four years in,
-        my work leans on ownership: I take a feature from database schema to shipped interface.
+        {ui.about.ledeBefore}<strong>{place}</strong>{ui.about.ledeAfter}
       </p>
-      <p>
-        I care about software that earns its keep — enterprise tools that move real numbers, and
-        products people actually reach for. I keep learning in the open, competing and certifying
-        along the way.
-      </p>
+      <p>{ui.about.lede2}</p>
     </div>
 
     <dl class="about__stats">

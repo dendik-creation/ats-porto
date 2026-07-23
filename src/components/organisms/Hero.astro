@@ -1,7 +1,9 @@
 ---
 import ArrowLink from '../atoms/ArrowLink.astro';
-import { cv } from '../../data/cv.data';
-const { basics } = cv;
+import { getCV, t, resolveLocale } from '../../i18n';
+const locale = resolveLocale(Astro.currentLocale);
+const { basics } = getCV(locale);
+const ui = t(locale);
 const first = "Dendi'";
 const last = 'Setiawan';
 ---
@@ -110,11 +112,11 @@ const last = 'Setiawan';
       <p class="hero__summary">{basics.summary}</p>
       <p class="hero__avail">
         <span class="hero__pulse" aria-hidden="true"></span>
-        Open to fullstack work
+        {ui.hero.availability}
       </p>
     </div>
     <div class="hero__cv">
-      <ArrowLink href={basics.cvUrl} external>View CV</ArrowLink>
+      <ArrowLink href={basics.cvUrl} external>{ui.hero.viewCv}</ArrowLink>
     </div>
   </div>
 </header>

@@ -3,11 +3,13 @@ import SectionHeader from '../molecules/SectionHeader.astro';
 import ArrowLink from '../atoms/ArrowLink.astro';
 import SocialLink from '../atoms/SocialLink.astro';
 import BrandIcon from '../atoms/BrandIcon.astro';
-import { cv } from '../../data/cv.data';
+import { getCV, t, resolveLocale } from '../../i18n';
 import { homeRegion } from '../../data/format';
-const { basics } = cv;
+const locale = resolveLocale(Astro.currentLocale);
+const { basics } = getCV(locale);
+const ui = t(locale);
 const year = new Date().getFullYear();
-const place = homeRegion(basics.location);
+const place = homeRegion(basics.location, locale);
 
 const FREELANCE_NETWORKS = new Set(['Upwork', 'Fiverr']);
 const social = basics.profiles.filter((p) => !FREELANCE_NETWORKS.has(p.network));
@@ -15,7 +17,7 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
 ---
 
 <footer class="contact shell" id="contact" aria-labelledby="contact-title">
-  <SectionHeader index="08" id="contact-title" title="Let's build something" kicker="Get in touch" axis="WGHT 500 · OPSZ 90" />
+  <SectionHeader index="08" id="contact-title" title={ui.sections.contact.title} kicker={ui.sections.contact.kicker} axis="WGHT 500 · OPSZ 90" />
 
   <a class="contact__email" href={`mailto:${basics.email}`}>
     <BrandIcon name="gmail" size={32} class="contact__email-icon" />
@@ -24,38 +26,38 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
 
   <div class="contact__cols">
     <div class="contact__col">
-      <p class="label">Direct</p>
-      <ArrowLink href={`mailto:${basics.email}`}>Email</ArrowLink>
+      <p class="label">{ui.contact.direct}</p>
+      <ArrowLink href={`mailto:${basics.email}`}>{ui.contact.email}</ArrowLink>
     </div>
 
     <div class="contact__col">
-      <p class="label">Social</p>
+      <p class="label">{ui.contact.social}</p>
       {social.map((p) => (
         <SocialLink href={p.url} network={p.network} handle={`@${p.username}`} />
       ))}
     </div>
 
     <div class="contact__col">
-      <p class="label">Freelance</p>
+      <p class="label">{ui.contact.freelance}</p>
       {freelance.map((p) => (
         <SocialLink href={p.url} network={p.network} handle={`@${p.username}`} />
       ))}
     </div>
 
     <div class="contact__col contact__col--avail">
-      <p class="label">Availability</p>
+      <p class="label">{ui.contact.availability}</p>
       <ul class="contact__avail">
         <li>
-          <span class="contact__avail-key">Open to</span>
-          <span class="contact__avail-val">Fullstack roles — remote or {basics.location.region}</span>
+          <span class="contact__avail-key">{ui.contact.openTo}</span>
+          <span class="contact__avail-val">{ui.contact.openToValue(basics.location.region)}</span>
         </li>
         <li>
-          <span class="contact__avail-key">Based in</span>
-          <span class="contact__avail-val">{place} · GMT+7</span>
+          <span class="contact__avail-key">{ui.contact.basedIn}</span>
+          <span class="contact__avail-val">{ui.contact.basedInValue(place)}</span>
         </li>
         <li>
-          <span class="contact__avail-key">Reply time</span>
-          <span class="contact__avail-val">Within a day, most days</span>
+          <span class="contact__avail-key">{ui.contact.replyTime}</span>
+          <span class="contact__avail-val">{ui.contact.replyTimeValue}</span>
         </li>
       </ul>
     </div>

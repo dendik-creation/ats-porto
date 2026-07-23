@@ -1,11 +1,13 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import { cv } from '../../data/cv.data';
-const { languages } = cv;
+import { getCV, t, resolveLocale } from '../../i18n';
+const locale = resolveLocale(Astro.currentLocale);
+const { languages } = getCV(locale);
+const ui = t(locale);
 ---
 
 <section class="langs shell" aria-labelledby="languages-title">
-  <SectionHeader index="07" id="languages-title" title="Languages" kicker="How I communicate" axis="WGHT 460 · OPSZ 50" />
+  <SectionHeader index="07" id="languages-title" title={ui.sections.languages.title} kicker={ui.sections.languages.kicker} axis="WGHT 460 · OPSZ 50" />
 
   <dl class="langs__list">
     {languages.map((l, i) => (

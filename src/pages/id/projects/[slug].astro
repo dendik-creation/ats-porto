@@ -1,11 +1,11 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import ProjectDetail from '../../components/templates/ProjectDetail.astro';
-import { getCV } from '../../i18n';
+import Layout from '../../../layouts/Layout.astro';
+import ProjectDetail from '../../../components/templates/ProjectDetail.astro';
+import { getCV } from '../../../i18n';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths = (() => {
-  const { projects } = getCV('en');
+  const { projects } = getCV('id');
   return projects.map((project, i) => {
     const prev = projects[(i - 1 + projects.length) % projects.length];
     const next = projects[(i + 1) % projects.length];
@@ -17,7 +17,7 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { project, index, total, prev, next } = Astro.props;
-const title = `${project.name} — ${getCV('en').basics.name}`;
+const title = `${project.name} — ${getCV('id').basics.name}`;
 const description = project.description;
 ---
 

@@ -1,16 +1,18 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import { cv } from '../../data/cv.data';
+import { getCV, t, resolveLocale } from '../../i18n';
 import { rangeLabel } from '../../data/format';
-const { volunteer } = cv;
+const locale = resolveLocale(Astro.currentLocale);
+const { volunteer } = getCV(locale);
+const ui = t(locale);
 ---
 
 <section class="vol shell" aria-labelledby="volunteer-title">
-  <SectionHeader index="05" id="volunteer-title" title="Volunteer" kicker="Beyond the job" axis="WGHT 520 · OPSZ 30" />
+  <SectionHeader index="05" id="volunteer-title" title={ui.sections.volunteer.title} kicker={ui.sections.volunteer.kicker} axis="WGHT 520 · OPSZ 30" />
 
   <div class="vol__list">
     {volunteer.map((v) => {
-      const range = v.startDate && v.endDate ? rangeLabel(v.startDate, v.endDate) : '';
+      const range = v.startDate && v.endDate ? rangeLabel(v.startDate, v.endDate, locale) : '';
       const isCurrent = v.endDate === 'Present';
       return (
         <article class="vol__item">
@@ -18,7 +20,7 @@ const { volunteer } = cv;
             {range && (
               <p class="vol__range label">
                 {range}
-                {isCurrent && <span class="vol__now" aria-label="current">●</span>}
+                {isCurrent && <span class="vol__now" aria-label={ui.volunteer.currentAria}>●</span>}
               </p>
             )}
             <p class="vol__loc">{v.location}</p>

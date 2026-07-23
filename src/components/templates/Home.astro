@@ -1,0 +1,35 @@
+---
+// Home page composition — shared by src/pages/index.astro (en) and
+// src/pages/id/index.astro (id). Every organism resolves its own locale via
+// Astro.currentLocale, so this single file renders both languages.
+import Hero from '../organisms/Hero.astro';
+import About from '../organisms/About.astro';
+import Skills from '../organisms/Skills.astro';
+import Projects from '../organisms/Projects.astro';
+import Experience from '../organisms/Experience.astro';
+import Volunteer from '../organisms/Volunteer.astro';
+import Certifications from '../organisms/Certifications.astro';
+import Languages from '../organisms/Languages.astro';
+import Contact from '../organisms/Contact.astro';
+---
+
+<Hero />
+<div class="sections">
+  <About />
+  <Skills />
+  <Projects />
+  <Experience />
+  <Volunteer />
+  <Certifications />
+  <Languages />
+</div>
+<Contact />
+
+<style>
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    padding-block: var(--space-xl);
+  }
+</style>

@@ -1,0 +1,372 @@
+---
+// Project detail body — shared by src/pages/projects/[slug].astro (en) and
+// src/pages/id/projects/[slug].astro (id). Resolves its own locale, so one
+// file renders both languages; only each route's getStaticPaths differs.
+import TagList from '../atoms/TagList.astro';
+import ArrowLink from '../atoms/ArrowLink.astro';
+import Lightbox from '../organisms/Lightbox.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { monthYear, projectLinks } from '../../data/format';
+import { t, resolveLocale } from '../../i18n';
+import type { Project } from '../../data/cv';
+
+interface Props {
+  project: Project;
+  index: number;
+  total: number;
+  prev: Project;
+  next: Project;
+}
+const { project, index, total, prev, next } = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
+const ui = t(locale);
+const home = getRelativeLocaleUrl(locale, '/');
+const num = String(index).padStart(2, '0');
+
+// Derived, honest facts — no invented claims, only what the data supports.
+const mobileStack = ['Flutter'];
+const isMobile = project.keywords.some((k: string) => mobileStack.includes(k));
+const focus = isMobile ? ui.projects.focusMobile : ui.projects.focusWeb;
+const facts = [
+  { term: ui.projects.facts.role, value: project.role },
+  { term: ui.projects.facts.focus, value: focus },
+  { term: ui.projects.facts.shipped, value: monthYear(project.date, locale) },
+  { term: ui.projects.facts.stack, value: ui.projects.techCount(project.keywords.length) },
+];
+const links = projectLinks(project, locale);
+const images = project.images ?? [];
+const galleryItems = images.map((src: string, i: number) => ({
+  src,
+  alt: ui.projects.screenshotAlt(project.name, i + 1, images.length),
+}));
+---
+
+<article class="detail shell">
+  <a class="detail__back" href={`${home}#projects-title`}>
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false">
+      <path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {ui.projects.backToWork}
+  </a>
+
+  <header class="detail__head">
+    <p class="detail__meta label">
+      <span>{ui.projects.projectCount(num, String(total).padStart(2, '0'))}</span>
+      <span class="detail__dot" aria-hidden="true">•</span>
+      <span>{monthYear(project.date, locale)}</span>
+    </p>
+    <h1 class="detail__title">{project.name}</h1>
+    <p class="detail__lede">{project.description}</p>
+  </header>
+
+  {images.length > 0 && (
+    <section class="detail__gallery" aria-label={ui.projects.galleryAria(project.name)}>
+      <p class="label">{ui.projects.gallery}</p>
+      <ul class="detail__gallery-grid">
+        {galleryItems.map((item: { src: string; alt: string }, i: number) => (
+          <li class="detail__gallery-item">
+            <button type="button" class="detail__gallery-trigger" data-lightbox-open aria-label={ui.projects.openScreenshotAria(item.alt)}>
+              <img
+                src={item.src}
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+              />
+            </button>
+            <span class="detail__gallery-index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <Lightbox items={galleryItems} name={project.name} />
+
+  <section class="detail__body" aria-label="Project details">
+    <div class="detail__stack">
+      <p class="label">{ui.projects.builtWith}</p>
+      <TagList items={project.keywords} label={ui.projects.stackAria(project.name)} />
+    </div>
+    <dl class="detail__facts">
+      {facts.map((f) => (
+        <div class="detail__fact">
+          <dt class="label">{f.term}</dt>
+          <dd class="detail__fact-val">{f.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  {links.length > 0 && (
+    <section class="detail__links" aria-label="Project links">
+      <p class="label">{ui.projects.seeItLive}</p>
+      <ul>
+        {links.map((l) => (
+          <li>
+            <a href={l.href} target="_blank" rel="noopener noreferrer">
+              {l.label}
+              <svg viewBox="0 0 24 24" width="0.8em" height="0.8em" aria-hidden="true" focusable="false">
+                <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <nav class="detail__nav" aria-label={ui.projects.projectNav}>
+    <a class="detail__nav-link detail__nav-link--prev" href={getRelativeLocaleUrl(locale, `/projects/${prev.slug}`)}>
+      <span class="label">{ui.projects.previous}</span>
+      <span class="detail__nav-name">{prev.name}</span>
+    </a>
+    <a class="detail__nav-link detail__nav-link--next" href={getRelativeLocaleUrl(locale, `/projects/${next.slug}`)}>
+      <span class="label">{ui.projects.next}</span>
+      <span class="detail__nav-name">{next.name}</span>
+    </a>
+  </nav>
+
+  <div class="detail__cta">
+    <ArrowLink href={`${home}#contact`}>{ui.projects.startConversation}</ArrowLink>
+  </div>
+</article>
+
+<style>
+  .detail {
+    padding-top: var(--space-l);
+    padding-bottom: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+  }
+  .detail__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color var(--dur-1) var(--ease);
+  }
+  .detail__back:hover {
+    color: var(--accent-ink);
+  }
+
+  .detail__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: var(--space-l);
+  }
+  .detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9em;
+    align-items: center;
+  }
+  .detail__dot {
+    color: var(--accent);
+  }
+  .detail__title {
+    font-size: var(--step-4);
+    font-variation-settings: 'opsz' 120, 'wght' 500, 'SOFT' 20, 'WONK' 0;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .detail__lede {
+    font-size: var(--step-1);
+    color: var(--muted);
+    max-width: var(--measure);
+    text-wrap: pretty;
+  }
+
+  .detail__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .detail__gallery-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    column-count: 1;
+    column-gap: var(--space-s);
+  }
+  @media (min-width: 560px) {
+    .detail__gallery-grid {
+      column-count: 2;
+    }
+  }
+  @media (min-width: 960px) {
+    .detail__gallery-grid {
+      column-count: 3;
+    }
+  }
+  .detail__gallery-item {
+    position: relative;
+    break-inside: avoid;
+    margin-bottom: var(--space-s);
+  }
+  .detail__gallery-trigger {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: var(--paper-deep);
+    cursor: pointer;
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .detail__gallery-trigger:hover,
+  .detail__gallery-trigger:focus-visible {
+    border-color: var(--accent);
+  }
+  .detail__gallery-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .detail__gallery-trigger img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .detail__gallery-index {
+    position: absolute;
+    left: 0.7em;
+    bottom: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--paper);
+    text-shadow: 0 1px 3px color-mix(in oklab, var(--ink) 70%, transparent);
+  }
+
+  .detail__body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: var(--space-l) var(--space-xl);
+    align-items: start;
+  }
+  .detail__stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .detail__facts {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m) var(--space-s);
+    border-left: 1px solid var(--line);
+    padding-left: var(--space-m);
+  }
+  .detail__fact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+  .detail__fact-val {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 30, 'wght' 500, var(--wonk-off);
+    line-height: 1.1;
+  }
+
+  .detail__links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-l);
+  }
+  .detail__links ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s) var(--space-m);
+  }
+  .detail__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: var(--step-0);
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 2px;
+    transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  }
+  .detail__links a:hover,
+  .detail__links a:focus-visible {
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+
+  .detail__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-l);
+  }
+  .detail__nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    transition: color var(--dur-1) var(--ease);
+  }
+  .detail__nav-link--next {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .detail__nav-name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    transition: font-variation-settings var(--dur-2) var(--ease);
+  }
+  .detail__nav-link:hover {
+    color: var(--accent-ink);
+  }
+  .detail__nav-link:hover .detail__nav-name {
+    font-variation-settings: 'opsz' 60, 'wght' 600, var(--wonk-on);
+  }
+
+  .detail__cta {
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-l);
+  }
+
+  @media (max-width: 720px) {
+    .detail__body {
+      grid-template-columns: 1fr;
+    }
+    .detail__facts {
+      border-left: 0;
+      padding-left: 0;
+      border-top: 1px solid var(--line);
+      padding-top: var(--space-m);
+    }
+  }
+  @media (max-width: 560px) {
+    .detail__nav {
+      grid-template-columns: 1fr;
+    }
+    .detail__nav-link--next {
+      text-align: left;
+      align-items: flex-start;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .detail__back, .detail__nav-link, .detail__nav-name { transition: color var(--dur-1) var(--ease); }
+    .detail__nav-link:hover .detail__nav-name {
+      font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    }
+  }
+</style>

@@ -1,7 +1,6 @@
-// Single source of truth for all portfolio content.
-// Shaped from the ATS résumé JSON. No placeholder data lives anywhere else.
-// Types live in ./cv.
-import type { CV } from './cv';
+// English canonical CV content — the source translations are cloned from.
+// Types live in ../../data/cv.
+import type { CV } from '../../data/cv';
 
 export const cv: CV = {
   basics: {
@@ -99,6 +98,7 @@ export const cv: CV = {
   ],
   projects: [
     {
+      slug: 'get-the-matrix',
       name: 'Get The Matrix',
       description:
         'An interactive educational gamification project designed to transform traditional matrix mathematics learning into an engaging digital experience. Developed in a three-member team, it features localized language support, cross-platform compatibility for both web (localhost) and mobile devices, and intuitive game mechanics built to eliminate conventional learning boredom.',
@@ -113,6 +113,7 @@ export const cv: CV = {
       links: { repo: 'https://github.com/dendik-creation/get-the-matrix', live: 'https://get-the-matrix.projectmendoan.my.id/' },
     },
     {
+      slug: 'gamelaneka',
       name: 'Gamelaneka',
       description:
         'An interactive multimedia learning platform designed to preserve and introduce Javanese gamelan traditional musical instruments. Features high-fidelity original instrument audio playback, educational historical modules, and an engaging, user-friendly digital layout tailored to enhance cultural heritage interest among the younger generation.',
@@ -128,6 +129,7 @@ export const cv: CV = {
       ],
     },
     {
+      slug: 'audit-mutu-internal-system',
       name: 'Audit Mutu Internal System',
       description:
         'An enterprise internal quality audit system (AMI) architected with a decoupled frontend-backend infrastructure. Designed to run granular audits per user and systematically recap complete historical reviews. Integrates a robust Laravel backend securing APIs via Sanctum alongside a high-performance React dashboard built with Tailwind CSS.',
@@ -142,6 +144,7 @@ export const cv: CV = {
       links: { repo: '', live: '' },
     },
     {
+      slug: 'family-care-stunting',
       name: 'Family Care Stunting',
       description:
         'A comprehensive public health tracking application designed to monitor, screen, and evaluate citizens with stunting histories. Features customized stunting assessment tests paired with tailored digital learning modules to deliver targeted educational content directly to affected families via the Play Store.',
@@ -157,6 +160,7 @@ export const cv: CV = {
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.familycarestunting' },
     },
     {
+      slug: 'tree-smart-coach',
       name: 'Tree Smart Coach',
       description:
         'A multi-platform digital monitoring system commissioned by the Ministry of Religious Affairs (Kemenag) Kudus to modernize madrasah school supervision. Replaces conventional manual reporting with a structured, data-driven evaluation pipeline, enabling supervisors to efficiently track, audit, and systematically review school performance in real-time.',
@@ -172,6 +176,7 @@ export const cv: CV = {
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.treesmartcoach' },
     },
     {
+      slug: 'snumaku-pkwu',
       name: 'SNUMAKU PKWU',
       description:
         'An interactive digital multimedia learning platform published on the Google Play Store to streamline vocational high school entrepreneurship (PKWU) education. Designed to guide students through designing, validating, producing, and marketing real-world services. Built to foster cross-major collaboration and digital literacy using an advanced game engine interface.',
@@ -187,6 +192,7 @@ export const cv: CV = {
       links: { playStore: 'https://play.google.com/store/apps/details?id=com.dendikcreation.snumakupkwu' },
     },
     {
+      slug: 'keras',
       name: 'KeRaS.',
       description:
         'An open-source, stateless web application and PWA designed to help university students automate and secure high-speed course registration (KRS). Features zero-database storage for absolute privacy, automated high-frequency submission mechanisms, real-time university portal scraping, and fully anonymized telemetry.',
@@ -207,6 +213,7 @@ export const cv: CV = {
       links: { repo: 'https://github.com/dendik-creation/keras', live: 'https://keras.dendikcreation.dev' },
     },
     {
+      slug: 'bi-booster',
       name: 'Bi Booster',
       description:
         'An AI-powered SaaS instant website builder for MSMEs (UMKM) that generates high-performance static websites in real-time based on structured business profiles. Features a multi-stage LLM generation pipeline, continuous job queues, automated Midtrans billing workflows, and dynamic reverse-proxy routing.',

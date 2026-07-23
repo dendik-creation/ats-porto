@@ -1,17 +1,21 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import TagList from '../atoms/TagList.astro';
 import type { Project } from '../../data/cv';
-import { slugify, projectLinks } from '../../data/format';
+import { projectLinks } from '../../data/format';
+import { t, resolveLocale } from '../../i18n';
 
 interface Props {
   project: Project;
   index: number; // 1-based, for the running number motif
 }
 const { project, index } = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
+const ui = t(locale);
 const num = String(index).padStart(2, '0');
 const year = project.date.slice(0, 4);
-const href = `/projects/${slugify(project.name)}`;
-const links = projectLinks(project);
+const href = getRelativeLocaleUrl(locale, `/projects/${project.slug}`);
+const links = projectLinks(project, locale);
 ---
 
 <article class="proj">
@@ -29,9 +33,9 @@ const links = projectLinks(project);
   </h3>
   <p class="proj__role">{project.role}</p>
   <p class="proj__desc">{project.description}</p>
-  <TagList items={project.keywords} label={`${project.name} — stack`} />
+  <TagList items={project.keywords} label={ui.projects.stackAria(project.name)} />
   {links.length > 0 && (
-    <ul class="proj__links" aria-label={`${project.name} — links`}>
+    <ul class="proj__links" aria-label={ui.projects.linksAria(project.name)}>
       {links.map((l) => (
         <li>
           <a class="proj__ext" href={l.href} target="_blank" rel="noopener noreferrer">

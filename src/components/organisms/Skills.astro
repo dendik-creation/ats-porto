@@ -1,12 +1,14 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
 import BrandIcon from '../atoms/BrandIcon.astro';
-import { cv } from '../../data/cv.data';
-const { skills } = cv;
+import { getCV, t, resolveLocale } from '../../i18n';
+const locale = resolveLocale(Astro.currentLocale);
+const { skills } = getCV(locale);
+const ui = t(locale);
 ---
 
 <section class="skills shell" aria-labelledby="skills-title">
-  <SectionHeader index="02" id="skills-title" title="Stack" kicker="What I build with" axis="WGHT 440 · OPSZ 50" />
+  <SectionHeader index="02" id="skills-title" title={ui.sections.skills.title} kicker={ui.sections.skills.kicker} axis="WGHT 440 · OPSZ 50" />
 
   <div class="skills__grid">
     {skills.map((group, i) => (

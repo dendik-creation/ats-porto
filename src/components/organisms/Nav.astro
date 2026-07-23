@@ -4,29 +4,34 @@
 // palette/type. Open state is a single [data-open] attribute; the stagger is
 // pure CSS (per-item transition-delay), so it works with no framework, degrades
 // without JS, and respects reduced-motion.
-import { cv } from '../../data/cv.data';
-const { basics } = cv;
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getCV, t, resolveLocale } from '../../i18n';
+
+const locale = resolveLocale(Astro.currentLocale);
+const { basics } = getCV(locale);
+const ui = t(locale);
+const home = getRelativeLocaleUrl(locale, '/');
 
 const items = [
-  { label: 'About', link: '/#about-title', ariaLabel: 'Jump to about' },
-  { label: 'Stack', link: '/#skills-title', ariaLabel: 'Jump to stack' },
-  { label: 'Work', link: '/#projects-title', ariaLabel: 'Jump to selected work' },
-  { label: 'Experience', link: '/#experience-title', ariaLabel: 'Jump to experience' },
-  { label: 'Volunteer', link: '/#volunteer-title', ariaLabel: 'Jump to volunteer' },
-  { label: 'Certifications', link: '/#certifications-title', ariaLabel: 'Jump to certifications' },
-  { label: 'Languages', link: '/#languages-title', ariaLabel: 'Jump to languages' },
-  { label: 'Contact', link: '/#contact-title', ariaLabel: 'Jump to contact' },
+  { label: ui.nav.items.about, link: `${home}#about-title`, ariaLabel: ui.nav.ariaLabels.about },
+  { label: ui.nav.items.stack, link: `${home}#skills-title`, ariaLabel: ui.nav.ariaLabels.stack },
+  { label: ui.nav.items.work, link: `${home}#projects-title`, ariaLabel: ui.nav.ariaLabels.work },
+  { label: ui.nav.items.experience, link: `${home}#experience-title`, ariaLabel: ui.nav.ariaLabels.experience },
+  { label: ui.nav.items.volunteer, link: `${home}#volunteer-title`, ariaLabel: ui.nav.ariaLabels.volunteer },
+  { label: ui.nav.items.certifications, link: `${home}#certifications-title`, ariaLabel: ui.nav.ariaLabels.certifications },
+  { label: ui.nav.items.languages, link: `${home}#languages-title`, ariaLabel: ui.nav.ariaLabels.languages },
+  { label: ui.nav.items.contact, link: `${home}#contact-title`, ariaLabel: ui.nav.ariaLabels.contact },
   {
-    label: 'Visitors',
+    label: ui.nav.items.visitors,
     link: 'https://cloud.umami.is/share/132aI2gdoyz9vhLj',
-    ariaLabel: 'View site visitor analytics (opens in a new tab)',
+    ariaLabel: ui.nav.ariaLabels.visitors,
     external: true,
   },
 ];
 const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 ---
 
-<div class="nav" data-nav transition:persist transition:name="site-nav">
+<div class="nav" data-nav>
   <div class="sm-bar" aria-hidden="true"></div>
 
   <div class="sm-prelayers" aria-hidden="true">
@@ -35,22 +40,24 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
   </div>
 
   <header class="sm-header">
-    <a class="sm-logo" href="/#main">
+    <a class="sm-logo" href={`${home}#main`}>
       <span aria-hidden="true">dendi'</span>
-      <span class="visually-hidden">{basics.name} — home</span>
+      <span class="visually-hidden">{ui.nav.homeAria(basics.name)}</span>
     </a>
 
     <button
       class="sm-toggle"
       type="button"
-      aria-label="Open menu"
+      aria-label={ui.nav.openMenuAria}
       aria-expanded="false"
       aria-controls="staggered-menu-panel"
+      data-open-label={ui.nav.openMenuAria}
+      data-close-label={ui.nav.closeMenuAria}
     >
       <span class="sm-toggle-textWrap" aria-hidden="true">
         <span class="sm-toggle-textInner">
-          <span class="sm-toggle-line">Menu</span>
-          <span class="sm-toggle-line">Close</span>
+          <span class="sm-toggle-line">{ui.nav.menuLabel}</span>
+          <span class="sm-toggle-line">{ui.nav.closeLabel}</span>
         </span>
       </span>
       <span class="sm-icon" aria-hidden="true">
@@ -80,7 +87,7 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 
       {socials.length > 0 && (
         <div class="sm-socials" aria-label="Social links">
-          <h3 class="sm-socials-title">Elsewhere</h3>
+          <h3 class="sm-socials-title">{ui.nav.elsewhere}</h3>
           <ul class="sm-socials-list" role="list">
             {socials.map((s, i) => (
               <li class="sm-socials-item" style={`--i:${i}`}>
@@ -91,37 +98,47 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
         </div>
       )}
 
-      <div class="sm-theme">
-        <h3 class="sm-theme-title">Theme</h3>
-        <div class="sm-theme-toggle" role="radiogroup" aria-label="Colour scheme">
-          <button class="sm-theme-btn" data-theme-val="light" role="radio" aria-checked="false" type="button" title="Light">
-            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/>
-              <line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <span>Light</span>
-          </button>
-          <button class="sm-theme-btn" data-theme-val="dark" role="radio" aria-checked="false" type="button" title="Dark">
-            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-            <span>Dark</span>
-          </button>
-          <button class="sm-theme-btn" data-theme-val="auto" role="radio" aria-checked="false" type="button" title="Auto (follow device)">
-            <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-            <span>Auto</span>
-          </button>
+      <div class="sm-controls-row">
+        <div class="sm-theme">
+          <h3 class="sm-theme-title">{ui.nav.theme.title}</h3>
+          <div class="sm-theme-toggle" role="radiogroup" aria-label="Colour scheme">
+            <button class="sm-theme-btn" data-theme-val="light" role="radio" aria-checked="false" type="button" title={ui.nav.theme.light}>
+              <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <span>{ui.nav.theme.light}</span>
+            </button>
+            <button class="sm-theme-btn" data-theme-val="dark" role="radio" aria-checked="false" type="button" title={ui.nav.theme.dark}>
+              <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+              <span>{ui.nav.theme.dark}</span>
+            </button>
+            <button class="sm-theme-btn" data-theme-val="auto" role="radio" aria-checked="false" type="button" title={ui.nav.theme.autoTitle}>
+              <svg class="sm-theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+              <span>{ui.nav.theme.auto}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="sm-lang">
+          <h3 class="sm-lang-title">{ui.nav.language.title}</h3>
+          <div class="sm-lang-toggle" role="radiogroup" aria-label={ui.nav.language.title}>
+            <a class="sm-lang-btn" data-lang-val="en" role="radio" aria-checked={locale === 'en'} href={getRelativeLocaleUrl('en', Astro.url.pathname.replace(/^\/id(?=\/|$)/, '') || '/')}>EN</a>
+            <a class="sm-lang-btn" data-lang-val="id" role="radio" aria-checked={locale === 'id'} href={getRelativeLocaleUrl('id', Astro.url.pathname.replace(/^\/id(?=\/|$)/, '') || '/')}>ID</a>
+          </div>
         </div>
       </div>
     </div>
@@ -297,8 +314,8 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     background: var(--paper);
     display: flex;
     flex-direction: column;
-    padding: var(--space-xl) var(--space-m) var(--space-l);
-    overflow-y: auto;
+    padding: calc(var(--nav-h) + var(--space-s)) var(--space-m) var(--space-m);
+    overflow-y: hidden;
     transform: translateX(100%);
     visibility: hidden;
     z-index: 30;
@@ -318,7 +335,8 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--space-l);
+    gap: var(--space-m);
+    min-height: 0;
   }
   .sm-panel-list {
     list-style: none;
@@ -393,11 +411,11 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
   /* ---- Socials ---- */
   .sm-socials {
     margin-top: auto;
-    padding-top: var(--space-m);
+    padding-top: var(--space-s);
     border-top: 1px solid var(--line);
     display: flex;
     flex-direction: column;
-    gap: var(--space-s);
+    gap: var(--space-xs);
   }
   .sm-socials-title {
     margin: 0;
@@ -447,11 +465,28 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     border-color: var(--accent);
   }
 
+  /* ---- Theme + language, side by side so neither reads as an afterthought ---- */
+  .sm-controls-row {
+    display: flex;
+    gap: var(--space-s);
+  }
+  .sm-controls-row > * {
+    flex: 1;
+    min-width: 0;
+  }
+  /* Below this panel width the 3-button theme toggle has no room to sit
+     beside language at half-width — stack instead of squeezing labels. */
+  @container (max-width: 400px) {
+    .sm-controls-row {
+      flex-direction: column;
+    }
+  }
+
   /* ---- Theme toggle ---- */
   .sm-theme {
     display: flex;
     flex-direction: column;
-    gap: var(--space-s);
+    gap: var(--space-xs);
   }
   .sm-theme-title {
     margin: 0;
@@ -515,6 +550,71 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     flex: 0 0 1em;
   }
 
+  /* ---- Language switcher — same segmented-control language as theme ---- */
+  .sm-lang {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .sm-lang-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease);
+  }
+  .nav[data-open] .sm-lang-title {
+    opacity: 1;
+    transition-delay: 0.5s;
+  }
+  .sm-lang-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--line);
+    border-radius: 8px;
+    padding: 2px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .nav[data-open] .sm-lang-toggle {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.55s;
+  }
+  .sm-lang-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4em 0.5em;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .sm-lang-btn[aria-checked='true'] {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .sm-lang-btn:hover,
+  .sm-lang-btn:focus-visible {
+    color: var(--accent-ink);
+  }
+
   /* ---- No-JS fallback ---- */
   .sm-fallback {
     position: absolute;
@@ -547,6 +647,8 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     .sm-socials-item,
     .sm-theme-title,
     .sm-theme-toggle,
+    .sm-lang-title,
+    .sm-lang-toggle,
     .sm-toggle-textInner,
     .sm-icon-line {
       transition-duration: 0.001s;
@@ -556,8 +658,16 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 </style>
 
 <script>
+  // Nav is no longer transition:persist'd — each navigation replaces it with
+  // a freshly server-rendered instance (so locale text/hrefs are always
+  // correct). ClientRouter dedupes this identical script chunk across pages
+  // the same way it does for Lightbox.astro, so it never re-runs on its own;
+  // astro:page-load fires on every navigation regardless, so init from
+  // there. Each run's listeners are torn down via the abort signal before the
+  // next run binds fresh ones to the new DOM.
+
   // Minimal, robust: flip a single [data-open] attribute; CSS does the rest.
-  function initNav() {
+  function initNav(signal: AbortSignal) {
     const root = document.querySelector<HTMLElement>('[data-nav]');
     if (!root) return;
     const btn = root.querySelector<HTMLButtonElement>('.sm-toggle');
@@ -569,29 +679,29 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
       open = v;
       root.toggleAttribute('data-open', v);
       btn.setAttribute('aria-expanded', String(v));
-      btn.setAttribute('aria-label', v ? 'Close menu' : 'Open menu');
+      btn.setAttribute('aria-label', v ? (btn.dataset.closeLabel ?? 'Close menu') : (btn.dataset.openLabel ?? 'Open menu'));
       panel?.setAttribute('aria-hidden', String(!v));
     };
 
-    btn.addEventListener('click', () => setOpen(!open));
+    btn.addEventListener('click', () => setOpen(!open), { signal });
     root.querySelectorAll('.sm-panel-item').forEach((a) =>
-      a.addEventListener('click', () => setOpen(false)),
+      a.addEventListener('click', () => setOpen(false), { signal }),
     );
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && open) setOpen(false);
-    });
+    }, { signal });
     document.addEventListener('click', (e) => {
       if (open && e.target instanceof Node && !root.contains(e.target)) setOpen(false);
-    });
+    }, { signal });
 
     // Fade the bar background in only after the first viewport is scrolled past.
     const onScroll = () => root.toggleAttribute('data-scrolled', window.scrollY > 24);
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
   }
 
   // --- Theme toggle logic ---
-  function initTheme() {
+  function initTheme(signal: AbortSignal) {
     const root = document.documentElement;
     const btns = document.querySelectorAll<HTMLButtonElement>('.sm-theme-btn');
     const meta = document.getElementById('theme-color-meta');
@@ -643,7 +753,7 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
       b.addEventListener('click', () => {
         const val = b.getAttribute('data-theme-val');
         if (val) apply(val);
-      });
+      }, { signal });
     });
 
     // Listen for device colour-scheme changes when in auto mode
@@ -655,11 +765,51 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
           meta.setAttribute('content', mql.matches ? '#1a1814' : '#f0ece1');
         }
       }
+    }, { signal });
+
+    sync();
+  }
+
+  // --- Language switcher logic ---
+  // Recomputes hrefs/aria-checked from the live pathname rather than
+  // trusting server-rendered state, since a click can land here before the
+  // next navigation's fresh Nav has fully replaced this one.
+  function initLang(signal: AbortSignal) {
+    const btns = document.querySelectorAll<HTMLAnchorElement>('.sm-lang-btn');
+    if (!btns.length) return;
+
+    const sync = () => {
+      const path = location.pathname;
+      const isId = /^\/id(\/|$)/.test(path);
+      const bare = path.replace(/^\/id(?=\/|$)/, '') || '/';
+      const enHref = bare + location.search + location.hash;
+      const idHref = (bare === '/' ? '/id/' : '/id' + bare) + location.search + location.hash;
+      btns.forEach((a) => {
+        const val = a.dataset.langVal;
+        a.setAttribute('href', val === 'id' ? idHref : enHref);
+        a.setAttribute('aria-checked', String((val === 'id') === isId));
+      });
+    };
+
+    btns.forEach((a) => {
+      a.addEventListener('click', () => {
+        const val = a.dataset.langVal;
+        if (val) localStorage.setItem('lang', val);
+      }, { signal });
     });
 
     sync();
   }
 
-  initNav();
-  initTheme();
+  let cleanup: AbortController | null = null;
+  function initAll() {
+    cleanup?.abort();
+    cleanup = new AbortController();
+    const { signal } = cleanup;
+    initNav(signal);
+    initTheme(signal);
+    initLang(signal);
+  }
+
+  document.addEventListener('astro:page-load', initAll);
 </script>

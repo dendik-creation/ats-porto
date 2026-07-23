@@ -4,6 +4,8 @@
 // side panel to the whole viewport. One motif, reused instead of invented.
 // Closing plays the identical sequence in reverse (panel leaves first,
 // ink then accent behind it) so it reads as the same gesture undone.
+import { t, resolveLocale } from '../../i18n';
+
 interface Item {
   src: string;
   alt: string;
@@ -13,6 +15,7 @@ interface Props {
   name: string;
 }
 const { items, name } = Astro.props;
+const ui = t(resolveLocale(Astro.currentLocale));
 const total = String(items.length).padStart(2, '0');
 ---
 
@@ -29,7 +32,7 @@ const total = String(items.length).padStart(2, '0');
           <span data-lb-current>01</span> / <span data-lb-total>{total}</span>
         </span>
         <button type="button" class="lb-close" data-lb-close>
-          <span class="lb-close-text">Close</span>
+          <span class="lb-close-text">{ui.projects.lightbox.close}</span>
           <span class="lb-close-icon" aria-hidden="true">
             <span class="lb-close-line"></span>
             <span class="lb-close-line lb-close-line-v"></span>
@@ -38,7 +41,7 @@ const total = String(items.length).padStart(2, '0');
       </header>
 
       <div class="lb-stage">
-        <button type="button" class="lb-arrow lb-arrow--prev" data-lb-prev aria-label="Previous screenshot">
+        <button type="button" class="lb-arrow lb-arrow--prev" data-lb-prev aria-label={ui.projects.lightbox.prevAria}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
             <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -58,7 +61,7 @@ const total = String(items.length).padStart(2, '0');
           </div>
         </div>
 
-        <button type="button" class="lb-arrow lb-arrow--next" data-lb-next aria-label="Next screenshot">
+        <button type="button" class="lb-arrow lb-arrow--next" data-lb-next aria-label={ui.projects.lightbox.nextAria}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
             <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>

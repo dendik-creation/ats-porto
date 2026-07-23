@@ -1,35 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/organisms/Hero.astro';
-import About from '../components/organisms/About.astro';
-import Skills from '../components/organisms/Skills.astro';
-import Projects from '../components/organisms/Projects.astro';
-import Experience from '../components/organisms/Experience.astro';
-import Volunteer from '../components/organisms/Volunteer.astro';
-import Certifications from '../components/organisms/Certifications.astro';
-import Languages from '../components/organisms/Languages.astro';
-import Contact from '../components/organisms/Contact.astro';
+import Home from '../components/templates/Home.astro';
 ---
 
 <Layout>
-  <Hero />
-  <div class="sections">
-    <About />
-    <Skills />
-    <Projects />
-    <Experience />
-    <Volunteer />
-    <Certifications />
-    <Languages />
-  </div>
-  <Contact />
+  <Home />
 </Layout>
-
-<style>
-  .sections {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-    padding-block: var(--space-xl);
-  }
-</style>

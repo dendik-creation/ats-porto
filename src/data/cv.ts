@@ -30,6 +30,7 @@ export interface ProjectLinks {
 }
 
 export interface Project {
+  slug: string;       // stable, locale-independent URL id — never derived from name
   name: string;
   description: string;
   date: string;
