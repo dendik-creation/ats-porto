@@ -211,6 +211,9 @@ export const cv: CV = {
       images: [
         "/projects/keras/1.png",
         "/projects/keras/2.png",
+        "/projects/keras/3.png",
+        "/projects/keras/4.png",
+        "/projects/keras/5.png",
       ],
       links: { repo: 'https://github.com/dendik-creation/keras', live: 'https://keras.dendikcreation.dev' },
     },
