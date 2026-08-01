@@ -207,6 +207,7 @@ export const cv: CV = {
         'PostHog',
         'Docker',
         'Cloudflare',
+        'Redis'
       ],
       images: [
         "/projects/keras/1.png",
