@@ -8,7 +8,7 @@ export const cv: CV = {
     label: 'Fullstack Developer',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
-    cvUrl: 'https://drive.google.com/file/d/15Gh5D6mWTWxL15awsxHcL1VhHdY6EUY1/view?usp=sharing',
+    cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',
     summary:
       'Fullstack developer with four years shipping enterprise web and mobile products end to end — from database schema and REST APIs to the interface people actually use. I work across Laravel, Go, and Node on the backend and Vue, Next.js, Astro, and Flutter on the front, and I take ownership of a feature the whole way through.',
     location: { city: 'Kudus', countryCode: 'ID', region: 'Central Java' },

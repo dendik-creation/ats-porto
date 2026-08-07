@@ -10,7 +10,7 @@ export const cv: CV = {
     label: 'Fullstack Developer',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
-    cvUrl: 'https://drive.google.com/file/d/15Gh5D6mWTWxL15awsxHcL1VhHdY6EUY1/view?usp=sharing',
+    cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',
     summary:
       "Fullstack developer dengan empat tahun pengalaman merilis produk web dan mobile enterprise secara end-to-end — dari skema database dan REST API sampai antarmuka yang benar-benar dipakai pengguna. Saya bekerja di Laravel, Go, dan Node di sisi backend, serta Vue, Next.js, Astro, dan Flutter di sisi front end, dan selalu memegang kepemilikan penuh atas satu fitur dari awal sampai akhir.",
     location: { city: 'Kudus', countryCode: 'ID', region: 'Jawa Tengah' },
