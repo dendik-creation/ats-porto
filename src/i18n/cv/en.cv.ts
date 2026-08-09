@@ -90,11 +90,11 @@ export const cv: CV = {
     }
   ],
   skills: [
-    { name: 'Front End', keywords: ['TypeScript', 'Next.js', 'Astro', 'Vue', 'React', 'Flutter', 'shadcn/ui'] },
-    { name: 'Back End', keywords: ['PHP', 'Laravel', 'Django', 'Node.js', 'Go', 'Bun', 'REST API'] },
+    { name: 'Frontend', keywords: ['TypeScript', 'Next.js', 'Astro', 'Vue', 'React', 'Flutter', 'shadcn/ui'] },
+    { name: 'Backend', keywords: ['PHP', 'Laravel', 'Django', 'Node.js', 'Go', 'Bun', 'REST API'] },
     { name: 'Database', keywords: ['MySQL', 'PostgreSQL', 'SQLite', 'Oracle'] },
-    { name: 'Cloud Computing', keywords: ['AWS', 'Firebase', 'FCM', 'Pusher', 'Digital Ocean'] },
-    { name: 'Tools', keywords: ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker'] },
+    { name: 'Cloud', keywords: ['AWS', 'Firebase', 'FCM', 'Pusher', 'Digital Ocean'] },
+    { name: 'Tools', keywords: ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker', 'Obsidian'] },
   ],
   projects: [
     {

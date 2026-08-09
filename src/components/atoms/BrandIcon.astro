@@ -46,6 +46,7 @@ import Redis from './icons/Redis.astro'
 import BullMQ from './icons/BullMQ.astro'
 import Cloudflare from './icons/Cloudflare.astro'
 import SAP from './icons/SAP.astro'
+import Obsidian from './icons/Obsidian.astro';
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -100,6 +101,7 @@ const REGISTRY: Record<string, typeof Typescript> = {
   bullmq : BullMQ,
   cloudflare : Cloudflare,
   powerbuilder : SAP,
+  obsidian : Obsidian,
 };
 
 interface Props {
@@ -110,11 +112,17 @@ interface Props {
 const { name, size = 20, class: className } = Astro.props;
 const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
 const Icon = REGISTRY[key];
+
+// Icons drawn in a light/bright fill (white, neon) read the opposite of
+// dark/black icons: invisible on paper in light mode, invisible again
+// after the dark-mode invert. Negate the invert for these keys.
+const LIGHT_FILL_ICONS = new Set(['prisma', 'construct3', 'shadcnui', 'aws', 'restapi']);
+const isLightFill = LIGHT_FILL_ICONS.has(key);
 ---
 
 {
   Icon && (
-    <span class:list={['brand-icon', className]}>
+    <span class:list={['brand-icon', isLightFill && 'brand-icon--light', className]}>
       <Icon width={size} height={size} role="img" aria-label={name} />
     </span>
   )
@@ -127,5 +135,17 @@ const Icon = REGISTRY[key];
   vertical-align: middle;
   filter: grayscale(60%);
   color: currentColor;
+}
+
+:root[data-theme='dark'] .brand-icon {
+  filter: grayscale(60%) invert(1);
+}
+
+.brand-icon--light {
+  filter: grayscale(60%) invert(1);
+}
+
+:root[data-theme='dark'] .brand-icon--light {
+  filter: grayscale(60%);
 }
 </style>

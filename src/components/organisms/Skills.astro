@@ -1,6 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import BrandIcon from '../atoms/BrandIcon.astro';
+import TagList from '../atoms/TagList.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
 const { skills } = getCV(locale);
@@ -10,98 +10,61 @@ const ui = t(locale);
 <section class="skills shell" aria-labelledby="skills-title">
   <SectionHeader index="02" id="skills-title" title={ui.sections.skills.title} kicker={ui.sections.skills.kicker} axis="WGHT 440 · OPSZ 50" />
 
-  <div class="skills__grid">
+  <div class="skills__index">
     {skills.map((group, i) => (
-      <div class="skills__group" style={`--offset:${i % 2}`}>
-        <h3 class="skills__group-name">
-          <span class="skills__group-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          {group.name}
-        </h3>
-        <ul class="skills__list">
-          {group.keywords.map((k) => (
-            <li class="skills__item">
-              <BrandIcon name={k} size={18} />
-              {k}
-            </li>
-          ))}
-        </ul>
+      <div class="skills__row">
+        <div class="skills__row-label">
+          <span class="skills__row-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="skills__row-name">{group.name}</h3>
+        </div>
+        <div class="skills__row-tags">
+          <TagList items={group.keywords} label={`${group.name} — stack`} />
+        </div>
       </div>
     ))}
   </div>
 </section>
 
 <style>
-  .skills__grid {
+  .skills__index {
+    border-top: 1px solid var(--line);
+  }
+  .skills__row {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-l) var(--space-xl);
+    grid-template-columns: minmax(7rem, 12rem) 1fr;
+    align-items: start;
+    gap: var(--space-s) var(--space-m);
+    padding: var(--space-s) 0;
+    border-bottom: 1px solid var(--line);
   }
-  /* Broken grid: nudge alternating columns off a shared baseline */
-  .skills__group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-    padding-top: calc(var(--offset) * var(--space-m));
-  }
-  .skills__group-name {
+  .skills__row-label {
     display: flex;
     align-items: baseline;
-    gap: var(--space-s);
-    font-size: var(--step-2);
-    font-variation-settings: 'opsz' 50, 'wght' 440, var(--wonk-off);
-    padding-bottom: var(--space-xs);
-    border-bottom: 2px solid var(--ink);
+    gap: var(--space-2xs);
+    padding-top: 0.35em;
   }
-  .skills__group-num {
+  .skills__row-num {
     font-family: var(--font-mono);
     font-size: var(--step--1);
     font-weight: 700;
     color: var(--accent);
+    line-height: 1;
   }
-  .skills__list {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-m);
-  }
-  .skills__item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
+  .skills__row-name {
     font-family: var(--font-mono);
     font-size: var(--step-0);
-    color: var(--muted);
-    position: relative;
-    transition: color var(--dur-1) var(--ease);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    line-height: 1.2;
   }
-  .skills__item:hover {
-    color: var(--accent-ink);
-  }
-  .skills__item::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -0.25em;
-    width: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: width var(--dur-1) var(--ease);
-  }
-  .skills__item:hover::after {
-    width: 100%;
-  }
-
   @media (max-width: 720px) {
-    .skills__grid {
+    .skills__row {
       grid-template-columns: 1fr;
-      gap: var(--space-l);
+      gap: var(--space-xs);
     }
-    .skills__group {
+    .skills__row-label {
       padding-top: 0;
     }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .skills__item, .skills__item::after { transition: none; }
   }
 </style>

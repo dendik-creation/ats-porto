@@ -16,7 +16,7 @@ if (!prefersReduced) {
   const ITEM_SELECTORS = [
     '.about__lede',
     '.about__stats',
-    '.skills__group',
+    '.skills__row',
     '.proj',
     '.exp__item',
     '.edu__item',
