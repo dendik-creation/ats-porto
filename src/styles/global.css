@@ -75,8 +75,10 @@ h3 {
 
 /* Shared layout primitive: the page gutter */
 .shell {
+  /* An explicit inline size prevents flex items from sizing to their content.
+     Every section therefore occupies the same centered page container. */
+  inline-size: min(100%, var(--container));
   padding-inline: var(--edge);
-  max-width: var(--container);
   margin-inline: auto;
 }
 

@@ -23,6 +23,33 @@ export const cv: CV = {
   },
   work: [
     {
+    name: 'Tech Lead of BI Booster',
+    position: 'Chief Technology Officer',
+    location: 'Kudus, Indonesia',
+    startDate: '2026-03',
+    endDate: 'Present',
+    summary: 'Led the core system architecture, SaaS platform development, and DevOps infrastructure for an automated website builder that generates websites for Indonesian SMEs through a structured multi-stage LLM workflow.',
+    highlights: [
+    'Designed the core system architecture using Next.js, TypeScript, Prisma, PostgreSQL, Redis, and BullMQ to support structured and asynchronous website generation workflows.',
+    'Developed an LLM-powered workflow using the DeepSeek API to transform structured business profiles into production-ready static websites.',
+    'Designed and managed Docker- and Caddy-based deployment infrastructure, including domain configuration, reverse proxy, and Cloudflare integration.',
+    'Implemented background job processing with Redis and BullMQ to execute website generation workflows reliably and efficiently at scale.'
+    ],
+    keywords: [
+    'Next.js',
+    'TypeScript',
+    'Prisma',
+    'PostgreSQL',
+    'Redis',
+    'BullMQ',
+    'DeepSeek API',
+    'Caddy',
+    'Docker',
+    'Cloudflare'
+    ]
+    }
+,
+    {
       name: 'Freelance',
       position: 'Freelance Software Engineer',
       location: 'Remote',
@@ -78,6 +105,19 @@ export const cv: CV = {
     },
   ],
   volunteer: [
+    {
+    organization: 'Pemburu Lomba Skadaku',
+    position: 'Competition Participant',
+    location: 'Kudus, Indonesia',
+    startDate: '2023-02',
+    endDate: '2024-07',
+    summary: 'Participated in various technology competitions to develop technical skills and industry-relevant experience.',
+    highlights: [
+    'Participated in various technology competitions aligned with industry trends and practices.',
+    'Shared knowledge and experiences with peers while participating in technology competitions.'
+    ]
+    }
+,
     {
       organization: 'Muria Computer Club',
       position: 'Educator / Mentor',

@@ -25,6 +25,32 @@ export const cv: CV = {
   },
   work: [
     {
+    name: 'Tech Lead of BI Booster',
+    position: 'Chief Technology Officer',
+    location: 'Kudus, Indonesia',
+    startDate: '2026-03',
+    endDate: 'Present',
+    summary: 'Memimpin arsitektur sistem inti, pengembangan platform SaaS, dan infrastruktur DevOps untuk membangun website UMKM secara otomatis melalui alur kerja LLM bertahap.',
+    highlights: [
+    'Merancang arsitektur core system menggunakan Next.js, TypeScript, Prisma, PostgreSQL, Redis, dan BullMQ untuk mendukung proses pembuatan website yang terstruktur dan asynchronous.',
+    'Mengembangkan workflow berbasis LLM menggunakan DeepSeek API untuk mengubah profil bisnis terstruktur menjadi website statis yang siap dipublikasikan.',
+    'Merancang dan mengelola infrastruktur deployment berbasis Docker dan Caddy, termasuk konfigurasi domain, reverse proxy, serta integrasi Cloudflare.',
+    'Mengimplementasikan background job processing menggunakan Redis dan BullMQ untuk menjalankan proses pembuatan website secara reliable dan scalable.'
+    ],
+    keywords: [
+    'Next.js',
+    'TypeScript',
+    'Prisma',
+    'PostgreSQL',
+    'Redis',
+    'BullMQ',
+    'DeepSeek API',
+    'Caddy',
+    'Docker',
+    'Cloudflare'
+    ]
+    },
+    {
       name: 'Freelance',
       position: 'Software Engineer Freelance',
       location: 'Remote',
@@ -80,6 +106,18 @@ export const cv: CV = {
     },
   ],
   volunteer: [
+    {
+      organization: 'Pemburu Lomba Skadaku',
+      position: 'Pemburu',
+      location: 'Kudus, Indonesia',
+      startDate: '2023-02',
+      endDate: '2024-07',
+      summary: 'Mengikuti berbagai kegiatan lomba dalam bidang teknologi.',
+      highlights: [
+        'Mengikuti berbagai lomba teknologi yang relevan dengan industri.',
+        'Berbagi pengalaman dan pengetahuan dengan orang lain dalam mengikuti lomba teknologi.'
+      ]
+    },
     {
       organization: 'Muria Computer Club',
       position: 'Edukator / Mentor',
@@ -287,7 +325,7 @@ export const cv: CV = {
     { name: 'Architecting on AWS', issuer: 'AWS Training', date: '2023-06', summary: 'Pola arsitektur cloud untuk merancang dan melakukan troubleshooting solusi di ekosistem AWS.', credentialId: '', url: 'https://drive.google.com/file/d/1_AzOVgRNSHhYFN_Hrnxm8Be1X5wKlBHA/view?usp=sharing' },
   ],
   languages: [
-    { name: 'Bahasa Indonesia', level: 'Bahasa Ibu' },
+    { name: 'Bahasa Indonesia', level: 'Professional Maksimal' },
     {
       name: 'Bahasa Inggris',
       level: 'Profesional, formal',

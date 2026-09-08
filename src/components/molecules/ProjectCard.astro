@@ -17,9 +17,14 @@ const year = project.date.slice(0, 4);
 const href = getRelativeLocaleUrl(locale, `/projects/${project.slug}`);
 const links = projectLinks(project, locale);
 const primaryImage = project.images?.[0];
+const visibleKeywords = project.keywords.slice(0, 3);
+const remainingKeywordCount = project.keywords.length - visibleKeywords.length;
+const projectKeywords = remainingKeywordCount > 0
+  ? [...visibleKeywords, `+${remainingKeywordCount}`]
+  : visibleKeywords;
 ---
 
-<article class="proj">
+<article class:list={['proj', { 'proj--has-media': Boolean(primaryImage) }]}>
   {primaryImage && (
     <div class="proj__media" aria-hidden="true">
       <img src={primaryImage} alt="" loading="lazy" decoding="async" />
@@ -39,7 +44,7 @@ const primaryImage = project.images?.[0];
   </h3>
   <p class="proj__role">{project.role}</p>
   <p class="proj__desc">{project.description}</p>
-  <TagList items={project.keywords} label={ui.projects.stackAria(project.name)} />
+  <TagList items={projectKeywords} label={ui.projects.stackAria(project.name)} />
   {links.length > 0 && (
     <ul class="proj__links" aria-label={ui.projects.linksAria(project.name)}>
       {links.map((l) => (
@@ -89,8 +94,8 @@ const primaryImage = project.images?.[0];
     object-fit: cover;
     object-position: center;
   }
-  .proj > :not(.proj__media),
-  .proj > :global(.tags) {
+  .proj--has-media > :not(.proj__media),
+  .proj--has-media > :global(.tags) {
     max-inline-size: calc(56% - var(--space-xs));
   }
   .proj__top {
@@ -186,8 +191,8 @@ const primaryImage = project.images?.[0];
       aspect-ratio: 16 / 9;
       margin-top: var(--space-s);
     }
-    .proj > :not(.proj__media),
-    .proj > :global(.tags) {
+    .proj--has-media > :not(.proj__media),
+    .proj--has-media > :global(.tags) {
       max-inline-size: none;
     }
   }
