@@ -16,9 +16,15 @@ const num = String(index).padStart(2, '0');
 const year = project.date.slice(0, 4);
 const href = getRelativeLocaleUrl(locale, `/projects/${project.slug}`);
 const links = projectLinks(project, locale);
+const primaryImage = project.images?.[0];
 ---
 
 <article class="proj">
+  {primaryImage && (
+    <div class="proj__media" aria-hidden="true">
+      <img src={primaryImage} alt="" loading="lazy" decoding="async" />
+    </div>
+  )}
   <div class="proj__top">
     <span class="proj__num" aria-hidden="true">{num}</span>
     <span class="proj__year label">{year}</span>
@@ -52,11 +58,40 @@ const links = projectLinks(project, locale);
 
 <style>
   .proj {
+    position: relative;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
     padding: var(--space-m) 0;
     border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .proj__media {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 44%;
+    pointer-events: none;
+  }
+  .proj__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--paper) 0%, transparent 35%);
+  }
+  .proj__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .proj > :not(.proj__media),
+  .proj > :global(.tags) {
+    max-inline-size: calc(56% - var(--space-xs));
   }
   .proj__top {
     display: flex;
@@ -135,6 +170,26 @@ const links = projectLinks(project, locale);
   .proj__ext:focus-visible {
     color: var(--accent-ink);
     border-color: var(--accent);
+  }
+  @media (max-width: 720px) {
+    .proj {
+      overflow: visible;
+    }
+    .proj__media {
+      position: relative;
+      z-index: 0;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      order: 1;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      margin-top: var(--space-s);
+    }
+    .proj > :not(.proj__media),
+    .proj > :global(.tags) {
+      max-inline-size: none;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .proj__ext { transition: none; }
