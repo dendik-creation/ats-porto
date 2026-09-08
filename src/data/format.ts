@@ -14,7 +14,7 @@ export function monthYear(value: string, locale: Locale): string {
 }
 
 export function rangeLabel(start: string, end: string, locale: Locale): string {
-  return `${monthYear(start, locale)} — ${monthYear(end, locale)}`;
+  return `${monthYear(start, locale)} - ${monthYear(end, locale)}`;
 }
 
 // Province-level home base — city is intentionally never surfaced in the UI.

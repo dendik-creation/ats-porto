@@ -7,7 +7,7 @@ const ui = t(locale);
 
 function validity(date: string, endDate?: string): string {
   const start = date.slice(0, 4);
-  return endDate ? `${start} — ${endDate.slice(0, 4)}` : start;
+  return endDate ? `${start} - ${endDate.slice(0, 4)}` : start;
 }
 ---
 

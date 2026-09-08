@@ -17,8 +17,8 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { project, index, total, prev, next } = Astro.props;
-const title = `${project.name} — ${getCV('en').basics.name}`;
-const description = project.description;
+const title = `${project.name} | ${getCV('en').basics.name}`;
+const description = project.seoDescription;
 ---
 
 <Layout title={title} description={description}>

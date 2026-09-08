@@ -33,6 +33,7 @@ export interface Project {
   slug: string;       // stable, locale-independent URL id — never derived from name
   name: string;
   description: string;
+  seoDescription: string;
   date: string;
   role: string;       // ownership signal — recruiters look for this
   keywords: string[];
@@ -81,6 +82,7 @@ export interface CV {
     url: string;
     cvUrl: string; // link to the downloadable/viewable CV file
     summary: string;
+    seoDescription: string;
     location: { city: string; countryCode: string; region: string };
     profiles: Profile[];
   };

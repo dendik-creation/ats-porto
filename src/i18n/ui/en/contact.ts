@@ -7,7 +7,7 @@ const contact: ContactStrings = {
   freelance: 'Freelance',
   availability: 'Availability',
   openTo: 'Open to',
-  openToValue: (region) => `Fullstack roles — remote or ${region}`,
+  openToValue: (region) => `Fullstack roles, remote or ${region}`,
   basedIn: 'Based in',
   basedInValue: (place) => `${place} · GMT+7`,
   replyTime: 'Reply time',

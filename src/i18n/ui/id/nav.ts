@@ -1,7 +1,7 @@
 import type { NavStrings } from '../../ui.types';
 
 const nav: NavStrings = {
-  homeAria: (name) => `${name} — beranda`,
+  homeAria: (name) => `${name} beranda`,
   items: {
     about: 'Tentang',
     stack: 'Teknologi',
