@@ -7,7 +7,7 @@ import type { CV } from '../../data/cv';
 export const cv: CV = {
   basics: {
     name: "Dendi' Setiawan",
-    label: 'Software Engineer',
+    label: 'Fullstack Dev',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
     cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',

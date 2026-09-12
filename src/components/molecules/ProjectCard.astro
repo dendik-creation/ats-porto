@@ -82,6 +82,9 @@ const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase()
                 </span>
               )}
               {l.label === 'Code' ? 'Repo' : l.label}
+              <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
+                <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </a>
           </li>
         );
@@ -116,6 +119,14 @@ const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase()
     inset: 0;
     background: linear-gradient(to right, var(--paper) 0%, transparent 35%);
   }
+
+  /*disable gradient proj__media for mobile*/
+  @media (max-width: 768px) {
+    .proj__media::after {
+      background: none;
+    }
+  }
+
   .proj__media img {
     display: block;
     width: 100%;

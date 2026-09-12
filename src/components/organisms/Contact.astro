@@ -1,8 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
-import ArrowLink from '../atoms/ArrowLink.astro';
 import SocialLink from '../atoms/SocialLink.astro';
-import BrandIcon from '../atoms/BrandIcon.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 import { homeRegion } from '../../data/format';
 const locale = resolveLocale(Astro.currentLocale);
@@ -18,16 +16,10 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
 
 <footer class="contact shell" id="contact" aria-labelledby="contact-title">
   <SectionHeader index="08" id="contact-title" title={ui.sections.contact.title} kicker={ui.sections.contact.kicker} axis="WGHT 500 · OPSZ 90" />
-
-  <a class="contact__email" href={`mailto:${basics.email}`}>
-    <BrandIcon name="gmail" size={32} class="contact__email-icon" />
-    <span class="contact__email-text">{basics.email}</span>
-  </a>
-
   <div class="contact__cols">
     <div class="contact__col">
       <p class="label">{ui.contact.direct}</p>
-      <ArrowLink href={`mailto:${basics.email}`}>{ui.contact.email}</ArrowLink>
+      <SocialLink href={`mailto:${basics.email}`} network={"Gmail"} handle={basics.email} />
     </div>
 
     <div class="contact__col">
@@ -77,44 +69,6 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
     padding-top: var(--space-xl);
     padding-bottom: var(--space-l);
   }
-  .contact__email {
-    display: flex;
-    align-items: center;
-    gap: var(--space-s);
-    width: fit-content;
-    max-width: 100%;
-    margin: var(--space-m) 0 var(--space-xl);
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 0.5rem + 5vw, 4.5rem);
-    font-variation-settings: 'opsz' 90, 'wght' 460, var(--wonk-off);
-    color: var(--ink);
-    word-break: break-word;
-    line-height: 1;
-    transition: font-variation-settings var(--dur-2) var(--ease), color var(--dur-1) var(--ease);
-  }
-  .contact__email-icon {
-    flex: none;
-    color: var(--muted);
-    transition: color var(--dur-1) var(--ease);
-  }
-  .contact__email:hover .contact__email-icon {
-    color: var(--accent-ink);
-  }
-  .contact__email-text {
-    background-image: linear-gradient(var(--accent), var(--accent));
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 0% 3px;
-    transition: background-size var(--dur-2) var(--ease);
-    padding-bottom: 0.1em;
-  }
-  .contact__email:hover {
-    font-variation-settings: 'opsz' 120, 'wght' 620, 'SOFT' 50, 'WONK' 1;
-    color: var(--accent-ink);
-  }
-  .contact__email:hover .contact__email-text {
-    background-size: 100% 3px;
-  }
 
   .contact__cols {
     position: relative;
@@ -122,8 +76,7 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-l) var(--space-m);
-    padding-top: var(--space-l);
-    border-top: 1px solid var(--line);
+    padding-bottom: var(--space-xl);
   }
   .contact__col {
     display: flex;
@@ -156,27 +109,32 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
 
   .contact__trail {
     position: absolute;
-    inset: 0;
-    z-index: -1;
     background-image: url('/static/sections/footer/cable_trail_light.png');
-    opacity: 0.07;
-    max-height: 300px;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    pointer-events: none;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: grayscale(100%);
+    opacity: 0.1;
   }
   :root[data-theme='dark'] .contact__trail {
     background-image: url('/static/sections/footer/cable_trail_dark.png');
   }
 
+  /*hidden contact__trail in mobile*/
+  @media (max-width: 520px) {
+    .contact__trail {
+      display: none;
+    }
+  }
+
   .contact__base {
+    padding-top: var(--space-s);
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-s) var(--space-m);
     justify-content: space-between;
-    margin-top: var(--space-xl);
-    padding-top: var(--space-s);
     border-top: 1px solid var(--line);
     font-family: var(--font-mono);
     font-size: var(--step--1);
@@ -191,6 +149,7 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
   @media (max-width: 520px) {
     .contact__cols {
       grid-template-columns: 1fr;
+      padding-bottom: var(--space-m);
     }
   }
   @media (prefers-reduced-motion: reduce) {

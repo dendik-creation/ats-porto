@@ -40,6 +40,7 @@
   --space-m: 2.25rem;
   --space-l: clamp(3rem, 2rem + 5vw, 6rem);
   --space-xl: clamp(5rem, 3rem + 9vw, 11rem);
+  --space-2xl: clamp(6rem, 6rem + 10vw, 12rem);
 
   --measure: 62ch;
   --measure-tight: 46ch;                  /* narrower reading column for cards */
