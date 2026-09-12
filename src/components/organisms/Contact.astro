@@ -61,7 +61,10 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
         </li>
       </ul>
     </div>
+
+    <div class="contact__trail" aria-hidden="true"></div>
   </div>
+
 
   <div class="contact__base">
     <span>© {year} {basics.name}</span>
@@ -114,6 +117,8 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
   }
 
   .contact__cols {
+    position: relative;
+    isolation: isolate;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-l) var(--space-m);
@@ -147,6 +152,22 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
   .contact__avail-val {
     font-size: var(--step-0);
     color: var(--ink);
+  }
+
+  .contact__trail {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url('/static/sections/footer/cable_trail_light.png');
+    opacity: 0.07;
+    max-height: 300px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    pointer-events: none;
+  }
+  :root[data-theme='dark'] .contact__trail {
+    background-image: url('/static/sections/footer/cable_trail_dark.png');
   }
 
   .contact__base {

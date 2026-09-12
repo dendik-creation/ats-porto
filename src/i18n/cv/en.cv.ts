@@ -5,12 +5,12 @@ import type { CV } from '../../data/cv';
 export const cv: CV = {
   basics: {
     name: "Dendi' Setiawan",
-    label: 'Fullstack Developer',
+    label: 'Software Engineer',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
     cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',
     summary:
-      'Fullstack developer with four years of experience building web and mobile products. I work with Laravel, Go, Node.js, Vue, Next.js, Astro, and Flutter, from database design and APIs to the user interface.',
+      "I build fullstack products end-to-end, from database design to user interface. Four years of experience across web and mobile, using Laravel, Go, Node.js, Vue, Next.js, Astro, and Flutter to deliver software that's secure and fast.",
     seoDescription:
       "Dendi' Setiawan is a fullstack developer in Indonesia building web and mobile products with Laravel, Go, Node.js, Vue, Next.js, Astro, and Flutter.",
     location: { city: 'Kudus', countryCode: 'ID', region: 'Central Java' },

@@ -9,6 +9,9 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import { monthYear, projectLinks } from '../../data/format';
 import { t, resolveLocale } from '../../i18n';
 import type { Project } from '../../data/cv';
+import Github from '../atoms/icons/Github.astro';
+import GooglePlay from '../atoms/icons/GooglePlay.astro';
+import Globe from '../atoms/icons/Globe.astro';
 
 interface Props {
   project: Project;
@@ -34,6 +37,26 @@ const facts = [
   { term: ui.projects.facts.stack, value: ui.projects.techCount(project.keywords.length) },
 ];
 const links = projectLinks(project, locale);
+
+// 'mono' icons carry a fixed brand color baked into their SVG paths, so they
+// need the grayscale+invert treatment to stay visible in dark mode. Globe
+// draws with stroke="currentColor" and already tracks the theme via --ink,
+// so filtering it on top of that inverts it right back to dark.
+const quickLinksIcon = (label: string) => {
+  const cleanQuickLink = label.trim().toLocaleLowerCase();
+  switch (cleanQuickLink) {
+    case 'live':
+      return Globe;
+    case 'code':
+      return Github;
+    case 'google play':
+      return GooglePlay;
+    default:
+      return null;
+  }
+}
+
+const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase() !== 'live';
 const images = project.images ?? [];
 const galleryItems = images.map((src: string, i: number) => ({
   src,
@@ -101,16 +124,25 @@ const galleryItems = images.map((src: string, i: number) => ({
     <section class="detail__links" aria-label="Project links">
       <p class="label">{ui.projects.seeItLive}</p>
       <ul>
-        {links.map((l) => (
-          <li>
-            <a href={l.href} target="_blank" rel="noopener noreferrer">
-              {l.label}
-              <svg viewBox="0 0 24 24" width="0.8em" height="0.8em" aria-hidden="true" focusable="false">
-                <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </a>
-          </li>
-        ))}
+        {links.map((l) => {
+          const Icon = quickLinksIcon(l.label);
+          const mono = quickLinksIconIsMono(l.label);
+          return (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener noreferrer">
+                {Icon && (
+                  <span class:list={['quick-icon', mono && 'quick-icon--mono']}>
+                    <Icon width={14} height={14} role="img" aria-hidden="true" />
+                  </span>
+                )}
+                {l.label}
+                <svg viewBox="0 0 24 24" width="0.8em" height="0.8em" aria-hidden="true" focusable="false">
+                  <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </section>
   )}
@@ -306,6 +338,19 @@ const galleryItems = images.map((src: string, i: number) => ({
   .detail__links a:focus-visible {
     color: var(--accent-ink);
     border-color: var(--accent);
+  }
+  .quick-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+  }
+  .quick-icon--mono {
+    filter: grayscale(60%);
+  }
+  :root[data-theme='dark'] .quick-icon--mono {
+    filter: grayscale(60%) invert(1);
   }
 
   .detail__nav {

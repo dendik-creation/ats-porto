@@ -7,12 +7,12 @@ import type { CV } from '../../data/cv';
 export const cv: CV = {
   basics: {
     name: "Dendi' Setiawan",
-    label: 'Fullstack Developer',
+    label: 'Software Engineer',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
     cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',
     summary:
-      'Fullstack developer dengan empat tahun pengalaman membangun produk web dan mobile. Saya bekerja dengan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter, dari perancangan database dan API hingga antarmuka pengguna.',
+      'Saya membangun produk fullstack secara end-to-end, dari desain database hingga antarmuka pengguna. Empat tahun pengalaman di pengembangan web dan mobile, menggunakan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter untuk menghadirkan software yang aman dan cepat.',
     seoDescription:
       "Dendi' Setiawan adalah fullstack developer dari Indonesia yang membangun produk web dan mobile dengan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter.",
     location: { city: 'Kudus', countryCode: 'ID', region: 'Jawa Tengah' },

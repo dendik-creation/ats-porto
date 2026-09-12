@@ -4,6 +4,9 @@ import TagList from '../atoms/TagList.astro';
 import type { Project } from '../../data/cv';
 import { projectLinks } from '../../data/format';
 import { t, resolveLocale } from '../../i18n';
+import Github from '../atoms/icons/Github.astro';
+import GooglePlay from '../atoms/icons/GooglePlay.astro';
+import Globe from '../atoms/icons/Globe.astro';
 
 interface Props {
   project: Project;
@@ -22,6 +25,26 @@ const remainingKeywordCount = project.keywords.length - visibleKeywords.length;
 const projectKeywords = remainingKeywordCount > 0
   ? [...visibleKeywords, `+${remainingKeywordCount}`]
   : visibleKeywords;
+
+// 'mono' icons carry a fixed brand color baked into their SVG paths, so they
+// need the grayscale+invert treatment to stay visible in dark mode. Globe
+// draws with stroke="currentColor" and already tracks the theme via --ink,
+// so filtering it on top of that inverts it right back to dark.
+const quickLinksIcon = (label: string) => {
+  const cleanQuickLink = label.trim().toLocaleLowerCase();
+  switch (cleanQuickLink) {
+    case 'live':
+      return Globe;
+    case 'code':
+      return Github;
+    case 'google play':
+      return GooglePlay;
+    default:
+      return null;
+  }
+}
+
+const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase() !== 'live';
 ---
 
 <article class:list={['proj', { 'proj--has-media': Boolean(primaryImage) }]}>
@@ -47,16 +70,22 @@ const projectKeywords = remainingKeywordCount > 0
   <TagList items={projectKeywords} label={ui.projects.stackAria(project.name)} />
   {links.length > 0 && (
     <ul class="proj__links" aria-label={ui.projects.linksAria(project.name)}>
-      {links.map((l) => (
-        <li>
-          <a class="proj__ext" href={l.href} target="_blank" rel="noopener noreferrer">
-            {l.label}
-            <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
-              <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </a>
-        </li>
-      ))}
+      {links.map((l) => {
+        const Icon = quickLinksIcon(l.label);
+        const mono = quickLinksIconIsMono(l.label);
+        return (
+          <li>
+            <a class="proj__ext" href={l.href} target="_blank" rel="noopener noreferrer">
+              {Icon && (
+                <span class:list={['quick-icon', mono && 'quick-icon--mono']}>
+                  <Icon width={14} height={14} role="img" aria-hidden="true" />
+                </span>
+              )}
+              {l.label === 'Code' ? 'Repo' : l.label}
+            </a>
+          </li>
+        );
+      })}
     </ul>
   )}
 </article>
@@ -112,7 +141,7 @@ const projectKeywords = remainingKeywordCount > 0
     letter-spacing: 0.1em;
   }
   .proj__title {
-    font-size: var(--step-2);
+    font-size: var(--step-1-5);
     width: fit-content;
   }
   .proj__link {
@@ -156,7 +185,7 @@ const projectKeywords = remainingKeywordCount > 0
     margin-top: var(--space-2xs);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-m);
+    gap: var(--space-2xs) var(--space-xs);
   }
   .proj__ext {
     display: inline-flex;
@@ -164,17 +193,32 @@ const projectKeywords = remainingKeywordCount > 0
     gap: 0.35em;
     font-family: var(--font-mono);
     font-size: var(--step--1);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 2px;
-    transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    padding: 0.2em 0.6em;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
   }
   .proj__ext:hover,
   .proj__ext:focus-visible {
-    color: var(--accent-ink);
     border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .quick-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+  }
+  .quick-icon--mono {
+    filter: grayscale(60%);
+  }
+  :root[data-theme='dark'] .quick-icon--mono {
+    filter: grayscale(60%) invert(1);
   }
   @media (max-width: 720px) {
     .proj {

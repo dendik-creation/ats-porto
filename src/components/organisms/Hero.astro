@@ -84,18 +84,36 @@ const last = 'Setiawan';
     </svg>
   </div>
 
-  <p class="hero__eyebrow label">
-    <span>{basics.label}</span>
-  </p>
+  <div class="hero__top">
+    <p class="hero__eyebrow label">{basics.label}</p>
+    <p class="hero__avail">
+      <span class="hero__pulse" aria-hidden="true"></span>
+      {ui.hero.availability}
+    </p>
+  </div>
 
-  <h1 class="hero__name" aria-label={basics.name}>
-    <span class="hero__word hero__word--first" aria-hidden="true">
-      {first.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
-    </span>
-    <span class="hero__word hero__word--last" aria-hidden="true">
-      {last.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
-    </span>
-  </h1>
+  <div class="hero__stage-frame">
+    <div class="hero__stage" role="presentation"></div>
+    <div class="hero__stage-mask" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__bottom">
+    <h1 class="hero__name" aria-label={basics.name}>
+      <span class="hero__word hero__word--first" aria-hidden="true">
+        {first.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+      </span>
+      <span class="hero__word hero__word--last" aria-hidden="true">
+        {last.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+      </span>
+    </h1>
+
+    <div class="hero__foot">
+      <p class="hero__summary">{basics.summary}</p>
+      <div class="hero__cv">
+        <ArrowLink href={basics.cvUrl} external>{ui.hero.viewCv}</ArrowLink>
+      </div>
+    </div>
+  </div>
 
   <p class="hero__spec" aria-hidden="true">
     <span>Fraunces Variable</span>
@@ -106,19 +124,6 @@ const last = 'Setiawan';
     <span class="hero__spec-sep">/</span>
     <span>SOFT · WONK</span>
   </p>
-
-  <div class="hero__bottom">
-    <div class="hero__foot">
-      <p class="hero__summary">{basics.summary}</p>
-      <p class="hero__avail">
-        <span class="hero__pulse" aria-hidden="true"></span>
-        {ui.hero.availability}
-      </p>
-    </div>
-    <div class="hero__cv">
-      <ArrowLink href={basics.cvUrl} external>{ui.hero.viewCv}</ArrowLink>
-    </div>
-  </div>
 </header>
 
 <style>
@@ -195,11 +200,58 @@ const last = 'Setiawan';
     0%, 100% { opacity: 0.2; r: 3.5; }
     50% { opacity: 0.9; r: 5; }
   }
-  .hero__eyebrow {
+  .hero__top {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.9em;
+    justify-content: space-between;
     align-items: center;
+    gap: var(--space-s);
+  }
+  .hero__eyebrow {
+    margin: 0;
+  }
+
+  /* Center stage: the desk illustration swaps per theme via background-image
+     so only the active variant is ever fetched, nothing extra downloaded.
+     The frame clips the curtain when it slides out of bounds; the image and
+     the curtain both fill it as stacked absolute layers. */
+  .hero__stage-frame {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1672 / 941;
+    width: min(100%, 53rem);
+    margin-inline: auto;
+  }
+  .hero__stage {
+    position: absolute;
+    inset: 0;
+    background-image: url('/static/sections/hero/work_setup_light.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+  :root[data-theme='dark'] .hero__stage {
+    background-image: url('/static/sections/hero/work_setup_dark.png');
+  }
+  /* Curtain: rests lifted clear of the frame by default (plain CSS, no JS —
+     the correct no-motion state), so reduced-motion / no-JS visitors just see
+     the illustration. The intro timeline (see scripts/animate.ts) snaps it
+     down to cover on load and lifts it away as its last, slowest beat; the
+     theme-toggle observer below replays the same pair — cover, then
+     lift — around every swap so the curtain always masks the image change. */
+  .hero__stage-mask {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    transform: translateY(-100%);
+    z-index: 1;
+  }
+
+  .hero__bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--space-l);
   }
 
   /* Concrete-poetry name: broken baseline, offset words, per-letter weight ramp */
@@ -209,13 +261,18 @@ const last = 'Setiawan';
     flex-direction: column;
     line-height: 0.82;
     letter-spacing: -0.03em;
+    /* Size words off this column's own width, not the viewport — the name
+       shares the row with .hero__foot, so it never gets the full shell. */
+    container-type: inline-size;
   }
   .hero__word {
     display: block;
     max-width: 100%;
     font-family: var(--font-display);
-    /* Sized so the longest word ("setiawan") fits within the gutter at 360px */
-    font-size: clamp(2.75rem, 16vw, 12rem);
+    /* cqi = share of the name column's width, so the longest word ("setiawan")
+       always fits on one line whether the column is the full shell (mobile,
+       stacked) or half of it (desktop, beside .hero__foot). */
+    font-size: clamp(2.75rem, 19cqi, 9rem);
     text-transform: lowercase;
   }
   .hero__word--last {
@@ -265,40 +322,31 @@ const last = 'Setiawan';
     color: var(--accent);
   }
 
-  .hero__bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: var(--space-m);
-    margin-top: var(--space-s);
-  }
   .hero__foot {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-s);
-    max-width: 54ch;
-    text-align: right;
+    gap: var(--space-xs);
+    max-width: 48ch;
+    padding-bottom: var(--space-2xs);
   }
   .hero__summary {
-    font-size: var(--step-1);
+    font-size: var(--step-0);
     color: var(--ink);
     font-variation-settings: 'wght' 380;
-    line-height: 1.4;
+    line-height: 1.5;
     text-wrap: pretty;
   }
   .hero__avail {
     display: inline-flex;
     align-items: center;
     gap: 0.6em;
-    justify-content: flex-end;
     font-family: var(--font-mono);
     font-size: var(--step--1);
     letter-spacing: 0.02em;
     color: var(--muted);
   }
   .hero__cv {
-    flex: none;
-    order: -1;
+    margin-top: var(--space-2xs);
   }
   .hero__pulse {
     width: 0.6em;
@@ -327,19 +375,15 @@ const last = 'Setiawan';
       align-self: flex-start;
       text-align: left;
     }
+    .hero__stage-frame {
+      width: 100%;
+    }
     .hero__bottom {
-      flex-direction: column;
-      align-items: flex-start;
+      grid-template-columns: 1fr;
       gap: var(--space-s);
     }
     .hero__foot {
-      text-align: left;
-    }
-    .hero__avail {
-      justify-content: flex-start;
-    }
-    .hero__cv {
-      order: 0;
+      max-width: none;
     }
   }
 
@@ -350,3 +394,44 @@ const last = 'Setiawan';
     .hero-bg__node { animation: none; }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  function prefersReduced(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  // Replays the curtain (cover, then lift) whenever the theme actually
+  // flips — not on every navigation, since Layout.astro re-applies the
+  // same data-theme value on every astro:after-swap even when it hasn't
+  // changed. One observer per page-load, disconnected before the next.
+  let observer: MutationObserver | null = null;
+
+  function setup(): void {
+    observer?.disconnect();
+    observer = null;
+
+    if (prefersReduced()) return;
+    const mask = document.querySelector<HTMLElement>('.hero__stage-mask');
+    if (!mask) return; // hero isn't on this page
+
+    let lastTheme = document.documentElement.getAttribute('data-theme');
+    let playing = false;
+
+    observer = new MutationObserver(() => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      if (theme === lastTheme || playing) return;
+      lastTheme = theme;
+      playing = true;
+      // Same yPercent baseline as the entrance timeline in scripts/animate.ts
+      // (additive over the curtain's resting transform): 100 covers, 0 reveals.
+      gsap.timeline({ onComplete: () => { playing = false; } })
+        .to(mask, { yPercent: 100, duration: 0.45, ease: 'power3.inOut' })
+        .to(mask, { yPercent: 0, duration: 0.7, ease: 'expo.out' });
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  document.addEventListener('astro:page-load', setup);
+</script>
