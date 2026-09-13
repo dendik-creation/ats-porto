@@ -25,6 +25,7 @@
   --font-mono: 'JetBrains Mono Variable', 'SFMono-Regular', ui-monospace, monospace;
 
   /* ---- Type scale (fluid, poster-grade contrast head↔body) ---- */
+  --step--0-5: clamp(0.68rem, 0.64rem + 0.1vw, 0.78rem);
   --step--1: clamp(0.78rem, 0.74rem + 0.2vw, 0.88rem);
   --step-0:  clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem);
   --step-1:  clamp(1.2rem, 1.05rem + 0.7vw, 1.6rem);

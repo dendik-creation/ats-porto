@@ -78,7 +78,6 @@ export interface AboutStrings {
 
 export interface ExperienceStrings {
   currentRoleAria: string;
-  recognition: string;
 }
 
 export interface VolunteerStrings {
@@ -88,6 +87,11 @@ export interface VolunteerStrings {
 export interface CertificationsStrings {
   credentialIdLabel: string;
   verifyCredential: string;
+  typeCertification: string;
+  typeAward: string;
+  openImageAria: (name: string) => string;
+  imageAlt: (name: string) => string;
+  lightboxName: string;
 }
 
 export interface ProjectsStrings {

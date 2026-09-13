@@ -6,7 +6,7 @@ const sections: SectionsStrings = {
   projects: { title: 'Karya pilihan', kicker: (count) => `${count} proyek` },
   experience: { title: 'Pengalaman', kicker: 'Tempat saya berkarya' },
   volunteer: { title: 'Relawan', kicker: 'Di luar pekerjaan' },
-  certifications: { title: 'Sertifikasi', kicker: 'Keahlian terverifikasi' },
+  certifications: { title: 'Sertifikasi & Penghargaan', kicker: 'Keahlian terverifikasi, karya yang diakui' },
   languages: { title: 'Bahasa', kicker: 'Cara saya berkomunikasi' },
   contact: { title: 'Mari membangun sesuatu', kicker: 'Hubungi saya' },
 };

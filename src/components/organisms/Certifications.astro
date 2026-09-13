@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
+import Lightbox from './Lightbox.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
 const { certificates } = getCV(locale);
@@ -9,20 +10,32 @@ function validity(date: string, endDate?: string): string {
   const start = date.slice(0, 4);
   return endDate ? `${start} - ${endDate.slice(0, 4)}` : start;
 }
+
+function latestDate(c: { date: string; endDate?: string }): number {
+  return new Date(c.endDate ?? c.date).getTime();
+}
+
+const sortedCertificates = [...certificates].sort((a, b) => latestDate(b) - latestDate(a));
+
+const galleryItems = sortedCertificates.map((c) => ({
+  src: c.image,
+  alt: ui.certifications.imageAlt(c.name),
+}));
 ---
 
 <section class="certs shell" aria-labelledby="certifications-title">
   <SectionHeader index="06" id="certifications-title" title={ui.sections.certifications.title} kicker={ui.sections.certifications.kicker} axis="WGHT 500 · OPSZ 40" />
 
   <ol class="certs__grid">
-    {certificates.map((c, i) => (
-      <li class="certs__card" style={`--offset:${i % 2}`}>
+    {sortedCertificates.map((c, i) => (
+      <li class="certs__card">
         <div class="certs__top">
           <span class="certs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <span class="certs__valid label">{validity(c.date, c.endDate)}</span>
+          <span class="certs__type" data-type={c.type}>{c.type === 'award' ? ui.certifications.typeAward : ui.certifications.typeCertification}</span>
         </div>
         <h3 class="certs__name">{c.name}</h3>
         <p class="certs__issuer">{c.issuer}</p>
+        <p class="certs__valid label">{validity(c.date, c.endDate)}</p>
         <p class="certs__summary">{c.summary}</p>
         {(c.credentialId || c.url) && (
           <div class="certs__cred">
@@ -37,9 +50,14 @@ function validity(date: string, endDate?: string): string {
             )}
           </div>
         )}
+        <button type="button" class="certs__image-trigger" data-lightbox-open aria-label={ui.certifications.openImageAria(c.name)}>
+          <img src={c.image} alt={ui.certifications.imageAlt(c.name)} loading="lazy" decoding="async" />
+        </button>
       </li>
     ))}
   </ol>
+
+  <Lightbox items={galleryItems} name={ui.certifications.lightboxName} />
 </section>
 
 <style>
@@ -48,18 +66,15 @@ function validity(date: string, endDate?: string): string {
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-l) var(--space-xl);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-l) var(--space-m);
   }
-  /* Broken grid: nudge alternating cards off a shared baseline, matching Stack.
-     Separator weight matches the site-wide 1px --line rule used by every section. */
   .certs__card {
     display: flex;
     flex-direction: column;
     gap: var(--space-2xs);
     border-top: 1px solid var(--line);
     padding-top: var(--space-s);
-    margin-top: calc(var(--offset) * var(--space-m));
   }
   .certs__top {
     display: flex;
@@ -73,6 +88,19 @@ function validity(date: string, endDate?: string): string {
     font-weight: 700;
     color: var(--accent);
     letter-spacing: 0.1em;
+  }
+  .certs__type {
+    font-family: var(--font-mono);
+    font-size: var(--step--0-5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    border: 1px solid var(--line);
+    padding: 0.2em 0.6em;
+  }
+  .certs__type[data-type='award'] {
+    color: var(--accent-ink);
+    border-color: var(--accent);
   }
   .certs__valid {
     color: var(--faint);
@@ -124,16 +152,40 @@ function validity(date: string, endDate?: string): string {
     color: var(--accent-ink);
     border-color: var(--accent);
   }
-  @media (max-width: 720px) {
+  .certs__image-trigger {
+    display: block;
+    width: 100%;
+    margin-top: auto;
+    padding-top: var(--space-s);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .certs__image-trigger img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    transition: border-color var(--dur-1) var(--ease);
+  }
+  .certs__image-trigger:hover img,
+  .certs__image-trigger:focus-visible img {
+    border-color: var(--accent);
+  }
+  .certs__image-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (max-width: 960px) {
+    .certs__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
     .certs__grid {
       grid-template-columns: 1fr;
       gap: var(--space-l);
     }
-    .certs__card {
-      margin-top: 0;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .certs__verify { transition: none; }
   }
 </style>

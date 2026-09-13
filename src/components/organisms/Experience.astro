@@ -4,7 +4,7 @@ import TagList from '../atoms/TagList.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 import { rangeLabel } from '../../data/format';
 const locale = resolveLocale(Astro.currentLocale);
-const { work, awards } = getCV(locale);
+const { work } = getCV(locale);
 const ui = t(locale);
 ---
 
@@ -39,20 +39,6 @@ const ui = t(locale);
         </article>
       );
     })}
-  </div>
-
-  <div class="experience__awards">
-    <p class="label">{ui.experience.recognition}</p>
-    <ul class="awards">
-      {awards.map((a) => (
-        <li class="award">
-          <span class="award__year">{a.date.slice(0, 4)}</span>
-          <span class="award__title">{a.title}</span>
-          <span class="award__by">{a.awarder}</span>
-          {a.summary && <p class="award__summary">{a.summary}</p>}
-        </li>
-      ))}
-    </ul>
   </div>
 </section>
 
@@ -132,49 +118,6 @@ const ui = t(locale);
     margin-top: var(--space-s);
   }
 
-  .experience__awards {
-    margin-top: var(--space-l);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-  }
-  .awards {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .award {
-    display: grid;
-    grid-template-columns: 5rem 1fr auto;
-    column-gap: var(--space-s);
-    row-gap: var(--space-2xs);
-    align-items: baseline;
-    padding: var(--space-s) 0;
-    border-top: 1px solid var(--line);
-  }
-  .award__year {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .award__title {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    font-variation-settings: 'opsz' 30, 'wght' 480, var(--wonk-off);
-  }
-  .award__by {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    color: var(--faint);
-  }
-  .award__summary {
-    grid-column: 2 / -1;
-    color: var(--muted);
-    max-width: var(--measure);
-  }
-
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
@@ -192,13 +135,5 @@ const ui = t(locale);
       flex-direction: row;
       justify-content: space-between;
     }
-  }
-  @media (max-width: 560px) {
-    .award {
-      grid-template-columns: 1fr auto;
-      row-gap: var(--space-2xs);
-    }
-    .award__year { grid-column: 1 / -1; }
-    .award__summary { grid-column: 1 / -1; }
   }
 </style>

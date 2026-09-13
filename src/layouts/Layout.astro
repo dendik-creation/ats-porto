@@ -55,12 +55,15 @@ const personLd = {
   sameAs: basics.profiles.map((p) => p.url),
   knowsAbout: cv.skills.flatMap((g) => g.keywords),
   knowsLanguage: cv.languages.map((l) => l.name),
-  hasCredential: cv.certificates.map((c) => ({
-    '@type': 'EducationalOccupationalCredential',
-    name: c.name,
-    credentialCategory: 'certificate',
-    recognizedBy: { '@type': 'Organization', name: c.issuer },
-  })),
+  hasCredential: cv.certificates
+    .filter((c) => c.type === 'certification')
+    .map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      name: c.name,
+      credentialCategory: 'certificate',
+      recognizedBy: { '@type': 'Organization', name: c.issuer },
+    })),
+  award: cv.certificates.filter((c) => c.type === 'award').map((c) => `${c.name} — ${c.issuer}`),
 };
 
 const jsonLd = {

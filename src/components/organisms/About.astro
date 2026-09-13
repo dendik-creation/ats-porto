@@ -6,12 +6,14 @@ import { homeRegion } from '../../data/format';
 const locale = resolveLocale(Astro.currentLocale);
 const cv = getCV(locale);
 const ui = t(locale);
-const { basics, awards, certificates } = cv;
+const { basics, certificates } = cv;
+const awardsCount = certificates.filter((c) => c.type === 'award').length;
+const certificationsCount = certificates.filter((c) => c.type === 'certification').length;
 const stats = [
   { value: '4', unit: ui.about.stats.years, label: ui.about.stats.buildingSoftware },
   { value: String(cv.projects.length), unit: '+', label: ui.about.stats.shippedProjects },
-  { value: String(awards.length), unit: '', label: ui.about.stats.competitionWins },
-  { value: String(certificates.length), unit: '', label: ui.about.stats.certifications },
+  { value: String(awardsCount), unit: '', label: ui.about.stats.competitionWins },
+  { value: String(certificationsCount), unit: '', label: ui.about.stats.certifications },
 ];
 const place = homeRegion(basics.location, locale);
 ---

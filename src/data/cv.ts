@@ -42,19 +42,14 @@ export interface Project {
   isPin: boolean;       // true = featured in the landing page's project section
 }
 
-export interface Award {
-  title: string;
-  date: string;
-  awarder: string;
-  summary: string;
-}
-
 export interface Certificate {
+  type: 'certification' | 'award';
   name: string;
   issuer: string;
   date: string;
   endDate?: string;
   summary: string;
+  image: string; // single certificate/award image, e.g. from /public or a placeholder
   credentialId?: string;
   url?: string;
 }
@@ -91,7 +86,6 @@ export interface CV {
   volunteer: Volunteer[];
   skills: SkillGroup[];
   projects: Project[];
-  awards: Award[];
   certificates: Certificate[];
   languages: Language[];
 }
