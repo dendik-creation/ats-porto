@@ -1,0 +1,247 @@
+---
+// Manual (no autoplay) image carousel for the /projects showcase rows.
+// Transition is an angled wipe — four slanted panels (a bright leading glint,
+// then accent, accent-ink, ink) sweep left-to-right to cover the current
+// shot, the image swaps underneath, then they retreat right-to-left in
+// reverse order to reveal the next one. Same accent/ink stagger motif as the
+// site's other transitions (PageTransition.astro, Nav's staggered menu),
+// just with two more tones for a fuller curtain and a gentler ease.
+import { t, resolveLocale } from '../../i18n';
+
+interface Props {
+  images: string[];
+  reverse?: boolean; // true = fade the right edge instead of the left (matches ProjectShowcase's mirrored layout)
+}
+const { images, reverse = false } = Astro.props;
+const ui = t(resolveLocale(Astro.currentLocale));
+---
+
+{images.length > 0 && (
+  <div class:list={['carousel', { 'carousel--reverse': reverse }]} data-carousel data-images={JSON.stringify(images)}>
+    <img class="carousel__img" data-carousel-image alt="" />
+    <div class="carousel__sweep" aria-hidden="true">
+      <div class="carousel__wipe carousel__wipe--glint" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
+      <div class="carousel__wipe carousel__wipe--1" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
+      <div class="carousel__wipe carousel__wipe--2" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
+      <div class="carousel__wipe carousel__wipe--3" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
+    </div>
+    {/* Painted above the image/wipe but below the arrow buttons (DOM order),
+       so the buttons stay clickable even where the fade is fully opaque. */}
+    <div class="carousel__fade" aria-hidden="true"></div>
+
+    {images.length > 1 && (
+      <>
+        <button type="button" class="carousel__arrow carousel__arrow--prev" data-carousel-prev aria-label={ui.projects.lightbox.prevAria}>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+            <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button type="button" class="carousel__arrow carousel__arrow--next" data-carousel-next aria-label={ui.projects.lightbox.nextAria}>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+            <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </>
+    )}
+  </div>
+)}
+
+<style>
+  .carousel {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .carousel__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .carousel__sweep {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* Oversized so the panel's translateX/skewX never needs to know the
+     container's real size. No initial `transform` here on purpose: GSAP
+     can't read a percentage-based translate back out of a computed pixel
+     matrix, so if CSS parks this at translateX(-100%) *and* the script later
+     does gsap.set(el, { xPercent: -100 }), GSAP stacks its own -100% on top
+     of the unrecognized CSS one instead of replacing it — animating back to
+     0 then only undoes GSAP's half, stalling at -50%. The script's
+     gsap.set(...) call is the only thing allowed to position this. */
+  .carousel__wipe {
+    position: absolute;
+    top: -15%;
+    bottom: -15%;
+    left: -20%;
+    width: 140%;
+  }
+  .carousel__wipe-fill {
+    width: 100%;
+    height: 100%;
+    transform: skewX(-12deg); /* the angled leading edge */
+  }
+  .carousel__wipe--1 .carousel__wipe-fill { background: var(--accent); }
+  .carousel__wipe--2 .carousel__wipe-fill { background: var(--accent-ink); }
+  .carousel__wipe--3 .carousel__wipe-fill { background: var(--ink); }
+  /* A thin bright streak that leads the solid panels in — a glint racing
+     just ahead of the curtain, same skew, same travel, just a slim band
+     painted inside its own oversized fill instead of a solid color. */
+  .carousel__wipe--glint .carousel__wipe-fill {
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      transparent 47%,
+      color-mix(in oklab, var(--accent) 55%, white) 50%,
+      transparent 53%,
+      transparent 100%
+    );
+  }
+
+  /* Fades the edge that bleeds toward the info text into the paper behind
+     it — ProjectCard's exact gradient, just living below the arrow buttons
+     in paint order (DOM order) so they stay clickable through it. */
+  .carousel__fade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to right, var(--paper) 0%, transparent 35%);
+  }
+  .carousel--reverse .carousel__fade {
+    background: linear-gradient(to left, var(--paper) 0%, transparent 35%);
+  }
+  @media (max-width: 768px) {
+    .carousel__fade {
+      background: none;
+    }
+  }
+
+  .carousel__arrow {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--paper) 82%, transparent);
+    backdrop-filter: blur(4px);
+    color: var(--ink);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .carousel:hover .carousel__arrow,
+  .carousel:focus-within .carousel__arrow {
+    opacity: 1;
+  }
+  .carousel__arrow--prev { left: var(--space-xs); }
+  .carousel__arrow--next { right: var(--space-xs); }
+  .carousel__arrow:hover,
+  .carousel__arrow:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel__arrow { transition: none; }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  function mountCarousel(root: HTMLElement, signal: AbortSignal) {
+    const images: string[] = JSON.parse(root.dataset.images ?? '[]');
+    const total = images.length;
+    if (total === 0) return;
+
+    const img = root.querySelector<HTMLImageElement>('[data-carousel-image]');
+    const wipes = Array.from(root.querySelectorAll<HTMLElement>('[data-carousel-wipe]'));
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-carousel-next]');
+    if (!img) return;
+
+    // GSAP can't infer a percentage-based transform from a computed pixel
+    // matrix — the -100% parked position is only known to CSS until this
+    // seeds GSAP's own cache with it. Skipping this makes the very first
+    // wipe silently animate xPercent 0 → 0 (no-op) instead of -100 → 0.
+    gsap.set(wipes, { xPercent: -100 });
+
+    let index = 0;
+    img.src = images[0];
+    if (total <= 1) return; // nothing to navigate to, no buttons rendered
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // power3 eases in/out smoothly rather than expo's near-instant mid-flight
+    // snap — reads as one continuous curtain instead of a sudden flick.
+    const EASE = 'power3.inOut';
+    const DUR = 0.5;
+    const STAGGER = 0.07;
+    let animating = false;
+
+    // DOM order is glint, accent, accent-ink, ink — that's the cover order
+    // (glint leads). Reveal runs the same list backwards (ink leads out).
+    const revealOrder = [...wipes].reverse();
+
+    const swapTo = (nextIndex: number) => {
+      if (animating) return;
+      animating = true;
+      index = ((nextIndex % total) + total) % total;
+
+      if (prefersReduced) {
+        img.src = images[index];
+        animating = false;
+        return;
+      }
+
+      // Explicit absolute positions on every step — relative '+='/'-=' tags
+      // measure from wherever the timeline's cursor happens to land, which
+      // is easy to miscalculate; absolute numbers can't drift out of sync.
+      const phaseDuration = (wipes.length - 1) * STAGGER + DUR; // last layer's own start + its duration
+      const swapAt = phaseDuration + 0.05; // brief hold on full cover
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(wipes, { xPercent: -100 });
+          animating = false;
+        },
+      });
+
+      wipes.forEach((wipe, i) => {
+        tl.to(wipe, { xPercent: 0, duration: DUR, ease: EASE }, i * STAGGER);
+      });
+      tl.call(() => {
+        img.src = images[index];
+        // A subtle Ken Burns settle on the fresh image, timed to finish
+        // exactly as the curtain finishes retreating — extra depth on top
+        // of the wipe itself instead of a flat, static swap.
+        gsap.fromTo(img, { scale: 1.06 }, { scale: 1, duration: phaseDuration, ease: 'power2.out' });
+      }, [], swapAt);
+      revealOrder.forEach((wipe, i) => {
+        tl.to(wipe, { xPercent: -100, duration: DUR, ease: EASE }, swapAt + i * STAGGER);
+      });
+    };
+
+    prevBtn?.addEventListener('click', () => swapTo(index - 1), { signal });
+    nextBtn?.addEventListener('click', () => swapTo(index + 1), { signal });
+  }
+
+  let cleanup: AbortController | null = null;
+  function initCarousels() {
+    cleanup?.abort();
+    cleanup = new AbortController();
+    const { signal } = cleanup;
+    document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => mountCarousel(root, signal));
+  }
+
+  document.addEventListener('astro:page-load', initCarousels);
+</script>

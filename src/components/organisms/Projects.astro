@@ -1,10 +1,15 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import SectionHeader from '../molecules/SectionHeader.astro';
 import ProjectCard from '../molecules/ProjectCard.astro';
+import ArrowLink from '../atoms/ArrowLink.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
 const ui = t(locale);
-const projects = [...getCV(locale).projects].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+const projects = getCV(locale).projects
+  .filter((p) => p.isPin)
+  .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+const allProjectsHref = getRelativeLocaleUrl(locale, '/projects');
 ---
 
 <section class="projects shell" aria-labelledby="projects-title">
@@ -19,6 +24,10 @@ const projects = [...getCV(locale).projects].sort((a, b) => (b.date || '').local
   <div class="projects__list">
     {projects.map((project, i) => <ProjectCard project={project} index={i + 1} />)}
   </div>
+
+  <div class="projects__more">
+    <ArrowLink href={allProjectsHref}>{ui.projects.viewAllCta}</ArrowLink>
+  </div>
 </section>
 
 <style>
@@ -31,6 +40,9 @@ const projects = [...getCV(locale).projects].sort((a, b) => (b.date || '').local
   .projects__list :global(.proj:last-child),
   .projects__list :global(.proj:nth-last-child(2)) {
     border-bottom: 1px solid var(--line);
+  }
+  .projects__more {
+    margin-top: var(--space-l);
   }
   @media (max-width: 720px) {
     .projects__list {

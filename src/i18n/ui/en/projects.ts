@@ -21,6 +21,13 @@ const projects: ProjectsStrings = {
   next: 'Next',
   startConversation: 'Start a conversation',
   lightbox: { close: 'Close', prevAria: 'Previous screenshot', nextAria: 'Next screenshot' },
+  viewAllCta: 'View all projects',
+  all: {
+    title: 'All projects',
+    kicker: (count) => `${count} projects, in full`,
+    seoDescription: "Every project Dendi' Setiawan has shipped — web, mobile, and interactive builds, with screenshots and stack details.",
+    backHome: 'Back to home',
+  },
 };
 
 export default projects;

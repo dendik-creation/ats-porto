@@ -1,0 +1,87 @@
+---
+// /projects — every project, in full. Shared by src/pages/projects/index.astro
+// (en) and src/pages/id/projects/index.astro (id); only each route's Layout
+// title/description differ.
+import { getRelativeLocaleUrl, getAbsoluteLocaleUrl } from 'astro:i18n';
+import SectionHeader from '../molecules/SectionHeader.astro';
+import ProjectShowcase from '../molecules/ProjectShowcase.astro';
+import { getCV, t, resolveLocale } from '../../i18n';
+
+const locale = resolveLocale(Astro.currentLocale);
+const ui = t(locale);
+const home = getRelativeLocaleUrl(locale, '/');
+const projects = [...getCV(locale).projects].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+// JSON-LD: an ItemList of CreativeWork entries, one per project — gives
+// search engines a structured index instead of just a wall of headings.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: ui.projects.all.title,
+  numberOfItems: projects.length,
+  itemListElement: projects.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'CreativeWork',
+      name: p.name,
+      description: p.seoDescription,
+      url: getAbsoluteLocaleUrl(locale, `/projects/${p.slug}`),
+      dateCreated: p.date,
+      keywords: p.keywords.join(', '),
+    },
+  })),
+};
+---
+
+<div class="projects-page shell">
+  <a class="projects-page__back" href={`${home}#projects-title`}>
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false">
+      <path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {ui.projects.all.backHome}
+  </a>
+
+  <SectionHeader
+    index="00"
+    id="all-projects-title"
+    title={ui.projects.all.title}
+    kicker={ui.projects.all.kicker(projects.length)}
+    axis="WGHT 500 · OPSZ 72"
+  />
+
+  <div class="projects-page__list">
+    {projects.map((project, i) => <ProjectShowcase project={project} reverse={i % 2 === 1} />)}
+  </div>
+</div>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+
+<style>
+  .projects-page {
+    padding-top: var(--nav-offset);
+    padding-bottom: var(--space-xl);
+  }
+  .projects-page__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-m);
+    transition: color var(--dur-1) var(--ease);
+  }
+  .projects-page__back:hover {
+    color: var(--accent-ink);
+  }
+  .projects-page__list :global(.showcase:last-child) {
+    border-bottom: 1px solid var(--line);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .projects-page__back { transition: none; }
+  }
+</style>

@@ -12,6 +12,7 @@ const nav: NavStrings = {
     languages: 'Languages',
     contact: 'Contact',
     visitors: 'Visitors',
+    allProjects: 'All projects',
   },
   ariaLabels: {
     about: 'Jump to about',
@@ -23,6 +24,7 @@ const nav: NavStrings = {
     languages: 'Jump to languages',
     contact: 'Jump to contact',
     visitors: 'View site visitor analytics (opens in a new tab)',
+    allProjects: 'See all projects',
   },
   menuLabel: 'Menu',
   closeLabel: 'Close',

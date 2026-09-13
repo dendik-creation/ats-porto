@@ -21,6 +21,13 @@ const projects: ProjectsStrings = {
   next: 'Berikutnya',
   startConversation: 'Mulai percakapan',
   lightbox: { close: 'Tutup', prevAria: 'Tangkapan layar sebelumnya', nextAria: 'Tangkapan layar berikutnya' },
+  viewAllCta: 'Lihat semua proyek',
+  all: {
+    title: 'Semua proyek',
+    kicker: (count) => `${count} proyek, lengkap`,
+    seoDescription: "Semua proyek yang telah dirilis Dendi' Setiawan — build web, mobile, dan interaktif, lengkap dengan tangkapan layar dan detail teknologi.",
+    backHome: 'Kembali ke beranda',
+  },
 };
 
 export default projects;

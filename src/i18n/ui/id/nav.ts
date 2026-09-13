@@ -12,6 +12,7 @@ const nav: NavStrings = {
     languages: 'Bahasa',
     contact: 'Kontak',
     visitors: 'Pengunjung',
+    allProjects: 'Semua proyek',
   },
   ariaLabels: {
     about: 'Lompat ke bagian tentang',
@@ -23,6 +24,7 @@ const nav: NavStrings = {
     languages: 'Lompat ke bahasa',
     contact: 'Lompat ke kontak',
     visitors: 'Lihat statistik pengunjung situs (buka di tab baru)',
+    allProjects: 'Lihat semua proyek',
   },
   menuLabel: 'Menu',
   closeLabel: 'Tutup',

@@ -13,6 +13,7 @@ export interface NavStrings {
     languages: string;
     contact: string;
     visitors: string;
+    allProjects: string;
   };
   ariaLabels: {
     about: string;
@@ -24,6 +25,7 @@ export interface NavStrings {
     languages: string;
     contact: string;
     visitors: string;
+    allProjects: string;
   };
   menuLabel: string;
   closeLabel: string;
@@ -109,6 +111,13 @@ export interface ProjectsStrings {
   next: string;
   startConversation: string;
   lightbox: { close: string; prevAria: string; nextAria: string };
+  viewAllCta: string; // landing page CTA linking to /projects
+  all: {
+    title: string;
+    kicker: (count: number) => string;
+    seoDescription: string;
+    backHome: string;
+  };
 }
 
 export interface ContactStrings {

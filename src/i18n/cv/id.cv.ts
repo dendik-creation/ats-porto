@@ -141,6 +141,7 @@ export const cv: CV = {
   projects: [
     {
       slug: 'get-the-matrix',
+      isPin: false,
       name: 'Get The Matrix',
       description:
         'Proyek pembelajaran interaktif oleh tiga orang yang mengubah materi matriks menjadi latihan singkat untuk web dan mobile.',
@@ -158,6 +159,7 @@ export const cv: CV = {
     },
     {
       slug: 'gamelaneka',
+      isPin: false,
       name: 'Gamelaneka',
       description:
         'Aplikasi pembelajaran interaktif yang mengenalkan gamelan Jawa melalui audio instrumen dan materi sejarah singkat.',
@@ -176,6 +178,7 @@ export const cv: CV = {
     },
     {
       slug: 'audit-mutu-internal-system',
+      isPin: false,
       name: 'Audit Mutu Internal System',
       description:
         'Sistem audit mutu internal untuk menjalankan audit per pengguna dan meninjau hasilnya, dibangun dengan Laravel, React, Oracle, dan REST API.',
@@ -193,6 +196,7 @@ export const cv: CV = {
     },
     {
       slug: 'family-care-stunting',
+      isPin: false,
       name: 'Family Care Stunting',
       description:
         'Aplikasi kesehatan masyarakat untuk mencatat dan menilai data terkait stunting, disertai modul pembelajaran digital bagi keluarga.',
@@ -211,6 +215,7 @@ export const cv: CV = {
     },
     {
       slug: 'tree-smart-coach',
+      isPin: true,
       name: 'Tree Smart Coach',
       description:
         'Sistem monitoring untuk Kemenag Kudus yang membantu pengawas madrasah mencatat tinjauan dan menindaklanjuti data sekolah.',
@@ -229,6 +234,7 @@ export const cv: CV = {
     },
     {
       slug: 'snumaku-pkwu',
+      isPin: true,
       name: 'SNUMAKU PKWU',
       description:
         'Aplikasi pembelajaran di Google Play untuk kelas kewirausahaan SMK, mencakup perencanaan, validasi, produksi, dan pemasaran.',
@@ -247,6 +253,7 @@ export const cv: CV = {
     },
     {
       slug: 'keras',
+      isPin: true,
       name: 'KeRaS.',
       description:
         'PWA open-source yang membantu mahasiswa mengirim permintaan KRS. Aplikasi ini tidak memakai database aplikasi dan mendukung scraping portal.',
@@ -274,6 +281,7 @@ export const cv: CV = {
     },
     {
       slug: 'bi-booster',
+      isPin: true,
       name: 'Bi Booster',
       description:
         'SaaS pembuat website untuk UMKM Indonesia. Platform ini membuat situs statis dari profil bisnis melalui alur kerja LLM bertahap.',

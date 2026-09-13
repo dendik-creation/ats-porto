@@ -141,6 +141,7 @@ export const cv: CV = {
   projects: [
     {
       slug: 'get-the-matrix',
+      isPin: false,
       name: 'Get The Matrix',
       description:
         'A three-person interactive learning project that turns matrix lessons into short, playable exercises for web and mobile.',
@@ -158,6 +159,7 @@ export const cv: CV = {
     },
     {
       slug: 'gamelaneka',
+      isPin: false,
       name: 'Gamelaneka',
       description:
         'An interactive learning app that introduces Javanese gamelan through instrument audio and concise historical material.',
@@ -176,6 +178,7 @@ export const cv: CV = {
     },
     {
       slug: 'audit-mutu-internal-system',
+      isPin: false,
       name: 'Audit Mutu Internal System',
       description:
         'An internal quality-audit system for running user-level audits and reviewing results, built with Laravel, React, Oracle, and REST APIs.',
@@ -193,6 +196,7 @@ export const cv: CV = {
     },
     {
       slug: 'family-care-stunting',
+      isPin: false,
       name: 'Family Care Stunting',
       description:
         'A public-health app that records and assesses stunting-related data, paired with digital learning modules for families.',
@@ -211,6 +215,7 @@ export const cv: CV = {
     },
     {
       slug: 'tree-smart-coach',
+      isPin: true,
       name: 'Tree Smart Coach',
       description:
         'A monitoring system for Kemenag Kudus that helps madrasah supervisors record reviews and follow up on school data.',
@@ -229,6 +234,7 @@ export const cv: CV = {
     },
     {
       slug: 'snumaku-pkwu',
+      isPin: true,
       name: 'SNUMAKU PKWU',
       description:
         'A Google Play learning app for vocational entrepreneurship classes, covering planning, validation, production, and marketing.',
@@ -247,6 +253,7 @@ export const cv: CV = {
     },
     {
       slug: 'keras',
+      isPin: true,
       name: 'KeRaS.',
       description:
         'An open-source PWA that helps students submit course-registration requests. It uses no application database and supports portal scraping.',
@@ -274,6 +281,7 @@ export const cv: CV = {
     },
     {
       slug: 'bi-booster',
+      isPin: true,
       name: 'Bi Booster',
       description:
         'A SaaS website builder for Indonesian small businesses. It creates static sites from business profiles using a multi-stage LLM workflow.',

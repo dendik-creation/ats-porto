@@ -39,6 +39,7 @@ export interface Project {
   keywords: string[];
   links?: ProjectLinks; // any empty/omitted URL is never rendered
   images?: string[];    // paths into /public, e.g. '/projects/bi-booster/01.jpg'
+  isPin: boolean;       // true = featured in the landing page's project section
 }
 
 export interface Award {

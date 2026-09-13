@@ -1,0 +1,267 @@
+---
+// A single project's row on /projects — the exact ProjectCard visual motif
+// (absolute media bleeding off the edge, gradient-faded into the paper
+// behind the text) at full row width instead of a 2-up card grid. Alternates
+// which edge the media sits on project-to-project (see reverse prop); mobile
+// always collapses to ProjectCard's own stacked order (media below info).
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import TagList from '../atoms/TagList.astro';
+import ProjectCarousel from './ProjectCarousel.astro';
+import type { Project } from '../../data/cv';
+import { projectLinks } from '../../data/format';
+import { t, resolveLocale } from '../../i18n';
+import Github from '../atoms/icons/Github.astro';
+import GooglePlay from '../atoms/icons/GooglePlay.astro';
+import Globe from '../atoms/icons/Globe.astro';
+
+interface Props {
+  project: Project;
+  reverse: boolean; // true = media bleeds off the left edge instead of the right (desktop only)
+}
+const { project, reverse } = Astro.props;
+const locale = resolveLocale(Astro.currentLocale);
+const ui = t(locale);
+const year = project.date.slice(0, 4);
+const href = getRelativeLocaleUrl(locale, `/projects/${project.slug}`);
+const links = projectLinks(project, locale);
+const images = project.images ?? [];
+
+const quickLinksIcon = (label: string) => {
+  const cleanQuickLink = label.trim().toLocaleLowerCase();
+  switch (cleanQuickLink) {
+    case 'live':
+      return Globe;
+    case 'code':
+      return Github;
+    case 'google play':
+      return GooglePlay;
+    default:
+      return null;
+  }
+};
+const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase() !== 'live';
+---
+
+<article class:list={['showcase', { 'showcase--has-media': images.length > 0, 'showcase--reverse': reverse }]}>
+  {images.length > 0 && (
+    <div class="showcase__media">
+      <ProjectCarousel images={images} reverse={reverse} />
+    </div>
+  )}
+  <div class="showcase__info">
+    <span class="showcase__year label">{year}</span>
+    <h3 class="showcase__title">
+      <a class="showcase__link" href={href}>
+        {project.name}
+        <svg class="showcase__arrow" viewBox="0 0 24 24" width="0.55em" height="0.55em" aria-hidden="true" focusable="false">
+          <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </h3>
+    <p class="showcase__role">{project.role}</p>
+    <p class="showcase__desc">{project.description}</p>
+    <TagList items={project.keywords} label={ui.projects.stackAria(project.name)} />
+    {links.length > 0 && (
+      <ul class="showcase__links" aria-label={ui.projects.linksAria(project.name)}>
+        {links.map((l) => {
+          const Icon = quickLinksIcon(l.label);
+          const mono = quickLinksIconIsMono(l.label);
+          return (
+            <li>
+              <a class="showcase__ext" href={l.href} target="_blank" rel="noopener noreferrer">
+                {Icon && (
+                  <span class:list={['quick-icon', mono && 'quick-icon--mono']}>
+                    <Icon width={14} height={14} role="img" aria-hidden="true" />
+                  </span>
+                )}
+                {l.label === 'Code' ? 'Repo' : l.label}
+                <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
+                  <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </div>
+</article>
+
+<style>
+  .showcase {
+    position: relative;
+    isolation: isolate;
+    padding: var(--space-l) 0;
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .showcase--has-media {
+    min-height: clamp(17rem, 30vw, 24rem);
+  }
+  .showcase__media {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 44%;
+  }
+  .showcase--reverse .showcase__media {
+    right: auto;
+    left: 0;
+  }
+
+  .showcase__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .showcase--has-media .showcase__info {
+    max-inline-size: calc(56% - var(--space-xs));
+  }
+  .showcase--reverse.showcase--has-media .showcase__info {
+    margin-inline-start: 44%;
+    max-inline-size: calc(56% - var(--space-xs));
+  }
+  .showcase--reverse .showcase__info {
+    text-align: right;
+  }
+  .showcase--reverse .showcase__title {
+    margin-inline-start: auto;
+  }
+  .showcase--reverse .showcase__links,
+  .showcase--reverse :global(.tags) {
+    justify-content: flex-end;
+  }
+  .showcase--reverse .showcase__desc {
+    margin-inline-start: auto;
+  }
+
+  .showcase__title {
+    font-size: var(--step-2);
+    width: fit-content;
+  }
+  .showcase__link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25em;
+    font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    transition: font-variation-settings var(--dur-2) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .showcase__arrow {
+    color: var(--accent);
+    transform: translateY(-0.05em);
+    transition: transform var(--dur-1) var(--ease);
+  }
+  .showcase:hover .showcase__link,
+  .showcase__link:focus-visible {
+    font-variation-settings: 'opsz' 72, 'wght' 620, var(--wonk-on);
+    color: var(--accent-ink);
+  }
+  .showcase:hover .showcase__arrow,
+  .showcase__link:focus-visible .showcase__arrow {
+    transform: translate(0.15em, -0.2em);
+  }
+  .showcase__role {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--accent-ink);
+    letter-spacing: 0.01em;
+  }
+  .showcase__desc {
+    color: var(--muted);
+    max-width: var(--measure-tight);
+  }
+  .showcase__links {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xs);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-xs);
+  }
+  .showcase__ext {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    padding: 0.2em 0.6em;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .showcase__ext:hover,
+  .showcase__ext:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .quick-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+  }
+  .quick-icon--mono {
+    filter: grayscale(60%);
+  }
+  :root[data-theme='dark'] .quick-icon--mono {
+    filter: grayscale(60%) invert(1);
+  }
+
+  @media (max-width: 720px) {
+    .showcase {
+      overflow: visible;
+    }
+    .showcase__media,
+    .showcase--reverse .showcase__media {
+      position: relative;
+      z-index: 0;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      order: 1;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      margin-top: var(--space-s);
+    }
+    .showcase--has-media,
+    .showcase--reverse.showcase--has-media {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .showcase--has-media .showcase__info,
+    .showcase--reverse.showcase--has-media .showcase__info {
+      order: 0;
+      max-inline-size: none;
+      margin-inline-start: 0;
+      text-align: left;
+    }
+    .showcase--reverse .showcase__title,
+    .showcase--reverse .showcase__desc {
+      margin-inline-start: 0;
+    }
+    .showcase--reverse .showcase__links,
+    .showcase--reverse :global(.tags) {
+      justify-content: flex-start;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .showcase__ext { transition: none; }
+    .showcase__link {
+      transition: color var(--dur-1) var(--ease);
+    }
+    .showcase:hover .showcase__link {
+      font-variation-settings: 'opsz' 40, 'wght' 480, var(--wonk-off);
+    }
+    .showcase__arrow { transition: none; }
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectsIndex from '../../components/templates/ProjectsIndex.astro';
+import { getCV, t } from '../../i18n';
+
+const cv = getCV('en');
+const ui = t('en');
+const title = `${ui.projects.all.title} | ${cv.basics.name}`;
+const description = ui.projects.all.seoDescription;
+---
+
+<Layout title={title} description={description}>
+  <ProjectsIndex />
+</Layout>
