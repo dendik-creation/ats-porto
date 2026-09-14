@@ -60,7 +60,7 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
 
   <div class="contact__base">
     <span>© {year} {basics.name}</span>
-    <span class="contact__loc">{place}</span>
+    <span class="contact__loc">Build with <a target="_blank" class="contact__loc__link" href="https://astro.build/">Astro 7</a></span>
   </div>
 </footer>
 
@@ -139,6 +139,24 @@ const freelance = basics.profiles.filter((p) => FREELANCE_NETWORKS.has(p.network
     font-family: var(--font-mono);
     font-size: var(--step--1);
     color: var(--faint);
+  }
+
+  .contact__loc {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+  }
+
+  .contact__loc__link {
+    color: var(--faint);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: color var(--dur-1) var(--ease);
+  }
+
+  .contact__loc__link:hover {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
   }
 
   @media (max-width: 920px) {
