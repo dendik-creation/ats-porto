@@ -15,10 +15,11 @@ interface Props {
     | 'rectangle-sweep'
     | 'polygon-reveal'
     | 'ripple-reveal'
-    | 'aurora-reveal';
+    | 'aurora-reveal'
+    | 'pixel-cascade';
 }
 
-const { toDarkLabel, toLightLabel, variant = 'rectangle-sweep' } = Astro.props;
+const { toDarkLabel, toLightLabel, variant = 'pixel-cascade' } = Astro.props;
 ---
 
 <button

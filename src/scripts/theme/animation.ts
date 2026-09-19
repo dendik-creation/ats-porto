@@ -20,6 +20,7 @@ import {
   GSAP_EASE,
   type PointOrigin,
 } from './motion';
+import { revealPixelCascade } from './pixel-cascade';
 
 export type RevealVariant =
   | 'circle-reveal'
@@ -27,13 +28,17 @@ export type RevealVariant =
   | 'rectangle-sweep'
   | 'polygon-reveal'
   | 'ripple-reveal'
-  | 'aurora-reveal';
+  | 'aurora-reveal'
+  | 'pixel-cascade';
 
 export interface OverlayNodes {
   root: HTMLElement;
   ringA: HTMLElement;
   ringB: HTMLElement;
   aurora: HTMLElement;
+  /** Small reused pool for pixel-cascade's boundary accent flashes. May be
+   *  empty (e.g. stale cached markup) — that variant degrades to no trail. */
+  pixels: HTMLElement[];
 }
 
 export function queryOverlay(): OverlayNodes | null {
@@ -43,7 +48,8 @@ export function queryOverlay(): OverlayNodes | null {
   const ringB = root.querySelector<HTMLElement>('[data-tt-ring="2"]');
   const aurora = root.querySelector<HTMLElement>('[data-tt-aurora]');
   if (!ringA || !ringB || !aurora) return null;
-  return { root, ringA, ringB, aurora };
+  const pixels = Array.from(root.querySelectorAll<HTMLElement>('[data-tt-pixel]'));
+  return { root, ringA, ringB, aurora, pixels };
 }
 
 // ---- Reveal variants (mutually exclusive — how the new theme appears) ----
@@ -185,6 +191,8 @@ export function runReveal(variant: RevealVariant, origin: PointOrigin, overlay: 
       return revealRipple(origin, overlay);
     case 'aurora-reveal':
       return revealAurora(origin, overlay);
+    case 'pixel-cascade':
+      return revealPixelCascade(origin, overlay);
   }
 }
 
@@ -221,6 +229,8 @@ export function animateIcon(icon: IconRefs, toDark: boolean, reduced: boolean): 
  *  completes — never recreated, just cleared for the next click. */
 export function cleanupTransition(overlay: OverlayNodes | null): void {
   if (!overlay) return;
-  gsap.killTweensOf([overlay.ringA, overlay.ringB, overlay.aurora]);
+  gsap.killTweensOf([overlay.ringA, overlay.ringB, overlay.aurora, ...overlay.pixels]);
   gsap.set([overlay.ringA, overlay.ringB, overlay.aurora], { opacity: 0, scale: 0 });
+  // pixels aren't scale-animated (fixed tile size), so only opacity resets.
+  gsap.set(overlay.pixels, { opacity: 0 });
 }

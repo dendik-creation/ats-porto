@@ -1,19 +1,21 @@
 ---
-// Page-load / page-change curtain — the same two-layer accent/ink stagger
-// used by the Nav's staggered menu (see Nav.astro), reused here as the
-// site's one transition motif instead of inventing a second unrelated one.
-// Persists across ClientRouter swaps so the covering/uncovering animation
-// is continuous rather than being torn down mid-transition.
+// Page-load / page-change curtain — the fullscreen tier of the Pixel Motion
+// System (see src/scripts/pixel-transition.ts). Persists across ClientRouter
+// swaps so the covering/uncovering animation is continuous rather than being
+// torn down mid-transition.
 //
 // Covers the viewport by default (see .pt-layer below) so it masks real
 // load time — fonts, images, the lot — rather than playing a flourish once
 // the page is already sitting there ready. page-transition.ts lifts it once
-// astro:page-load actually fires.
+// astro:page-load actually fires; on the very first load (no navigation
+// behind it) that lift is a plain fade, never the pixel cascade.
 ---
 
 <div class="pt-veil" data-pt aria-hidden="true" transition:persist transition:name="page-veil">
-  <div class="pt-layer pt-layer--1"></div>
-  <div class="pt-layer pt-layer--2"></div>
+  <div class="pt-layer"></div>
+  {Array.from({ length: 8 }).map((_, i) => (
+    <span class="pt-pixel opacity-0" data-pt-pixel={i} aria-hidden="true"></span>
+  ))}
 </div>
 
 <style>
@@ -29,13 +31,17 @@
   .pt-layer {
     position: absolute;
     inset: 0;
-    transform: translateX(0); /* covering — the pre-JS, pre-load default */
-  }
-  .pt-layer--1 {
-    background: var(--accent);
-  }
-  .pt-layer--2 {
     background: var(--ink);
+    clip-path: inset(0 0 0 0); /* covering — the pre-JS, pre-load default */
+  }
+  /* Boundary accent trail for the fullscreen cascade — same reused-node
+     technique as the theme toggle's .tt-pixel. */
+  .pt-pixel {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {

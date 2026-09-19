@@ -16,6 +16,9 @@
   <div class="tt-ring opacity-0 rounded-full" data-tt-ring="1"></div>
   <div class="tt-ring opacity-0 rounded-full" data-tt-ring="2"></div>
   <div class="tt-aurora opacity-0 rounded-full" data-tt-aurora></div>
+  {Array.from({ length: 6 }).map((_, i) => (
+    <div class="tt-pixel opacity-0" data-tt-pixel={i}></div>
+  ))}
 </div>
 
 <style>
@@ -43,5 +46,14 @@
       transparent 72%
     );
     filter: blur(4px);
+  }
+  /* pixel-cascade's boundary trail: hard-edged squares only, no radius/blur —
+     sized and positioned per-flash by pixel-cascade.ts, this just fixes the
+     shape/color and overrides .tt-overlay > *'s 1px baseline. */
+  .tt-overlay > .tt-pixel {
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 0;
   }
 </style>

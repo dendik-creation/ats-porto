@@ -21,11 +21,6 @@ const total = String(items.length).padStart(2, '0');
 
 {items.length > 0 && (
   <div class="lb" data-lightbox aria-hidden="true">
-    <div class="lb-prelayers" aria-hidden="true">
-      <div class="lb-prelayer lb-prelayer--1"></div>
-      <div class="lb-prelayer lb-prelayer--2"></div>
-    </div>
-
     <div class="lb-panel" role="dialog" aria-modal="true" aria-label={`${name} screenshot viewer`}>
       <header class="lb-head">
         <span class="lb-count" aria-hidden="true">
@@ -97,30 +92,11 @@ const total = String(items.length).padStart(2, '0');
     pointer-events: auto;
   }
 
-  .lb-prelayers {
-    position: absolute;
-    inset: 0;
-    z-index: 20;
-  }
-  .lb-prelayer {
-    position: absolute;
-    inset: 0;
-    transform: translateX(100%);
-    transition: transform var(--dur-2) var(--ease);
-  }
-  .lb-prelayer--1 { background: var(--lb-accent); }
-  .lb-prelayer--2 { background: var(--lb-ink); }
-
-  /* Opening: accent leads, ink follows, the panel arrives last on top. */
-  .lb[data-state='open'] .lb-prelayer--1 { transform: translateX(0); transition-delay: 0s; }
-  .lb[data-state='open'] .lb-prelayer--2 { transform: translateX(0); transition-delay: 0.07s; }
-  .lb[data-state='open'] .lb-panel { transform: translateX(0); transition-delay: 0.12s; }
-
-  /* Closing: same leftward sweep continues off-screen — panel leaves first, accent last. */
-  .lb[data-state='closing'] .lb-panel { transform: translateX(-100%); transition-delay: 0s; }
-  .lb[data-state='closing'] .lb-prelayer--2 { transform: translateX(-100%); transition-delay: 0.07s; }
-  .lb[data-state='closing'] .lb-prelayer--1 { transform: translateX(-100%); transition-delay: 0.14s; }
-
+  /* Open/close is a Pixel Cascade clip-path (see the component script),
+     originating from — and, on close, consuming back toward — the clicked
+     thumbnail. Resting clip-path is the pre-JS / closed baseline: fully
+     collapsed, functionally invisible even before .lb[data-state] visibility
+     kicks in. */
   .lb-panel {
     position: absolute;
     inset: 0;
@@ -128,8 +104,7 @@ const total = String(items.length).padStart(2, '0');
     display: flex;
     flex-direction: column;
     background: var(--lb-ink);
-    transform: translateX(100%);
-    transition: transform var(--dur-2) var(--ease);
+    clip-path: inset(0 0 0 100%);
   }
 
   .lb-head {
@@ -282,8 +257,6 @@ const total = String(items.length).padStart(2, '0');
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .lb-prelayer,
-    .lb-panel,
     .lb-track[data-animating] {
       transition-duration: 0.001s;
       transition-delay: 0s;
@@ -292,6 +265,8 @@ const total = String(items.length).padStart(2, '0');
 </style>
 
 <script>
+  import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion, PIXEL_EASE, type Point } from '../../scripts/pixel-transition';
+
   // Track position, as a % of the 3-slide track's own width — each slide is
   // exactly one third, so these three values are viewport-size independent.
   const TRACK_PREV = 0;
@@ -300,6 +275,12 @@ const total = String(items.length).padStart(2, '0');
 
   const MIN_SCALE = 1;
   const MAX_SCALE = 4;
+
+  const LB_DESKTOP_TILE = 24;
+  const LB_MOBILE_TILE = 16;
+  const LB_OPEN_MS = 750;
+  const LB_CLOSE_MS = 650;
+  const LB_BUCKETS = 28;
 
   type GestureMode = 'idle' | 'pan' | 'swipe' | 'pinch' | 'tap';
 
@@ -444,45 +425,66 @@ const total = String(items.length).padStart(2, '0');
       });
     };
 
-    // A close schedules a transitionend listener + a fallback timer to clear
-    // data-state once the exit sweep finishes. If the lightbox is reopened
-    // before either fires, both must be cancelled — otherwise the stale
-    // callback lands later and rips data-state off the freshly-opened panel.
-    const accent = root.querySelector<HTMLElement>('.lb-prelayer--1');
-    let closeTimeoutId = 0;
-    let pendingFinish: (() => void) | null = null;
-    const cancelPendingClose = () => {
-      window.clearTimeout(closeTimeoutId);
-      if (pendingFinish) {
-        accent?.removeEventListener('transitionend', pendingFinish);
-        pendingFinish = null;
-      }
+    // Pixel expand/collapse: open originates from the clicked thumbnail's
+    // own rect, close consumes back toward that same thumbnail (or a safe
+    // fallback origin if it's ever missing). One Animation on the panel's
+    // clip-path — cancelling a still-running one is what "reopen before the
+    // close finishes" needs instead of the old transitionend/timer pair.
+    let panelAnim: Animation | null = null;
+
+    const originFor = (i: number): Point => {
+      const trigger = triggers[i];
+      if (!trigger || !trigger.isConnected) return { x: window.innerWidth, y: 0 };
+      const rect = trigger.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
     };
 
     const setOpen = (v: boolean, i?: number) => {
-      cancelPendingClose();
+      const targetIndex = i ?? index;
       open = v;
+      panelAnim?.cancel();
+
       if (v) {
         root.setAttribute('data-state', 'open');
         root.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         lastFocused = document.activeElement as HTMLElement | null;
-        show(i ?? index);
+        show(targetIndex);
         closeBtn.focus();
       } else {
-        root.setAttribute('data-state', 'closing');
         root.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         lastFocused?.focus();
-
-        const finish = () => {
-          cancelPendingClose();
-          root.removeAttribute('data-state');
-        };
-        pendingFinish = finish;
-        accent?.addEventListener('transitionend', finish, { once: true });
-        closeTimeoutId = window.setTimeout(finish, 900);
       }
+
+      if (prefersReducedMotion()) {
+        panel.style.clipPath = v ? 'inset(0 0 0 0)' : 'inset(0 0 0 100%)';
+        if (!v) root.removeAttribute('data-state');
+        return;
+      }
+
+      const tileSize = resolveTileSize(LB_DESKTOP_TILE, LB_MOBILE_TILE);
+      const plan = buildPixelPlan({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        origin: originFor(targetIndex),
+        tileSize,
+      });
+      const keyframes = buildClipKeyframes(plan, { buckets: LB_BUCKETS, reverse: !v });
+
+      const anim = panel.animate(keyframes, {
+        duration: v ? LB_OPEN_MS : LB_CLOSE_MS,
+        easing: PIXEL_EASE,
+        fill: 'forwards',
+      });
+      panelAnim = anim;
+      anim.finished
+        .then(() => {
+          panel.style.clipPath = v ? 'inset(0 0 0 0)' : 'inset(0 0 0 100%)';
+          anim.cancel();
+          if (!v) root.removeAttribute('data-state');
+        })
+        .catch(() => undefined);
     };
 
     triggers.forEach((btn, i) => btn.addEventListener('click', () => setOpen(true, i)));

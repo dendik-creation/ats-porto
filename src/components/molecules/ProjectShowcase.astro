@@ -44,7 +44,7 @@ const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase()
 
 <article class:list={['showcase', { 'showcase--has-media': images.length > 0, 'showcase--reverse': reverse }]}>
   {images.length > 0 && (
-    <div class="showcase__media">
+    <div class="showcase__media" data-pixel-reveal>
       <ProjectCarousel images={images} reverse={reverse} />
     </div>
   )}

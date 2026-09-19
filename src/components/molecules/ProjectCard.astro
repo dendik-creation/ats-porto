@@ -49,7 +49,7 @@ const quickLinksIconIsMono = (label: string) => label.trim().toLocaleLowerCase()
 
 <article class:list={['proj', { 'proj--has-media': Boolean(primaryImage) }]}>
   {primaryImage && (
-    <div class="proj__media" aria-hidden="true">
+    <div class="proj__media" data-pixel-reveal aria-hidden="true">
       <img src={primaryImage} alt="" loading="lazy" decoding="async" />
     </div>
   )}

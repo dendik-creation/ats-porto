@@ -235,18 +235,28 @@ const last = 'Setiawan';
   :root[data-theme='dark'] .hero__stage {
     background-image: url('/static/sections/hero/work_setup_dark.png');
   }
-  /* Curtain: rests lifted clear of the frame by default (plain CSS, no JS —
-     the correct no-motion state), so reduced-motion / no-JS visitors just see
-     the illustration. The intro timeline (see scripts/animate.ts) snaps it
-     down to cover on load and lifts it away as its last, slowest beat; the
-     theme-toggle observer below replays the same pair — cover, then
-     lift — around every swap so the curtain always masks the image change. */
+  /* Pixel mask: rests fully collapsed (zero-area clip-path) by default —
+     plain CSS, no JS — so reduced-motion / no-JS visitors just see the
+     illustration with no motion at all. The entrance timeline (see
+     scripts/animate.ts, which fires a 'hero-stage-reveal' event at the same
+     tuned position the old curtain used to animate) and the theme-toggle
+     observer below both cover this element then chunky-pixel-consume it
+     away — same Pixel Motion System every other transition on the site
+     uses (see scripts/pixel-transition.ts) — so the mask always conceals
+     the image swap instead of letting it flash. Never translates/slides:
+     only its clip-path ever changes, so the illustration itself never moves. */
   .hero__stage-mask {
     position: absolute;
     inset: 0;
-    background: var(--paper);
-    transform: translateY(-100%);
+    scale: 1.2;
+    background-color: var(--paper);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    clip-path: inset(0 0 0 100%);
+    visibility: hidden;
     z-index: 1;
+    pointer-events: none;
   }
 
   .hero__bottom {
@@ -398,41 +408,154 @@ const last = 'Setiawan';
 </style>
 
 <script>
-  import gsap from 'gsap';
+  // Hero stage pixel mask — the entrance reveal (triggered by the
+  // 'hero-stage-reveal' event scripts/animate.ts's GSAP timeline dispatches
+  // at the right beat) and the theme-swap reveal (triggered by the theme
+  // toggle actually flipping data-theme) both cover `.hero__stage` with
+  // `.hero__stage-mask`, then chunky-pixel-consume it away via the shared
+  // Pixel Motion System (scripts/pixel-transition.ts) — same tile/threshold
+  // math the menu, page transitions, and project images use. The mask only
+  // ever animates its own clip-path; the illustration underneath never
+  // moves, and `.hero__stage`'s background-image keeps swapping instantly
+  // via the existing plain-CSS `:root[data-theme='dark']` rule — the mask
+  // just conceals that swap until the destination image is ready.
+  import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion, PIXEL_EASE } from '../../scripts/pixel-transition';
 
-  function prefersReduced(): boolean {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DESKTOP_TILE = 22;
+  const MOBILE_TILE = 16;
+  const BUCKETS = 36;
+  const ENTRANCE_MS = 750;
+  const THEME_SWAP_MS = 700;
+  const IMAGE_READY_TIMEOUT_MS = 400; // never let a slow fetch block the swap indefinitely
+
+  const HERO_IMAGE_BY_THEME: Record<'light' | 'dark', string> = {
+    light: '/static/sections/hero/work_setup_light.png',
+    dark: '/static/sections/hero/work_setup_dark.png',
+  };
+
+  // Persists across astro:page-load re-inits (module scope) — once an image
+  // has loaded this session there's no reason to re-check it.
+  const loadedImages = new Set<string>();
+
+  function waitForImage(url: string, timeoutMs: number): Promise<void> {
+    if (loadedImages.has(url)) return Promise.resolve();
+    return new Promise((resolve) => {
+      const img = new Image();
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        loadedImages.add(url);
+        resolve();
+      };
+      img.onload = finish;
+      img.onerror = finish; // don't hang the swap on a broken/slow asset
+      img.src = url;
+      window.setTimeout(finish, timeoutMs);
+    });
   }
 
-  // Replays the curtain (cover, then lift) whenever the theme actually
-  // flips — not on every navigation, since Layout.astro re-applies the
-  // same data-theme value on every astro:after-swap even when it hasn't
-  // changed. One observer per page-load, disconnected before the next.
-  let observer: MutationObserver | null = null;
+  function toTheme(v: string | null): 'light' | 'dark' {
+    return v === 'dark' ? 'dark' : 'light';
+  }
+
+  let cleanupFns: Array<() => void> = [];
 
   function setup(): void {
-    observer?.disconnect();
-    observer = null;
+    cleanupFns.forEach((fn) => fn());
+    cleanupFns = [];
 
-    if (prefersReduced()) return;
-    const mask = document.querySelector<HTMLElement>('.hero__stage-mask');
-    if (!mask) return; // hero isn't on this page
+    const frameEl = document.querySelector<HTMLElement>('.hero__stage-frame');
+    const maskEl = document.querySelector<HTMLElement>('.hero__stage-mask');
+    if (!frameEl || !maskEl) return; // hero isn't on this page
+    const frame = frameEl;
+    const mask = maskEl;
 
-    let lastTheme = document.documentElement.getAttribute('data-theme');
-    let playing = false;
+    // Preload both variants once so a theme toggle never has to wait on a
+    // cold fetch — cheap even when already cached by the browser.
+    void waitForImage(HERO_IMAGE_BY_THEME.light, IMAGE_READY_TIMEOUT_MS);
+    void waitForImage(HERO_IMAGE_BY_THEME.dark, IMAGE_READY_TIMEOUT_MS);
 
-    observer = new MutationObserver(() => {
-      const theme = document.documentElement.getAttribute('data-theme');
-      if (theme === lastTheme || playing) return;
-      lastTheme = theme;
-      playing = true;
-      // Same yPercent baseline as the entrance timeline in scripts/animate.ts
-      // (additive over the curtain's resting transform): 100 covers, 0 reveals.
-      gsap.timeline({ onComplete: () => { playing = false; } })
-        .to(mask, { yPercent: 100, duration: 0.45, ease: 'power3.inOut' })
-        .to(mask, { yPercent: 0, duration: 0.7, ease: 'expo.out' });
+    let currentAnim: Animation | null = null;
+
+    // Covers the illustration, then chunky-pixel-consumes the cover away
+    // from a bottom-left origin — tiles farthest from it (top-right) vanish
+    // first, so the reveal visibly sweeps top-right → bottom-left, the
+    // last remnant clinging to the bottom-left corner.
+    function reveal(durationMs: number): void {
+      currentAnim?.cancel();
+      const rect = frame.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+
+      const tileSize = resolveTileSize(DESKTOP_TILE, MOBILE_TILE);
+      const plan = buildPixelPlan({
+        width: rect.width,
+        height: rect.height,
+        origin: { x: 0, y: rect.height },
+        tileSize,
+        direction: { x: Math.SQRT1_2, y: -Math.SQRT1_2 },
+      });
+      const keyframes = buildClipKeyframes(plan, { buckets: BUCKETS, reverse: true });
+
+      currentAnim = mask.animate(keyframes, { duration: durationMs, easing: PIXEL_EASE, fill: 'forwards' });
+      currentAnim.finished
+        .then(() => {
+          mask.style.clipPath = 'inset(0 0 0 100%)';
+          mask.style.visibility = 'hidden';
+          mask.style.backgroundImage = '';
+          currentAnim?.cancel();
+          currentAnim = null;
+        })
+        .catch(() => undefined);
+    }
+
+    function cover(backgroundImageUrl?: string): void {
+      mask.style.backgroundImage = backgroundImageUrl ? `url('${backgroundImageUrl}')` : '';
+      mask.style.clipPath = 'inset(0 0 0 0)';
+      mask.style.visibility = 'visible';
+    }
+
+    // ---- Entrance: fired once by scripts/animate.ts's GSAP timeline ----
+    const onEntranceReveal = () => {
+      if (prefersReducedMotion()) return; // idle CSS state is already correct
+      cover(); // solid --paper cover, no snapshot — nothing to conceal yet
+      reveal(ENTRANCE_MS);
+    };
+    document.addEventListener('hero-stage-reveal', onEntranceReveal);
+    cleanupFns.push(() => document.removeEventListener('hero-stage-reveal', onEntranceReveal));
+
+    // ---- Theme swap: replays whenever data-theme actually flips ----
+    // Not on every navigation — Layout.astro re-applies the same value on
+    // every astro:after-swap even when it hasn't changed, so oldValue is
+    // compared explicitly rather than reacting to every mutation record.
+    let swapToken = 0;
+    const observer = new MutationObserver((mutations) => {
+      if (prefersReducedMotion()) return;
+      const mutation = mutations[mutations.length - 1];
+      const oldTheme = toTheme(mutation.oldValue);
+      const newTheme = toTheme(document.documentElement.getAttribute('data-theme'));
+      if (oldTheme === newTheme) return;
+
+      const token = ++swapToken;
+      // Rapid re-toggle: cancel whatever's in flight and re-cover with a
+      // fresh snapshot of the theme we're actually leaving now, then
+      // restart toward the latest destination — never stacks animations.
+      cover(HERO_IMAGE_BY_THEME[oldTheme]);
+
+      waitForImage(HERO_IMAGE_BY_THEME[newTheme], IMAGE_READY_TIMEOUT_MS).then(() => {
+        if (token !== swapToken) return; // superseded by a newer toggle
+        reveal(THEME_SWAP_MS);
+      });
     });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'], attributeOldValue: true });
+    cleanupFns.push(() => observer.disconnect());
+
+    cleanupFns.push(() => {
+      currentAnim?.cancel();
+      mask.style.clipPath = 'inset(0 0 0 100%)';
+      mask.style.visibility = 'hidden';
+      mask.style.backgroundImage = '';
+    });
   }
 
   document.addEventListener('astro:page-load', setup);

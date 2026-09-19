@@ -13,11 +13,14 @@ if (!prefersReduced) {
   const RISE = 26;
 
   // Content items a section can hold — collected per section so the cascade is local.
+  // '.proj' is deliberately excluded: its image now reveals through the
+  // Pixel Motion System (scripts/project-image-reveal.ts) instead of this
+  // shared fade+rise cascade, and layering both on the same card would
+  // fade the image while it's also pixel-revealing.
   const ITEM_SELECTORS = [
     '.about__lede',
     '.about__stats',
     '.skills__row',
-    '.proj',
     '.exp__item',
     '.edu__item',
     '.certs__card',
@@ -52,19 +55,12 @@ if (!prefersReduced) {
         .from('.hero__avail', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6')
         .from('.hero__cv', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6')
         // Desk illustration reveals last, same rise+fade beat as every other
-        // item in the cascade above, plus its own curtain lift layered on
-        // top. yPercent is additive on top of the curtain's resting CSS
-        // transform (translateY(-100%), i.e. already lifted clear) — so 100
-        // here means "100% back down over that", landing on 0 (fully
-        // covering), and 0 means "no added offset", landing back on the
-        // resting -100%.
+        // item in the cascade above. The illustration itself never
+        // slides — Hero.astro's own script owns the pixel-mask reveal
+        // (Pixel Motion System) and listens for this event, fired at the
+        // same tuned timeline position the old curtain animation used.
         .from('.hero__stage-frame', { y: RISE, opacity: 0, duration: 0.9 }, '-=0.5')
-        .fromTo(
-          '.hero__stage-mask',
-          { yPercent: 100 },
-          { yPercent: 0, duration: 1.1 },
-          '-=0.3',
-        );
+        .call(() => document.dispatchEvent(new CustomEvent('hero-stage-reveal')), [], '-=0.3');
     }
 
     // ---- Sections: header + item cascade on scroll-in ----
