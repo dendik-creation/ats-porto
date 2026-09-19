@@ -73,6 +73,20 @@ const jsonLd = {
   inLanguage: locale,
   mainEntity: personLd,
 };
+
+// WebSite schema: only on the homepage, since it describes the whole site
+// (not a per-page entity like ProfilePage above).
+const isHome = barePath === '/';
+const siteRootUrl = new URL('/', Astro.site ?? basics.url).toString();
+const websiteLd = isHome
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: basics.siteName,
+      alternateName: [basics.siteName.replace(/'/g, ''), new URL(siteRootUrl).host],
+      url: siteRootUrl,
+    }
+  : null;
 ---
 
 <!doctype html>
@@ -94,6 +108,7 @@ const jsonLd = {
 
     <!-- Open Graph -->
     <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={basics.siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -110,6 +125,7 @@ const jsonLd = {
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+    {websiteLd && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} is:inline />}
 
     <script defer src="https://cloud.umami.is/script.js" data-website-id="24e3a2ab-1ee5-42df-9a72-6446df7fd411" is:inline></script>
 

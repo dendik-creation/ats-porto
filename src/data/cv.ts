@@ -73,6 +73,7 @@ export interface Language {
 export interface CV {
   basics: {
     name: string;
+    siteName: string; // brand/site name for Google Site Name & WebSite schema — distinct from the person's name
     label: string;
     email: string;
     url: string;
