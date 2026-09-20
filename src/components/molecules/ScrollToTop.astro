@@ -1,0 +1,133 @@
+---
+// Fixed bottom-right FAB — appears once Hero has scrolled out of view
+// (IntersectionObserver on [data-hero]; pages without a Hero, like /projects
+// and project detail, fall back to a scroll-past-one-viewport threshold).
+// Not transition:persist'd — like Nav, re-rendering fresh per page avoids
+// pinning a stale scoped-style hash on the live node across a CSS edit
+// (see PixelScrollProgress). Its script re-queries and re-observes on every
+// astro:page-load already, so there's no state that needs to survive.
+import ArrowTop from '../atoms/ArrowTop.astro';
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<button
+  class="stt"
+  type="button"
+  data-scroll-to-top
+  aria-label={label}
+  tabindex="-1"
+>
+  <span class="stt__icon">
+    <ArrowTop width={18} height={18} aria-hidden="true" />
+  </span>
+</button>
+
+<style>
+  .stt {
+    position: fixed;
+    right: calc(var(--space-m) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--space-m) + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    pointer-events: none;
+    transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .stt[data-visible] {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .stt:hover,
+  .stt:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .stt__icon {
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .stt {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stt {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const THRESHOLD_FALLBACK = () => window.innerHeight;
+
+  let btn: HTMLElement | null = null;
+  let io: IntersectionObserver | null = null;
+  let framePending = false;
+
+  function setVisible(v: boolean) {
+    if (!btn) return;
+    btn.toggleAttribute('data-visible', v);
+    btn.tabIndex = v ? 0 : -1;
+  }
+
+  function onScrollFallback() {
+    framePending = false;
+    setVisible(window.scrollY > THRESHOLD_FALLBACK());
+  }
+
+  function queueFallbackCheck() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(onScrollFallback);
+  }
+
+  function scrollToTop() {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  }
+
+  function init() {
+    btn = document.querySelector<HTMLElement>('[data-scroll-to-top]');
+    if (!btn) return;
+
+    io?.disconnect();
+    window.removeEventListener('scroll', queueFallbackCheck);
+
+    const hero = document.querySelector('[data-hero]');
+    if (hero) {
+      io = new IntersectionObserver(([entry]) => setVisible(!entry.isIntersecting), {
+        rootMargin: '0px',
+      });
+      io.observe(hero);
+    } else {
+      onScrollFallback();
+      window.addEventListener('scroll', queueFallbackCheck, { passive: true });
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target instanceof Element && e.target.closest('[data-scroll-to-top]')) scrollToTop();
+  });
+  // Fires on first load and after every ClientRouter swap (see scroll-to-section.ts).
+  document.addEventListener('astro:page-load', init);
+</script>

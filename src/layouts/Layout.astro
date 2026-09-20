@@ -14,6 +14,8 @@ import { getCV, t, resolveLocale } from '../i18n';
 import Nav from '../components/organisms/Nav.astro';
 import PageTransition from '../components/organisms/PageTransition.astro';
 import ThemeTransitionOverlay from '../components/molecules/ThemeTransitionOverlay.astro';
+import PixelScrollProgress from '../components/molecules/PixelScrollProgress.astro';
+import ScrollToTop from '../components/molecules/ScrollToTop.astro';
 
 interface Props {
   title?: string;
@@ -218,6 +220,8 @@ const websiteLd = isHome
 
     <PageTransition />
     <ThemeTransitionOverlay />
+    <PixelScrollProgress />
+    <ScrollToTop label={ui.common.scrollToTop} />
     <Nav />
 
     <main id="main">

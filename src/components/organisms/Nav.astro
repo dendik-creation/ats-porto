@@ -38,7 +38,24 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
 
   <header class="sm-header">
     <a class="sm-logo" href={`${home}#main`}>
-      <span aria-hidden="true">dendi'</span>
+      <img
+        class="sm-logo-mark sm-logo-mark--light"
+        src="/logo_in_light.webp"
+        alt=""
+        aria-hidden="true"
+        width="321"
+        height="358"
+        style="height:clamp(1.8rem, 1.5rem + 1.2vw, 2.4rem); width:auto;"
+      />
+      <img
+        class="sm-logo-mark sm-logo-mark--dark"
+        src="/logo_in_dark.webp"
+        alt=""
+        aria-hidden="true"
+        width="322"
+        height="358"
+        style="height:clamp(1.8rem, 1.5rem + 1.2vw, 2.4rem); width:auto;"
+      />
       <span class="visually-hidden">{ui.nav.homeAria(basics.name)}</span>
     </a>
 
@@ -184,15 +201,32 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     gap: var(--space-xs);
   }
   .sm-logo {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
-    font-variation-settings: 'opsz' 40, 'wght' 620, var(--wonk-off);
-    color: var(--accent);
-    letter-spacing: -0.01em;
-    transition: font-variation-settings var(--dur-2) var(--ease);
+    display: inline-flex;
+    align-items: center;
   }
-  .sm-logo:hover {
-    font-variation-settings: 'opsz' 40, 'wght' 780, 'SOFT' 40, 'WONK' 1;
+  .sm-logo-mark {
+    height: clamp(1.8rem, 1.5rem + 1.2vw, 2.4rem);
+    width: auto;
+    transition: transform var(--dur-2) var(--ease);
+  }
+  .sm-logo:hover .sm-logo-mark {
+    transform: scale(1.06);
+  }
+  /* Theme-scoped pair, same show/hide-by-attribute technique as the rest of
+     the site's light/dark swaps — no JS, flips instantly with data-theme. */
+  .sm-logo-mark--dark {
+    display: none;
+  }
+  :root[data-theme='dark'] .sm-logo-mark--light {
+    display: none;
+  }
+  :root[data-theme='dark'] .sm-logo-mark--dark {
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sm-logo-mark {
+      transition: none;
+    }
   }
 
   .sm-toggle {

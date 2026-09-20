@@ -15,6 +15,17 @@ html {
   scroll-behavior: smooth;
   /* Fragment links (#experience-title …) stop below the fixed nav, not under it */
   scroll-padding-top: var(--nav-offset);
+  /* Native root scrollbar is replaced by PixelScrollProgress.astro; scrolling
+     itself stays untouched (wheel/touch/keyboard/programmatic all still work,
+     no overflow:hidden here). Firefox + legacy Edge/IE: */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,165 @@
+---
+// Replaces the native page scrollbar: a fixed pixel-tiled rail on the right
+// viewport edge, filled top-to-bottom by scroll progress. Not transition:persist'd
+// — like Nav, it's cheap to re-render fresh from each page's own markup, and
+// persisting it would pin a stale scoped-style hash on the live node across
+// a CSS edit (see Nav's own comment on the same tradeoff). It's still mounted
+// exactly once per page (Layout.astro renders it once), and its script
+// re-queries + recomputes progress on every astro:page-load regardless, so
+// there's no continuity to lose. Purely decorative: it does not replace
+// scrollbar *interaction* (wheel/touch/keyboard scrolling is untouched,
+// native scrollbar is only hidden visually in global.css), so it stays
+// aria-hidden + pointer-events:none rather than claiming role="scrollbar".
+---
+
+<div
+  class="pixel-scrollbar"
+  data-pixel-scrollbar
+  aria-hidden="true"
+>
+  <div class="pixel-scrollbar__track"></div>
+  <div class="pixel-scrollbar__fill" data-pixel-scrollbar-fill></div>
+</div>
+
+<style>
+  .pixel-scrollbar {
+    --scroll-progress: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 100vh;
+    height: 100dvh;
+    padding-right: env(safe-area-inset-right, 0px);
+    z-index: 20; /* below Nav's overlay (z-40) and every fullscreen surface above it */
+    pointer-events: none;
+  }
+  .pixel-scrollbar[data-inactive] {
+    opacity: 0;
+  }
+
+  .pixel-scrollbar__track,
+  .pixel-scrollbar__fill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    background-repeat: repeat-y;
+    background-size: 100% 8px;
+  }
+
+  .pixel-scrollbar__track {
+    height: 100%;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--line-strong) 0 5px,
+      transparent 5px 8px
+    );
+    opacity: 0.2;
+  }
+
+  .pixel-scrollbar__fill {
+    height: calc(var(--scroll-progress) * 100%);
+    background-image: repeating-linear-gradient(to bottom, var(--ink) 0 5px, transparent 5px 8px);
+    opacity: 0.85;
+    transition: height 60ms steps(2, end);
+  }
+
+  /* Pixelated boundary tip: one small accent block at the leading edge,
+     a pseudo-element rather than an extra DOM node. */
+  .pixel-scrollbar__fill::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pixel-scrollbar__fill {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pixel-scrollbar {
+      width: 12px;
+    }
+    .pixel-scrollbar__track,
+    .pixel-scrollbar__fill {
+      width: 5px;
+      background-size: 100% 6px;
+    }
+    .pixel-scrollbar__track {
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--line-strong) 0 4px,
+        transparent 4px 6px
+      );
+    }
+    .pixel-scrollbar__fill {
+      background-image: repeating-linear-gradient(to bottom, var(--ink) 0 4px, transparent 4px 6px);
+    }
+    .pixel-scrollbar__fill::after {
+      height: 4px;
+    }
+  }
+</style>
+
+<script>
+  const STEPS = 100;
+
+  let bar: HTMLElement | null = null;
+  let fill: HTMLElement | null = null;
+  let framePending = false;
+  let observer: ResizeObserver | null = null;
+  let lastQuantized = -1;
+
+  function update() {
+    framePending = false;
+    if (!bar || !fill) return;
+
+    const root = document.scrollingElement ?? document.documentElement;
+    const maxScroll = root.scrollHeight - window.innerHeight;
+
+    if (maxScroll <= 0) {
+      bar.setAttribute('data-inactive', '');
+      return;
+    }
+    bar.removeAttribute('data-inactive');
+
+    const raw = Math.min(1, Math.max(0, root.scrollTop / maxScroll));
+    const atBottom = root.scrollTop + window.innerHeight >= root.scrollHeight - 1;
+    const quantized = atBottom ? 1 : Math.round(raw * STEPS) / STEPS;
+
+    // Skip the style write (and its layout recalc) on the many scroll
+    // frames that land on the same one-of-100 step.
+    if (quantized === lastQuantized) return;
+    lastQuantized = quantized;
+    bar.style.setProperty('--scroll-progress', String(quantized));
+  }
+
+  function onScroll() {
+    if (framePending) return;
+    framePending = true;
+    requestAnimationFrame(update);
+  }
+
+  function init() {
+    bar = document.querySelector<HTMLElement>('[data-pixel-scrollbar]');
+    fill = bar?.querySelector<HTMLElement>('[data-pixel-scrollbar-fill]') ?? null;
+    if (!bar || !fill) return;
+
+    update();
+
+    observer ??= new ResizeObserver(() => update());
+    observer.observe(document.body);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  // Fires on first load and after every ClientRouter swap (see scroll-to-section.ts).
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -43,6 +43,7 @@ export interface NavStrings {
 
 export interface CommonStrings {
   skipToContent: string;
+  scrollToTop: string;
   present: string;
   country: Record<string, string>;
 }
