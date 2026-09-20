@@ -54,12 +54,9 @@ if (!prefersReduced) {
         .from('.hero__summary', { y: 16, opacity: 0, duration: 0.8 }, '-=0.55')
         .from('.hero__avail', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6')
         .from('.hero__cv', { y: 16, opacity: 0, duration: 0.8 }, '-=0.6')
-        // Desk illustration reveals last, same rise+fade beat as every other
-        // item in the cascade above. The illustration itself never
-        // slides — Hero.astro's own script owns the pixel-mask reveal
-        // (Pixel Motion System) and listens for this event, fired at the
-        // same tuned timeline position the old curtain animation used.
-        .from('.hero__stage-frame', { y: RISE, opacity: 0, duration: 0.9 }, '-=0.5')
+        // Hero.astro's own script owns the keyboard's pseudo-3D entrance and
+        // listens for this event, fired at the same tuned timeline position
+        // the old illustration reveal used.
         .call(() => document.dispatchEvent(new CustomEvent('hero-stage-reveal')), [], '-=0.3');
     }
 

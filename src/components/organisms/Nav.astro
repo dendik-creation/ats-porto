@@ -582,6 +582,41 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     if (!ghost) return;
     const pixels = Array.from(panel.querySelectorAll<HTMLElement>('[data-sm-pixel]'));
 
+    // Idle-bar entrance: logo, theme toggle, menu trigger swipe down from
+    // above the viewport once on mount — not the staggered panel (that's
+    // setOpen's own pixel-cascade reveal below, untouched). Each fresh Nav
+    // instance replays this, same as Hero's own load cascade in animate.ts.
+    //
+    // Lands last, together with the keyboard: on pages with a Hero, both
+    // wait on the same 'hero-stage-reveal' event (dispatched near the end
+    // of animate.ts's GSAP timeline; Hero.astro's own script plays the
+    // keyboard's pixel reveal off the same event). Pages without a Hero
+    // (projects, project detail, 404) never get that event, so the bar
+    // plays immediately there instead of waiting forever.
+    if (!prefersReducedMotion()) {
+      // Off-screen the instant this runs, synchronously — gsap.from() only
+      // applies its hidden state lazily, at the moment it's actually called,
+      // which here could be seconds after page-load (waiting on the event
+      // below). gsap.set() + a later gsap.to() is what makes it hidden from
+      // the very first frame instead of flashing visible until the reveal.
+      gsap.set('.sm-logo, .tt-btn, .sm-toggle', { y: -40, opacity: 0 });
+
+      const playBarEntrance = () => {
+        gsap.to('.sm-logo, .tt-btn, .sm-toggle', {
+          y: 0,
+          opacity: 1,
+          duration: 0.85,
+          ease: 'expo.out',
+          stagger: 0.08,
+        });
+      };
+      if (document.querySelector('[data-hero]')) {
+        document.addEventListener('hero-stage-reveal', playBarEntrance, { once: true });
+      } else {
+        playBarEntrance();
+      }
+    }
+
     let open = false;
     let animating = false;
 

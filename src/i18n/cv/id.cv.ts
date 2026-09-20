@@ -121,14 +121,15 @@ export const cv: CV = {
     },
     {
       organization: 'Muria Computer Club',
-      position: 'Edukator / Mentor',
+      position: 'Edukator / Juri Lomba ',
       location: 'Kudus, Indonesia',
       startDate: '2025-05',
       endDate: 'Present',
       summary: 'Mengajar dan membimbing anggota pada dasar-dasar pengembangan web yang praktis.',
       highlights: [
         'Mengadakan sesi pelatihan tentang Laravel dan ekosistemnya.',
-        'Membimbing anggota lewat praktik alur kerja pengembangan dan arsitektur perangkat lunak.'
+        'Membimbing anggota lewat praktik alur kerja pengembangan dan arsitektur perangkat lunak.',
+        `Berperan sebagai juri dalam kompetisi “Vibe Coding” yang diikuti oleh mahasiswa tahun pertama, dengan proyek yang dikembangkan menggunakan Google AI Studio.`
       ]
     }
   ],

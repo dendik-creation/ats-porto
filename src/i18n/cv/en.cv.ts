@@ -107,6 +107,19 @@ export const cv: CV = {
   ],
   volunteer: [
     {
+      organization: 'Muria Computer Club',
+      position: 'Educator / Competition Judge',
+      location: 'Kudus, Indonesia',
+      startDate: '2025-05',
+      endDate: 'Present',
+      summary: 'Teach and mentor members on practical web-development foundations.',
+      highlights: [
+        'Run training sessions on Laravel and its ecosystem.',
+        'Guide members through hands-on development workflows and software-architecture practices.',
+        `Served as a judge for a “Vibe Coding” competition for first-year university students, where participants developed projects using Google AI Studio.`
+      ]
+    },
+    {
     organization: 'Pemburu Lomba Skadaku',
     position: 'Competition Participant',
     location: 'Kudus, Indonesia',
@@ -117,19 +130,6 @@ export const cv: CV = {
     'Participated in various technology competitions aligned with industry trends and practices.',
     'Shared knowledge and experiences with peers while participating in technology competitions.'
     ]
-    }
-,
-    {
-      organization: 'Muria Computer Club',
-      position: 'Educator / Mentor',
-      location: 'Kudus, Indonesia',
-      startDate: '2025-05',
-      endDate: 'Present',
-      summary: 'Teach and mentor members on practical web-development foundations.',
-      highlights: [
-        'Run training sessions on Laravel and its ecosystem.',
-        'Guide members through hands-on development workflows and software-architecture practices.'
-      ]
     }
   ],
   skills: [

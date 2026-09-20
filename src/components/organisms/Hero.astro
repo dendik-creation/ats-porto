@@ -84,54 +84,90 @@ const last = 'Setiawan';
     </svg>
   </div>
 
-  <div class="hero__top">
-    <p class="hero__eyebrow label">{basics.label}</p>
-    <p class="hero__avail">
-      <span class="hero__pulse" aria-hidden="true"></span>
-      {ui.hero.availability}
-    </p>
-  </div>
+  <div class="hero__content">
+    <div class="hero__top">
+      <p class="hero__eyebrow label">{basics.label}</p>
+      <p class="hero__avail">
+        <span class="hero__pulse" aria-hidden="true"></span>
+        {ui.hero.availability}
+      </p>
+    </div>
 
-  <div class="hero__stage-frame">
-    <div class="hero__stage" role="presentation"></div>
-    <div class="hero__stage-mask" aria-hidden="true"></div>
-  </div>
+    <div class="hero__bottom">
+      <h1 class="hero__name" aria-label={basics.name}>
+        <span class="hero__word hero__word--first" aria-hidden="true">
+          {first.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+        </span>
+        <span class="hero__word hero__word--last" aria-hidden="true">
+          {last.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
+        </span>
+      </h1>
 
-  <div class="hero__bottom">
-    <h1 class="hero__name" aria-label={basics.name}>
-      <span class="hero__word hero__word--first" aria-hidden="true">
-        {first.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
-      </span>
-      <span class="hero__word hero__word--last" aria-hidden="true">
-        {last.split('').map((c, i) => <span class="hero__ch" style={`--i:${i}`}>{c}</span>)}
-      </span>
-    </h1>
+      <!-- Own grid row, above .hero__foot — a bounded slot, not a full-hero
+           overlay, so the keyboard can never share paint area with the
+           description (see this file's own <script> for the entrance). -->
+      <div class="hero__visual-slot" aria-hidden="true">
+        <div class="hero__keyboard-depth" data-hero-keyboard>
+          <img
+            class="hero__keyboard"
+            src="/static/arc/hero-section.webp"
+            alt=""
+            width="2018"
+            height="779"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <span class="hero__keyboard-shadow"></span>
+        </div>
+      </div>
 
-    <div class="hero__foot">
-      <p class="hero__summary">{basics.summary}</p>
-      <div class="hero__cv">
-        <ArrowLink href={basics.cvUrl} external>{ui.hero.viewCv}</ArrowLink>
+      <div class="hero__foot">
+        <p class="hero__summary">{basics.summary}</p>
+        <div class="hero__cv">
+          <ArrowLink href={basics.cvUrl} external>{ui.hero.viewCv}</ArrowLink>
+        </div>
       </div>
     </div>
-  </div>
 
-  <p class="hero__spec" aria-hidden="true">
-    <span>Fraunces Variable</span>
-    <span class="hero__spec-sep">/</span>
-    <span>WGHT 300 → 900</span>
-    <span class="hero__spec-sep">/</span>
-    <span>OPSZ 144</span>
-    <span class="hero__spec-sep">/</span>
-    <span>SOFT · WONK</span>
-  </p>
+    <p class="hero__spec" aria-hidden="true">
+      <span>Fraunces Variable</span>
+      <span class="hero__spec-sep">/</span>
+      <span>WGHT 300 → 900</span>
+      <span class="hero__spec-sep">/</span>
+      <span>OPSZ 144</span>
+      <span class="hero__spec-sep">/</span>
+      <span>SOFT · WONK</span>
+    </p>
+  </div>
 </header>
 
 <style>
   .hero {
     position: relative;
     isolation: isolate;
-    padding-top: clamp(3.5rem, 8vh, 8rem);
+    box-sizing: border-box;
+    /* Horizontal only — vertical overflow must stay visible or the idle
+       keyboard drift and its own shadow can clip against this box. */
+    overflow-x: hidden;
+    overflow-x: clip;
+    /* A full-viewport-height hero regardless of the (now much shorter, text-
+       only) in-flow content — the keyboard is a grid item sized by its own
+       slot, not something Hero's height can lean on. */
+    min-height: 100svh;
+    min-height: 100dvh;
+    padding-top: var(--nav-h);
     padding-bottom: var(--space-l);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Balanced breathing room above/below inside the now viewport-tall .hero —
+     margin-block:auto centers this one flex child along .hero's main axis. */
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    margin-block: auto;
     display: flex;
     flex-direction: column;
     gap: var(--space-m);
@@ -212,55 +248,95 @@ const last = 'Setiawan';
     margin: 0;
   }
 
-  /* Center stage: the desk illustration swaps per theme via background-image
-     so only the active variant is ever fetched, nothing extra downloaded.
-     The frame clips the curtain when it slides out of bounds; the image and
-     the curtain both fill it as stacked absolute layers. */
-  .hero__stage-frame {
+  /* Bounded slot, not a full-hero overlay — a real grid cell the keyboard
+     is sized/clipped against, so it can never spill into .hero__foot's row
+     or past the column edge. One asset works for both themes (transparent
+     background, ink linework already carries the ivory/graphite/accent
+     palette), so there's no swap-on-theme-change to guard against. */
+  .hero__visual-slot {
     position: relative;
-    overflow: hidden;
-    aspect-ratio: 1672 / 941;
-    width: min(100%, 53rem);
-    margin-inline: auto;
-  }
-  .hero__stage {
-    position: absolute;
-    inset: 0;
-    scale: 1.2;
-    background-image: url('/static/arc/hero-section.webp');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-  }
-  /* Pixel mask: rests fully collapsed (zero-area clip-path) by default —
-     plain CSS, no JS — so reduced-motion / no-JS visitors just see the
-     illustration with no motion at all. The entrance timeline (see
-     scripts/animate.ts, which fires a 'hero-stage-reveal' event at the same
-     tuned position the old curtain used to animate) and the theme-toggle
-     observer below both cover this element then chunky-pixel-consume it
-     away — same Pixel Motion System every other transition on the site
-     uses (see scripts/pixel-transition.ts) — so the mask always conceals
-     the image swap instead of letting it flash. Never translates/slides:
-     only its clip-path ever changes, so the illustration itself never moves. */
-  .hero__stage-mask {
-    position: absolute;
-    inset: 0;
-    scale: 1.2;
-    background-color: var(--paper);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    clip-path: inset(0 0 0 100%);
-    visibility: hidden;
-    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 14rem;
+    padding: clamp(0.5rem, 1vw, 1.25rem);
+    overflow: visible;
     pointer-events: none;
+    user-select: none;
   }
 
+  /* Entrance + perspective live here; idle drift lives one level down on
+     .hero__keyboard so the two transforms never overwrite each other. Only
+     transform/opacity/filter ever animate — no top/right/width, so the
+     rendered box (and its safe margin to the slot's own edge) never moves.
+     The 100% cap (not the rem figure) is what actually governs on desktop —
+     the column itself is narrower than 52rem at every real viewport, so this
+     just removes slot padding as the only thing holding the render back. */
+  .hero__keyboard-depth {
+    position: relative;
+    width: min(100%, 52rem);
+    max-width: 100%;
+    margin-inline: auto;
+    transform-origin: center;
+    transform-style: preserve-3d;
+    transform: perspective(1200px) rotateX(3deg) rotateY(-4deg) rotateZ(-2deg) scale(0.94);
+  }
+  .hero__keyboard {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    animation: hero-keyboard-idle 7.5s ease-in-out infinite alternate;
+    animation-delay: 1.6s;
+  }
+  @keyframes hero-keyboard-idle {
+    from { transform: translateY(0) rotateZ(0deg); }
+    to { transform: translateY(-5px) rotateZ(0.6deg); }
+  }
+
+  /* Cross-hatch-style ground shadow, not a soft modern drop-shadow — same
+     var(--ink)-plus-opacity wash .hero-bg__path already uses above. Sits
+     inside .hero__keyboard-depth's own stacking context (its transform
+     creates one), so z-index:-1 only ever tucks it behind the keyboard img,
+     never behind unrelated siblings like .hero__foot. */
+  .hero__keyboard-shadow {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 4%;
+    height: 12%;
+    z-index: -1;
+    opacity: 0.14;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 3px, transparent 3px 7px);
+    filter: blur(8px);
+  }
+
+  /* Three real areas, not one row with a keyboard stacked behind it: name
+     spans the full left column; the keyboard and description are separate
+     grid ROWS in the right column, so they can never occupy the same
+     paint area — no z-index trick required to keep them apart. */
   .hero__bottom {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    align-items: end;
-    gap: var(--space-l);
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: var(--space-l);
+    row-gap: var(--space-s);
+  }
+  .hero__name {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: end;
+  }
+  .hero__visual-slot {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .hero__foot {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
   }
 
   /* Concrete-poetry name: broken baseline, offset words, per-letter weight ramp */
@@ -372,6 +448,31 @@ const last = 'Setiawan';
     100% { box-shadow: 0 0 0 0 transparent; }
   }
 
+  /* Tablet: the 1.2fr/1fr split gets too cramped for a real keyboard render
+     before the phone breakpoint below — collapse to one column here instead
+     of squeezing it. Order stays name → keyboard → description (source
+     order already matches; only the explicit column/row placement needs
+     resetting to auto). */
+  @media (max-width: 1024px) {
+    .hero__bottom {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      gap: var(--space-m);
+    }
+    .hero__name,
+    .hero__visual-slot,
+    .hero__foot {
+      grid-column: 1;
+      grid-row: auto;
+    }
+    .hero__name {
+      align-self: auto;
+    }
+    .hero__foot {
+      align-self: auto;
+    }
+  }
+
   @media (max-width: 720px) {
     /* Mobile stacks the hero into one dense text column — no negative-space
        quadrant left for the linework to occupy without crossing copy. Keep
@@ -384,15 +485,25 @@ const last = 'Setiawan';
       align-self: flex-start;
       text-align: left;
     }
-    .hero__stage-frame {
-      width: 100%;
-    }
     .hero__bottom {
-      grid-template-columns: 1fr;
       gap: var(--space-s);
     }
     .hero__foot {
       max-width: none;
+    }
+
+    /* Full opacity, same as desktop — the slot still bounds it, so nothing
+       gets cropped. */
+    .hero__visual-slot {
+      min-height: 9rem;
+      padding-inline: 0.75rem;
+    }
+    .hero__keyboard-depth {
+      width: min(28rem, 100%);
+      transform: perspective(900px) rotateX(3deg) rotateY(-3deg) rotateZ(-2deg) scale(0.92);
+    }
+    .hero__keyboard {
+      animation: none;
     }
   }
 
@@ -401,159 +512,61 @@ const last = 'Setiawan';
     .hero__pulse { animation: none; }
     .hero-bg__path,
     .hero-bg__node { animation: none; }
+    .hero__keyboard-depth,
+    .hero__keyboard {
+      animation: none;
+      transition: none;
+    }
+    .hero__keyboard-depth {
+      opacity: 1;
+      filter: none;
+    }
   }
 </style>
 
 <script>
-  // Hero stage pixel mask — the entrance reveal (triggered by the
-  // 'hero-stage-reveal' event scripts/animate.ts's GSAP timeline dispatches
-  // at the right beat) and the theme-swap reveal (triggered by the theme
-  // toggle actually flipping data-theme) both cover `.hero__stage` with
-  // `.hero__stage-mask`, then chunky-pixel-consume it away via the shared
-  // Pixel Motion System (scripts/pixel-transition.ts) — same tile/threshold
-  // math the menu, page transitions, and project images use. The mask only
-  // ever animates its own clip-path; the illustration underneath never
-  // moves, and `.hero__stage`'s background-image keeps swapping instantly
-  // via the existing plain-CSS `:root[data-theme='dark']` rule — the mask
-  // just conceals that swap until the destination image is ready.
+  // Pixelate-in entrance, same Pixel Motion System every other reveal on the
+  // site uses (Nav, Lightbox, project images) — fired once, at the same beat
+  // the old mask-based reveal used to fire on ('hero-stage-reveal', dispatched
+  // by scripts/animate.ts's GSAP timeline). No theme-swap handling needed —
+  // one asset serves both themes, so data-theme flips never touch this element.
   import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion, PIXEL_EASE } from '../../scripts/pixel-transition';
 
   const DESKTOP_TILE = 22;
   const MOBILE_TILE = 16;
-  const BUCKETS = 36;
-  const ENTRANCE_MS = 750;
-  const THEME_SWAP_MS = 700;
-  const IMAGE_READY_TIMEOUT_MS = 400; // never let a slow fetch block the swap indefinitely
-
-  const HERO_IMAGE_BY_THEME: Record<'light' | 'dark', string> = {
-    light: '/static/arc/hero-section.webp',
-    dark: '/static/arc/hero-section.webp',
-  };
-
-  // Persists across astro:page-load re-inits (module scope) — once an image
-  // has loaded this session there's no reason to re-check it.
-  const loadedImages = new Set<string>();
-
-  function waitForImage(url: string, timeoutMs: number): Promise<void> {
-    if (loadedImages.has(url)) return Promise.resolve();
-    return new Promise((resolve) => {
-      const img = new Image();
-      let done = false;
-      const finish = () => {
-        if (done) return;
-        done = true;
-        loadedImages.add(url);
-        resolve();
-      };
-      img.onload = finish;
-      img.onerror = finish; // don't hang the swap on a broken/slow asset
-      img.src = url;
-      window.setTimeout(finish, timeoutMs);
-    });
-  }
-
-  function toTheme(v: string | null): 'light' | 'dark' {
-    return v === 'dark' ? 'dark' : 'light';
-  }
-
-  let cleanupFns: Array<() => void> = [];
+  const BUCKETS = 30;
+  const DURATION_MS = 900;
 
   function setup(): void {
-    cleanupFns.forEach((fn) => fn());
-    cleanupFns = [];
+    const depth = document.querySelector<HTMLElement>('[data-hero-keyboard]');
+    if (!depth) return; // hero isn't on this page
+    if (prefersReducedMotion()) return; // resting CSS state is already the final one
 
-    const frameEl = document.querySelector<HTMLElement>('.hero__stage-frame');
-    const maskEl = document.querySelector<HTMLElement>('.hero__stage-mask');
-    if (!frameEl || !maskEl) return; // hero isn't on this page
-    const frame = frameEl;
-    const mask = maskEl;
+    // offsetWidth/Height, not getBoundingClientRect — .hero__keyboard-depth
+    // carries its own permanent rotate/scale, and clip-path is defined in an
+    // element's own pre-transform local box regardless of that transform.
+    const width = depth.offsetWidth;
+    const height = depth.offsetHeight;
+    if (width <= 0 || height <= 0) return;
 
-    // Preload both variants once so a theme toggle never has to wait on a
-    // cold fetch — cheap even when already cached by the browser.
-    void waitForImage(HERO_IMAGE_BY_THEME.light, IMAGE_READY_TIMEOUT_MS);
-    void waitForImage(HERO_IMAGE_BY_THEME.dark, IMAGE_READY_TIMEOUT_MS);
+    const tileSize = resolveTileSize(DESKTOP_TILE, MOBILE_TILE);
+    const plan = buildPixelPlan({ width, height, origin: { x: width, y: 0 }, tileSize });
+    const keyframes = buildClipKeyframes(plan, { buckets: BUCKETS });
 
-    let currentAnim: Animation | null = null;
+    // Hidden the instant this runs (well before the GSAP-timed event below
+    // fires) so there's no flash of the finished keyboard beforehand.
+    depth.style.clipPath = keyframes[0].clipPath as string;
 
-    // Covers the illustration, then chunky-pixel-consumes the cover away
-    // from a bottom-left origin — tiles farthest from it (top-right) vanish
-    // first, so the reveal visibly sweeps top-right → bottom-left, the
-    // last remnant clinging to the bottom-left corner.
-    function reveal(durationMs: number): void {
-      currentAnim?.cancel();
-      const rect = frame.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-
-      const tileSize = resolveTileSize(DESKTOP_TILE, MOBILE_TILE);
-      const plan = buildPixelPlan({
-        width: rect.width,
-        height: rect.height,
-        origin: { x: 0, y: rect.height },
-        tileSize,
-        direction: { x: Math.SQRT1_2, y: -Math.SQRT1_2 },
-      });
-      const keyframes = buildClipKeyframes(plan, { buckets: BUCKETS, reverse: true });
-
-      currentAnim = mask.animate(keyframes, { duration: durationMs, easing: PIXEL_EASE, fill: 'forwards' });
-      currentAnim.finished
+    const onReveal = () => {
+      const anim = depth.animate(keyframes, { duration: DURATION_MS, easing: PIXEL_EASE, fill: 'forwards' });
+      anim.finished
         .then(() => {
-          mask.style.clipPath = 'inset(0 0 0 100%)';
-          mask.style.visibility = 'hidden';
-          mask.style.backgroundImage = '';
-          currentAnim?.cancel();
-          currentAnim = null;
+          depth.style.clipPath = ''; // no inline style left behind once settled
+          anim.cancel();
         })
         .catch(() => undefined);
-    }
-
-    function cover(backgroundImageUrl?: string): void {
-      mask.style.backgroundImage = backgroundImageUrl ? `url('${backgroundImageUrl}')` : '';
-      mask.style.clipPath = 'inset(0 0 0 0)';
-      mask.style.visibility = 'visible';
-    }
-
-    // ---- Entrance: fired once by scripts/animate.ts's GSAP timeline ----
-    const onEntranceReveal = () => {
-      if (prefersReducedMotion()) return; // idle CSS state is already correct
-      cover(); // solid --paper cover, no snapshot — nothing to conceal yet
-      reveal(ENTRANCE_MS);
     };
-    document.addEventListener('hero-stage-reveal', onEntranceReveal);
-    cleanupFns.push(() => document.removeEventListener('hero-stage-reveal', onEntranceReveal));
-
-    // ---- Theme swap: replays whenever data-theme actually flips ----
-    // Not on every navigation — Layout.astro re-applies the same value on
-    // every astro:after-swap even when it hasn't changed, so oldValue is
-    // compared explicitly rather than reacting to every mutation record.
-    let swapToken = 0;
-    const observer = new MutationObserver((mutations) => {
-      if (prefersReducedMotion()) return;
-      const mutation = mutations[mutations.length - 1];
-      const oldTheme = toTheme(mutation.oldValue);
-      const newTheme = toTheme(document.documentElement.getAttribute('data-theme'));
-      if (oldTheme === newTheme) return;
-      if (HERO_IMAGE_BY_THEME[oldTheme] === HERO_IMAGE_BY_THEME[newTheme]) return; // same asset both themes — nothing to reveal
-
-      const token = ++swapToken;
-      // Rapid re-toggle: cancel whatever's in flight and re-cover with a
-      // fresh snapshot of the theme we're actually leaving now, then
-      // restart toward the latest destination — never stacks animations.
-      cover(HERO_IMAGE_BY_THEME[oldTheme]);
-
-      waitForImage(HERO_IMAGE_BY_THEME[newTheme], IMAGE_READY_TIMEOUT_MS).then(() => {
-        if (token !== swapToken) return; // superseded by a newer toggle
-        reveal(THEME_SWAP_MS);
-      });
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'], attributeOldValue: true });
-    cleanupFns.push(() => observer.disconnect());
-
-    cleanupFns.push(() => {
-      currentAnim?.cancel();
-      mask.style.clipPath = 'inset(0 0 0 100%)';
-      mask.style.visibility = 'hidden';
-      mask.style.backgroundImage = '';
-    });
+    document.addEventListener('hero-stage-reveal', onReveal, { once: true });
   }
 
   document.addEventListener('astro:page-load', setup);
