@@ -1,11 +1,12 @@
 ---
 // Manual (no autoplay) image carousel for the /projects showcase rows.
-// Transition is an angled wipe — four slanted panels (a bright leading glint,
-// then accent, accent-ink, ink) sweep left-to-right to cover the current
-// shot, the image swaps underneath, then they retreat right-to-left in
-// reverse order to reveal the next one. Same accent/ink stagger motif as the
-// site's other transitions (PageTransition.astro, Nav's staggered menu),
-// just with two more tones for a fuller curtain and a gentler ease.
+// Transition is a localized tier of the site's Pixel Motion System (see
+// src/scripts/pixel-transition.ts) — an OPPOSITE-theme ghost layer leads,
+// the destination image (stacked on top of the current one) lags behind it,
+// both materializing in through the same chunky, clipped pixel cascade,
+// propagating right-to-left on Next and left-to-right on Previous, clipped
+// entirely to the carousel's own bounds. Same lead/lag ghost technique as
+// Nav's menu panel and the Lightbox.
 import { t, resolveLocale } from '../../i18n';
 
 interface Props {
@@ -19,13 +20,9 @@ const ui = t(resolveLocale(Astro.currentLocale));
 {images.length > 0 && (
   <div class:list={['carousel', { 'carousel--reverse': reverse }]} data-carousel data-images={JSON.stringify(images)}>
     <img class="carousel__img" data-carousel-image alt="" />
-    <div class="carousel__sweep" aria-hidden="true">
-      <div class="carousel__wipe carousel__wipe--glint" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
-      <div class="carousel__wipe carousel__wipe--1" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
-      <div class="carousel__wipe carousel__wipe--2" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
-      <div class="carousel__wipe carousel__wipe--3" data-carousel-wipe><div class="carousel__wipe-fill"></div></div>
-    </div>
-    {/* Painted above the image/wipe but below the arrow buttons (DOM order),
+    <div class="carousel__ghost" data-carousel-ghost aria-hidden="true"></div>
+    <img class="carousel__img carousel__img--next" data-carousel-image-next alt="" aria-hidden="true" />
+    {/* Painted above the images but below the arrow buttons (DOM order),
        so the buttons stay clickable even where the fade is fully opaque. */}
     <div class="carousel__fade" aria-hidden="true"></div>
 
@@ -53,53 +50,41 @@ const ui = t(resolveLocale(Astro.currentLocale));
     overflow: hidden;
   }
   .carousel__img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
   }
-  .carousel__sweep {
+  /* Ghost layer — sits between the current and destination images, painted
+     in the OPPOSITE theme's tone for the duration of the pixel transition
+     only (identical technique to Nav's .sm-ghost / Lightbox's .lb-ghost: it
+     leads, the destination image lags a beat behind it, so a band of
+     opposite-theme color is visible at the advancing pixel edge before the
+     real destination photo catches up). Never touches :root[data-theme] —
+     colors below are restated from tokens.css, kept in sync with those, not
+     a new palette. */
+  .carousel__ghost {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    background: #1a1814;
+    clip-path: inset(0 0 0 100%);
+    visibility: hidden;
     pointer-events: none;
   }
-  /* Oversized so the panel's translateX/skewX never needs to know the
-     container's real size. No initial `transform` here on purpose: GSAP
-     can't read a percentage-based translate back out of a computed pixel
-     matrix, so if CSS parks this at translateX(-100%) *and* the script later
-     does gsap.set(el, { xPercent: -100 }), GSAP stacks its own -100% on top
-     of the unrecognized CSS one instead of replacing it — animating back to
-     0 then only undoes GSAP's half, stalling at -50%. The script's
-     gsap.set(...) call is the only thing allowed to position this. */
-  .carousel__wipe {
-    position: absolute;
-    top: -15%;
-    bottom: -15%;
-    left: -20%;
-    width: 140%;
+  :root[data-theme='dark'] .carousel__ghost {
+    background: #f0ece1;
   }
-  .carousel__wipe-fill {
-    width: 100%;
-    height: 100%;
-    transform: skewX(-12deg); /* the angled leading edge */
-  }
-  .carousel__wipe--1 .carousel__wipe-fill { background: var(--accent); }
-  .carousel__wipe--2 .carousel__wipe-fill { background: var(--accent-ink); }
-  .carousel__wipe--3 .carousel__wipe-fill { background: var(--ink); }
-  /* A thin bright streak that leads the solid panels in — a glint racing
-     just ahead of the curtain, same skew, same travel, just a slim band
-     painted inside its own oversized fill instead of a solid color. */
-  .carousel__wipe--glint .carousel__wipe-fill {
-    background: linear-gradient(
-      100deg,
-      transparent 0%,
-      transparent 47%,
-      color-mix(in oklab, var(--accent) 55%, white) 50%,
-      transparent 53%,
-      transparent 100%
-    );
+  /* Destination image, stacked on top of the ghost — clip-path starts fully
+     collapsed (pre-JS baseline) and materializes in through the shared
+     Pixel Motion System's chunky clip-path cascade (see the component
+     script), never a smooth wipe. Always non-interactive: the base image
+     and controls below/above it stay the real hit targets. */
+  .carousel__img--next {
+    clip-path: inset(0 0 0 100%);
+    pointer-events: none;
   }
 
   /* Fades the edge that bleeds toward the info text into the paper behind
@@ -157,7 +142,7 @@ const ui = t(resolveLocale(Astro.currentLocale));
 </style>
 
 <script>
-  import gsap from 'gsap';
+  import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion, PIXEL_EASE } from '../../scripts/pixel-transition';
 
   function mountCarousel(root: HTMLElement, signal: AbortSignal) {
     const images: string[] = JSON.parse(root.dataset.images ?? '[]');
@@ -165,74 +150,113 @@ const ui = t(resolveLocale(Astro.currentLocale));
     if (total === 0) return;
 
     const img = root.querySelector<HTMLImageElement>('[data-carousel-image]');
-    const wipes = Array.from(root.querySelectorAll<HTMLElement>('[data-carousel-wipe]'));
+    const ghost = root.querySelector<HTMLElement>('[data-carousel-ghost]');
+    const nextImg = root.querySelector<HTMLImageElement>('[data-carousel-image-next]');
     const prevBtn = root.querySelector<HTMLButtonElement>('[data-carousel-prev]');
     const nextBtn = root.querySelector<HTMLButtonElement>('[data-carousel-next]');
-    if (!img) return;
-
-    // GSAP can't infer a percentage-based transform from a computed pixel
-    // matrix — the -100% parked position is only known to CSS until this
-    // seeds GSAP's own cache with it. Skipping this makes the very first
-    // wipe silently animate xPercent 0 → 0 (no-op) instead of -100 → 0.
-    gsap.set(wipes, { xPercent: -100 });
+    if (!img || !ghost || !nextImg) return;
 
     let index = 0;
     img.src = images[0];
     if (total <= 1) return; // nothing to navigate to, no buttons rendered
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // power3 eases in/out smoothly rather than expo's near-instant mid-flight
-    // snap — reads as one continuous curtain instead of a sudden flick.
-    const EASE = 'power3.inOut';
-    const DUR = 0.5;
-    const STAGGER = 0.07;
+    const prefersReduced = prefersReducedMotion();
+    // How far ahead the opposite-theme ghost runs relative to the
+    // destination image — same lead/lag split Nav's menu ghost uses.
+    const GHOST_LEAD_MS = 110;
     let animating = false;
+    let imgAnim: Animation | null = null;
+    let ghostAnim: Animation | null = null;
 
-    // DOM order is glint, accent, accent-ink, ink — that's the cover order
-    // (glint leads). Reveal runs the same list backwards (ink leads out).
-    const revealOrder = [...wipes].reverse();
+    // Waits for the destination bitmap to actually be paintable before the
+    // reveal starts, so no half-loaded frame is ever exposed. decode() is
+    // the standard way to do that off the main thread; onload/onerror is
+    // the fallback for browsers/images where it's unavailable.
+    const loadInto = (el: HTMLImageElement, src: string) =>
+      new Promise<boolean>((resolve) => {
+        el.src = src;
+        if (typeof el.decode === 'function') {
+          el.decode().then(() => resolve(true), () => resolve(false));
+        } else if (el.complete) {
+          resolve(true);
+        } else {
+          el.onload = () => resolve(true);
+          el.onerror = () => resolve(false);
+        }
+      });
 
-    const swapTo = (nextIndex: number) => {
+    // Next propagates right → left, Previous left → right: origin sits just
+    // outside the edge the wave starts from, direction biases the spread
+    // toward the opposite edge — same technique as Nav's menu cascade, just
+    // scoped to the carousel's own (measured once) rect instead of the
+    // viewport.
+    const swapTo = (targetIndex: number, direction: 1 | -1) => {
       if (animating) return;
-      animating = true;
-      index = ((nextIndex % total) + total) % total;
+      const nextIndex = ((targetIndex % total) + total) % total;
+      if (nextIndex === index) return;
 
       if (prefersReduced) {
+        index = nextIndex;
         img.src = images[index];
-        animating = false;
         return;
       }
 
-      // Explicit absolute positions on every step — relative '+='/'-=' tags
-      // measure from wherever the timeline's cursor happens to land, which
-      // is easy to miscalculate; absolute numbers can't drift out of sync.
-      const phaseDuration = (wipes.length - 1) * STAGGER + DUR; // last layer's own start + its duration
-      const swapAt = phaseDuration + 0.05; // brief hold on full cover
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          gsap.set(wipes, { xPercent: -100 });
+      animating = true;
+      loadInto(nextImg, images[nextIndex]).then((loaded) => {
+        if (!loaded) {
+          nextImg.removeAttribute('src');
           animating = false;
-        },
-      });
+          return;
+        }
 
-      wipes.forEach((wipe, i) => {
-        tl.to(wipe, { xPercent: 0, duration: DUR, ease: EASE }, i * STAGGER);
-      });
-      tl.call(() => {
-        img.src = images[index];
-        // A subtle Ken Burns settle on the fresh image, timed to finish
-        // exactly as the curtain finishes retreating — extra depth on top
-        // of the wipe itself instead of a flat, static swap.
-        gsap.fromTo(img, { scale: 1.06 }, { scale: 1, duration: phaseDuration, ease: 'power2.out' });
-      }, [], swapAt);
-      revealOrder.forEach((wipe, i) => {
-        tl.to(wipe, { xPercent: -100, duration: DUR, ease: EASE }, swapAt + i * STAGGER);
+        const rect = root.getBoundingClientRect();
+        const smaller = Math.min(rect.width, rect.height);
+        const desktopTile = Math.max(14, Math.min(24, Math.round(smaller * 0.055)));
+        const tileSize = resolveTileSize(desktopTile, 18);
+        const origin = direction === 1
+          ? { x: rect.width + rect.height, y: rect.height / 2 }
+          : { x: -rect.height, y: rect.height / 2 };
+        const plan = buildPixelPlan({
+          width: rect.width,
+          height: rect.height,
+          origin,
+          tileSize,
+          direction: { x: -direction, y: 0 },
+        });
+        const keyframes = buildClipKeyframes(plan, { buckets: 30 });
+        const totalMs = 650;
+        const segmentMs = totalMs - GHOST_LEAD_MS;
+
+        imgAnim?.cancel();
+        ghostAnim?.cancel();
+        ghost.style.visibility = 'visible';
+        ghostAnim = ghost.animate(keyframes, { duration: segmentMs, easing: PIXEL_EASE, fill: 'forwards' });
+        imgAnim = nextImg.animate(keyframes, {
+          duration: segmentMs,
+          delay: GHOST_LEAD_MS,
+          easing: PIXEL_EASE,
+          fill: 'both',
+        });
+
+        Promise.all([ghostAnim.finished, imgAnim.finished])
+          .then(() => {
+            index = nextIndex;
+            img.src = images[index];
+            nextImg.style.clipPath = 'inset(0 0 0 100%)';
+            ghost.style.clipPath = 'inset(0 0 0 100%)';
+            ghost.style.visibility = 'hidden';
+            ghostAnim?.cancel();
+            imgAnim?.cancel();
+            animating = false;
+          })
+          .catch(() => {
+            animating = false;
+          });
       });
     };
 
-    prevBtn?.addEventListener('click', () => swapTo(index - 1), { signal });
-    nextBtn?.addEventListener('click', () => swapTo(index + 1), { signal });
+    prevBtn?.addEventListener('click', () => swapTo(index - 1, -1), { signal });
+    nextBtn?.addEventListener('click', () => swapTo(index + 1, 1), { signal });
   }
 
   let cleanup: AbortController | null = null;

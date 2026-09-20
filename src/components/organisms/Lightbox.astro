@@ -21,6 +21,7 @@ const total = String(items.length).padStart(2, '0');
 
 {items.length > 0 && (
   <div class="lb" data-lightbox aria-hidden="true">
+    <div class="lb-ghost" data-lb-ghost aria-hidden="true"></div>
     <div class="lb-panel" role="dialog" aria-modal="true" aria-label={`${name} screenshot viewer`}>
       <header class="lb-head">
         <span class="lb-count" aria-hidden="true">
@@ -105,6 +106,29 @@ const total = String(items.length).padStart(2, '0');
     flex-direction: column;
     background: var(--lb-ink);
     clip-path: inset(0 0 0 100%);
+  }
+
+  /* Ghost layer — same rect as .lb-panel, one z-index behind it, painted in
+     the OPPOSITE theme's paper/ink for the duration of the pixel transition
+     only (identical technique to Nav's .sm-ghost: leads on open, lags on
+     close so a band of opposite-theme color is visible at the advancing/
+     retreating edge before the real, current-theme panel catches up).
+     Never touches :root[data-theme] — colors below are restated from
+     tokens.css, kept in sync with those, not a new palette. Always
+     pointer-events: none; purely decorative. */
+  .lb-ghost {
+    position: absolute;
+    inset: 0;
+    background: #1a1814;
+    color: #e8e2d3;
+    clip-path: inset(0 0 0 100%);
+    visibility: hidden;
+    z-index: 29;
+    pointer-events: none;
+  }
+  :root[data-theme='dark'] .lb-ghost {
+    background: #f0ece1;
+    color: #14130f;
   }
 
   .lb-head {
@@ -281,6 +305,9 @@ const total = String(items.length).padStart(2, '0');
   const LB_OPEN_MS = 750;
   const LB_CLOSE_MS = 650;
   const LB_BUCKETS = 28;
+  // How far ahead (open) / behind (close) the opposite-theme ghost layer
+  // runs relative to the real panel — same split Nav.astro's menu ghost uses.
+  const LB_GHOST_LEAD_MS = 140;
 
   type GestureMode = 'idle' | 'pan' | 'swipe' | 'pinch' | 'tap';
 
@@ -289,6 +316,7 @@ const total = String(items.length).padStart(2, '0');
     if (!root) return;
 
     const panel = root.querySelector<HTMLElement>('.lb-panel');
+    const ghost = root.querySelector<HTMLElement>('[data-lb-ghost]');
     const viewport = root.querySelector<HTMLElement>('[data-lb-viewport]');
     const track = root.querySelector<HTMLElement>('[data-lb-track]');
     const prevImg = root.querySelector<HTMLImageElement>('[data-lb-prev-image]');
@@ -301,7 +329,7 @@ const total = String(items.length).padStart(2, '0');
     const nextBtn = root.querySelector<HTMLButtonElement>('[data-lb-next]');
     const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lightbox-open]'));
     if (
-      !panel || !viewport || !track || !prevImg || !currentImg || !nextImg ||
+      !panel || !ghost || !viewport || !track || !prevImg || !currentImg || !nextImg ||
       !currentEl || !closeBtn || !prevBtn || !nextBtn || triggers.length === 0
     ) return;
 
@@ -427,10 +455,11 @@ const total = String(items.length).padStart(2, '0');
 
     // Pixel expand/collapse: open originates from the clicked thumbnail's
     // own rect, close consumes back toward that same thumbnail (or a safe
-    // fallback origin if it's ever missing). One Animation on the panel's
-    // clip-path — cancelling a still-running one is what "reopen before the
-    // close finishes" needs instead of the old transitionend/timer pair.
+    // fallback origin if it's ever missing). One Animation per surface —
+    // cancelling any still-running ones is what "reopen before the close
+    // finishes" needs instead of the old transitionend/timer pair.
     let panelAnim: Animation | null = null;
+    let ghostAnim: Animation | null = null;
 
     const originFor = (i: number): Point => {
       const trigger = triggers[i];
@@ -443,6 +472,7 @@ const total = String(items.length).padStart(2, '0');
       const targetIndex = i ?? index;
       open = v;
       panelAnim?.cancel();
+      ghostAnim?.cancel();
 
       if (v) {
         root.setAttribute('data-state', 'open');
@@ -459,6 +489,8 @@ const total = String(items.length).padStart(2, '0');
 
       if (prefersReducedMotion()) {
         panel.style.clipPath = v ? 'inset(0 0 0 0)' : 'inset(0 0 0 100%)';
+        ghost.style.clipPath = 'inset(0 0 0 100%)';
+        ghost.style.visibility = 'hidden';
         if (!v) root.removeAttribute('data-state');
         return;
       }
@@ -471,17 +503,37 @@ const total = String(items.length).padStart(2, '0');
         tileSize,
       });
       const keyframes = buildClipKeyframes(plan, { buckets: LB_BUCKETS, reverse: !v });
+      const totalMs = v ? LB_OPEN_MS : LB_CLOSE_MS;
+      const segmentMs = totalMs - LB_GHOST_LEAD_MS;
 
-      const anim = panel.animate(keyframes, {
-        duration: v ? LB_OPEN_MS : LB_CLOSE_MS,
+      // Opening: the opposite-theme ghost sweeps first, the real (current-
+      // theme) panel follows LB_GHOST_LEAD_MS behind. Closing: the real
+      // panel retreats first, the ghost follows — same lead/lag split as
+      // the menu panel in Nav.astro. The ghost's colors are pure CSS
+      // (`:root[data-theme='dark'] .lb-ghost`), so a theme flip while the
+      // detail is open is picked up automatically on the next transition —
+      // no theme read in this script.
+      const leadEl = v ? ghost : panel;
+      const lagEl = v ? panel : ghost;
+
+      ghost.style.visibility = 'visible';
+      const leadAnim = leadEl.animate(keyframes, { duration: segmentMs, easing: PIXEL_EASE, fill: 'forwards' });
+      const lagAnim = lagEl.animate(keyframes, {
+        duration: segmentMs,
+        delay: LB_GHOST_LEAD_MS,
         easing: PIXEL_EASE,
-        fill: 'forwards',
+        fill: 'both',
       });
-      panelAnim = anim;
-      anim.finished
+      panelAnim = v ? lagAnim : leadAnim;
+      ghostAnim = v ? leadAnim : lagAnim;
+
+      Promise.all([leadAnim.finished, lagAnim.finished])
         .then(() => {
           panel.style.clipPath = v ? 'inset(0 0 0 0)' : 'inset(0 0 0 100%)';
-          anim.cancel();
+          ghost.style.clipPath = 'inset(0 0 0 100%)';
+          ghost.style.visibility = 'hidden';
+          leadAnim.cancel();
+          lagAnim.cancel();
           if (!v) root.removeAttribute('data-state');
         })
         .catch(() => undefined);

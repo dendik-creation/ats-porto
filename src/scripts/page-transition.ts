@@ -27,7 +27,14 @@ if (veil && !prefersReduced) {
   const MOBILE_TILE = 16;
   const DURATION_MS = 1000;
   const BUCKETS = 40;
-  const FADE_MS = 250; // initial-load reveal only — never the pixel cascade
+  // Initial-load reveal only — lighter/faster than a real navigation curtain,
+  // and painted in the OPPOSITE theme's tone via [data-opposite] on .pt-layer
+  // (see PageTransition.astro) — same opposite-palette rule the menu and
+  // image-detail transitions use, not the navigation curtain's own --ink.
+  const INITIAL_DESKTOP_TILE = 26;
+  const INITIAL_MOBILE_TILE = 20;
+  const INITIAL_DURATION_MS = 850;
+  const INITIAL_BUCKETS = 36;
 
   // The curtain starts covering the viewport (see the component's CSS) so
   // there's no gap between first paint and the veil taking over — mark it
@@ -63,6 +70,7 @@ if (veil && !prefersReduced) {
       veil.setAttribute('data-active', '');
       currentAnim?.cancel();
       layer.style.opacity = ''; // clear a leftover initial-load fade, if any
+      layer.removeAttribute('data-opposite'); // clear a leftover initial-load tone override, if any
 
       const tileSize = resolveTileSize(DESKTOP_TILE, MOBILE_TILE);
       const plan = buildPixelPlan({ width: window.innerWidth, height: window.innerHeight, origin: origin(), tileSize });
@@ -102,17 +110,44 @@ if (veil && !prefersReduced) {
       .catch(() => undefined);
   };
 
-  // First paint only — never the pixel cascade, just a short crossfade so
-  // load time (fonts, images) stays masked without playing a flourish.
-  const revealFade = () => {
-    const anim = layer.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_MS, easing: 'ease', fill: 'forwards' });
-    anim.finished
-      .then(() => {
-        layer.style.opacity = '0';
-        anim.cancel();
-        veil.removeAttribute('data-active');
-      })
-      .catch(() => undefined);
+  // First paint only — the fullscreen pixel cascade, painted in the OPPOSITE
+  // theme's tone (never the navigation curtain's --ink, never the active
+  // theme's own surface). Same reverse-reveal shape as revealPixels(), just
+  // its own lighter timing/tile size.
+  const clearVeil = () => {
+    layer.style.clipPath = 'inset(0 0 0 100%)';
+    layer.removeAttribute('data-opposite');
+    gsap.set(pixels, { opacity: 0 });
+    veil.removeAttribute('data-active');
+  };
+
+  const revealInitial = () => {
+    // Safety net: if animation setup throws, or finished/browser support is
+    // flaky, never leave the page blocked behind the cover.
+    const fallback = window.setTimeout(clearVeil, INITIAL_DURATION_MS + 400);
+    try {
+      layer.setAttribute('data-opposite', '');
+      const tileSize = resolveTileSize(INITIAL_DESKTOP_TILE, INITIAL_MOBILE_TILE);
+      const plan = buildPixelPlan({ width: window.innerWidth, height: window.innerHeight, origin: origin(), tileSize });
+      const keyframes = buildClipKeyframes(plan, { buckets: INITIAL_BUCKETS, reverse: true });
+
+      const anim = layer.animate(keyframes, { duration: INITIAL_DURATION_MS, easing: PIXEL_EASE, fill: 'forwards' });
+      currentAnim = anim;
+      if (pixels.length) runAccentTrail(anim, plan, pixels, { samples: 6, gsap });
+      anim.finished
+        .then(() => {
+          window.clearTimeout(fallback);
+          clearVeil();
+          anim.cancel();
+        })
+        .catch(() => {
+          window.clearTimeout(fallback);
+          clearVeil();
+        });
+    } catch {
+      window.clearTimeout(fallback);
+      clearVeil();
+    }
   };
 
   // Outgoing navigation: hold the swap until the curtain has fully covered
@@ -129,14 +164,16 @@ if (veil && !prefersReduced) {
 
   // Fires once the page is genuinely ready — on the first visit that's the
   // real `window.load` (fonts and images included), on later navigations
-  // it's right after the swap. Either way: lift the curtain, pixel cascade
-  // only for an actual navigation.
+  // it's right after the swap. Either way: lift the curtain — the real
+  // navigation cascade for an actual navigation, the lighter theme-correct
+  // initial cascade for the first document load only (`navigating` is only
+  // ever set by a real astro:before-preparation, never on first load).
   document.addEventListener('astro:page-load', () => {
     if (navigating) {
       revealPixels();
       navigating = false;
     } else {
-      revealFade();
+      revealInitial();
     }
   });
 }
