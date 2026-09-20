@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
+import SectionIllustration from '../molecules/SectionIllustration.astro';
 import Lightbox from './Lightbox.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
@@ -24,43 +25,70 @@ const galleryItems = sortedCertificates.map((c) => ({
 ---
 
 <section class="certs shell" aria-labelledby="certifications-title">
-  <SectionHeader index="06" id="certifications-title" title={ui.sections.certifications.title} kicker={ui.sections.certifications.kicker} axis="WGHT 500 · OPSZ 40" />
+  <div class="section-heading-stage">
+    <SectionHeader index="06" id="certifications-title" title={ui.sections.certifications.title} kicker={ui.sections.certifications.kicker} axis="WGHT 500 · OPSZ 40" />
+    <SectionIllustration
+      src="/static/arc/certifications-archive-cabinet.webp"
+      width={1536}
+      height={1024}
+      duration={550}
+      tileMin={8}
+      tileMax={28}
+      artWidth="clamp(300px, 32vw, 480px)"
+      artRight="-1%"
+      artOpacity="0.26"
+      mobileWidth="95vw"
+      mobileRight="-30%"
+      mobileOpacity="0.06"
+    />
+  </div>
 
-  <ol class="certs__grid">
-    {sortedCertificates.map((c, i) => (
-      <li class="certs__card">
-        <div class="certs__top">
-          <span class="certs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <span class="certs__type" data-type={c.type}>{c.type === 'award' ? ui.certifications.typeAward : ui.certifications.typeCertification}</span>
-        </div>
-        <h3 class="certs__name">{c.name}</h3>
-        <p class="certs__issuer">{c.issuer}</p>
-        <p class="certs__valid label">{validity(c.date, c.endDate)}</p>
-        <p class="certs__summary">{c.summary}</p>
-        {(c.credentialId || c.url) && (
-          <div class="certs__cred">
-            {c.credentialId && <span class="certs__cred-id">{ui.certifications.credentialIdLabel} · {c.credentialId}</span>}
-            {c.url && (
-              <a class="certs__verify" href={c.url} target="_blank" rel="noopener noreferrer">
-                {ui.certifications.verifyCredential}
-                <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
-                  <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </a>
-            )}
+  <div class="certs__content">
+    <ol class="certs__grid">
+      {sortedCertificates.map((c, i) => (
+        <li class="certs__card">
+          <div class="certs__top">
+            <span class="certs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span class="certs__type" data-type={c.type}>{c.type === 'award' ? ui.certifications.typeAward : ui.certifications.typeCertification}</span>
           </div>
-        )}
-        <button type="button" class="certs__image-trigger" data-lightbox-open aria-label={ui.certifications.openImageAria(c.name)}>
-          <img src={c.image} alt={ui.certifications.imageAlt(c.name)} loading="lazy" decoding="async" />
-        </button>
-      </li>
-    ))}
-  </ol>
-
-  <Lightbox items={galleryItems} name={ui.certifications.lightboxName} />
+          <h3 class="certs__name">{c.name}</h3>
+          <p class="certs__issuer">{c.issuer}</p>
+          <p class="certs__valid label">{validity(c.date, c.endDate)}</p>
+          <p class="certs__summary">{c.summary}</p>
+          {(c.credentialId || c.url) && (
+            <div class="certs__cred">
+              {c.credentialId && <span class="certs__cred-id">{ui.certifications.credentialIdLabel} · {c.credentialId}</span>}
+              {c.url && (
+                <a class="certs__verify" href={c.url} target="_blank" rel="noopener noreferrer">
+                  {ui.certifications.verifyCredential}
+                  <svg viewBox="0 0 24 24" width="0.7em" height="0.7em" aria-hidden="true" focusable="false">
+                    <path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </a>
+              )}
+            </div>
+          )}
+          <button type="button" class="certs__image-trigger" data-lightbox-open aria-label={ui.certifications.openImageAria(c.name)}>
+            <img src={c.image} alt={ui.certifications.imageAlt(c.name)} loading="lazy" decoding="async" />
+          </button>
+        </li>
+      ))}
+    </ol>
+  </div>
 </section>
 
+<Lightbox items={galleryItems} name={ui.certifications.lightboxName} />
+
 <style>
+  .certs {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+  .certs__content {
+    position: relative;
+    z-index: 1;
+  }
   .certs__grid {
     list-style: none;
     padding: 0;

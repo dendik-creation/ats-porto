@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
+import SectionIllustration from '../molecules/SectionIllustration.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 import { rangeLabel } from '../../data/format';
 const locale = resolveLocale(Astro.currentLocale);
@@ -8,38 +9,66 @@ const ui = t(locale);
 ---
 
 <section class="vol shell" aria-labelledby="volunteer-title">
-  <SectionHeader index="05" id="volunteer-title" title={ui.sections.volunteer.title} kicker={ui.sections.volunteer.kicker} axis="WGHT 520 · OPSZ 30" />
+  <div class="section-heading-stage">
+    <SectionHeader index="05" id="volunteer-title" title={ui.sections.volunteer.title} kicker={ui.sections.volunteer.kicker} axis="WGHT 520 · OPSZ 30" />
+    <SectionIllustration
+      src="/static/arc/volunteer-collaboration-table.webp"
+      width={1536}
+      height={1024}
+      duration={700}
+      tileMin={11}
+      tileMax={44}
+      artWidth="clamp(340px, 38vw, 560px)"
+      artRight="-3%"
+      artOpacity="0.4"
+      mobileWidth="110vw"
+      mobileRight="-35%"
+      mobileOpacity="0.1"
+    />
+  </div>
 
-  <div class="vol__list">
-    {volunteer.map((v) => {
-      const range = v.startDate && v.endDate ? rangeLabel(v.startDate, v.endDate, locale) : '';
-      const isCurrent = v.endDate === 'Present';
-      return (
-        <article class="vol__item">
-          <div class="vol__meta">
-            {range && (
-              <p class="vol__range label">
-                {range}
-                {isCurrent && <span class="vol__now" aria-label={ui.volunteer.currentAria}>●</span>}
-              </p>
-            )}
-            <p class="vol__loc">{v.location}</p>
-          </div>
-          <div class="vol__body">
-            <h3 class="vol__role">{v.organization}</h3>
-            <p class="vol__position">{v.position}</p>
-            {v.summary && <p class="vol__summary">{v.summary}</p>}
-            <ul class="vol__highlights">
-              {v.highlights.map((h) => <li>{h}</li>)}
-            </ul>
-          </div>
-        </article>
-      );
-    })}
+  <div class="vol__content">
+    <div class="vol__list">
+      {volunteer.map((v) => {
+        const range = v.startDate && v.endDate ? rangeLabel(v.startDate, v.endDate, locale) : '';
+        const isCurrent = v.endDate === 'Present';
+        return (
+          <article class="vol__item">
+            <div class="vol__meta">
+              {range && (
+                <p class="vol__range label">
+                  {range}
+                  {isCurrent && <span class="vol__now" aria-label={ui.volunteer.currentAria}>●</span>}
+                </p>
+              )}
+              <p class="vol__loc">{v.location}</p>
+            </div>
+            <div class="vol__body">
+              <h3 class="vol__role">{v.organization}</h3>
+              <p class="vol__position">{v.position}</p>
+              {v.summary && <p class="vol__summary">{v.summary}</p>}
+              <ul class="vol__highlights">
+                {v.highlights.map((h) => <li>{h}</li>)}
+              </ul>
+            </div>
+          </article>
+        );
+      })}
+    </div>
   </div>
 </section>
 
 <style>
+  .vol {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+  .vol__content {
+    position: relative;
+    z-index: 1;
+  }
+
   /* Same layout as Experience — sticky meta column beside the body */
   .vol__list {
     border-bottom: 1px solid var(--line);

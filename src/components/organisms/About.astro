@@ -19,26 +19,28 @@ const place = homeRegion(basics.location, locale);
 ---
 
 <section class="about shell" aria-labelledby="about-title">
-  <SectionHeader index="01" id="about-title" title={ui.sections.about.title} kicker={ui.sections.about.kicker} axis="WGHT 460 · OPSZ 60" />
+  <div class="about__content">
+    <SectionHeader index="01" id="about-title" title={ui.sections.about.title} kicker={ui.sections.about.kicker} axis="WGHT 460 · OPSZ 60" />
 
-  <div class="about__grid">
-    <div class="about__lede">
-      <p>
-        {ui.about.ledeBefore}<strong>{place}</strong>{ui.about.ledeAfter}
-      </p>
-      <p>{ui.about.lede2}</p>
+    <div class="about__grid">
+      <div class="about__lede">
+        <p>
+          {ui.about.ledeBefore}<strong>{place}</strong>{ui.about.ledeAfter}
+        </p>
+        <p>{ui.about.lede2}</p>
+      </div>
+
+      <dl class="about__stats">
+        {stats.map((s) => (
+          <div class="about__stat">
+            <dt class="about__stat-val">
+              {s.value}<span class="about__stat-unit">{s.unit}</span>
+            </dt>
+            <dd class="about__stat-label">{s.label}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
-
-    <dl class="about__stats">
-      {stats.map((s) => (
-        <div class="about__stat">
-          <dt class="about__stat-val">
-            {s.value}<span class="about__stat-unit">{s.unit}</span>
-          </dt>
-          <dd class="about__stat-label">{s.label}</dd>
-        </div>
-      ))}
-    </dl>
   </div>
 </section>
 

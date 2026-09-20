@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
+import SectionIllustration from '../molecules/SectionIllustration.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
 const { languages } = getCV(locale);
@@ -7,25 +8,52 @@ const ui = t(locale);
 ---
 
 <section class="langs shell" aria-labelledby="languages-title">
-  <SectionHeader index="07" id="languages-title" title={ui.sections.languages.title} kicker={ui.sections.languages.kicker} axis="WGHT 460 · OPSZ 50" />
+  <div class="section-heading-stage">
+    <SectionHeader index="07" id="languages-title" title={ui.sections.languages.title} kicker={ui.sections.languages.kicker} axis="WGHT 460 · OPSZ 50" />
+    <SectionIllustration
+      src="/static/arc/languages-listening-station.webp"
+      width={1774}
+      height={887}
+      duration={550}
+      tileMin={8}
+      tileMax={28}
+      artWidth="clamp(320px, 36vw, 540px)"
+      artRight="-2%"
+      artOpacity="0.4"
+      mobileWidth="105vw"
+      mobileRight="-32%"
+      mobileOpacity="0.1"
+    />
+  </div>
 
-  <dl class="langs__list">
-    {languages.map((l, i) => (
-      <div class="langs__item">
-        <dt class="langs__name">
-          <span class="langs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          {l.name}
-        </dt>
-        <dd class="langs__body">
-          <span class="langs__level">{l.level}</span>
-          {l.note && <span class="langs__note">{l.note}</span>}
-        </dd>
-      </div>
-    ))}
-  </dl>
+  <div class="langs__content">
+    <dl class="langs__list">
+      {languages.map((l, i) => (
+        <div class="langs__item">
+          <dt class="langs__name">
+            <span class="langs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            {l.name}
+          </dt>
+          <dd class="langs__body">
+            <span class="langs__level">{l.level}</span>
+            {l.note && <span class="langs__note">{l.note}</span>}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
 </section>
 
 <style>
+  .langs {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+  .langs__content {
+    position: relative;
+    z-index: 1;
+  }
   .langs__list {
     margin: 0;
     display: flex;

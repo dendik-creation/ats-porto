@@ -1,0 +1,117 @@
+---
+// Decorative layer for the five editorial section illustrations (Stack,
+// Experience, Volunteer, Certifications, Languages). Always vertically
+// centered on and right-anchored to its host — meant to sit inside a
+// `.section-heading-stage` wrapper (see global.css) alongside the section's
+// SectionHeader, never in normal flow, never affecting the header's own
+// measurements. The containing section still needs `overflow: clip` (see
+// any of the sections above) so the illustration can't cause horizontal
+// page scroll.
+//
+// Reveals through the site's existing Pixel Motion System via
+// project-image-reveal.ts — the data-pixel-* attributes just tune that
+// shared engine's duration/tile size per instance. The engine toggles the
+// <img>'s own opacity between 0 (unrevealed) and 1 (revealed); the
+// decorative dimming below is a separate opacity on the wrapping layer, so
+// the two multiply together and the pixel mask reveals an image that's
+// already at its final, dimmed target — never a 0 → full fade.
+interface Props {
+  src: string;
+  alt?: string;
+  width: number;
+  height: number;
+  duration?: number;
+  tileMin?: number;
+  tileMax?: number;
+  /** Desktop placement/size, any valid CSS length (%, clamp(), vw, px). */
+  artWidth: string;
+  artRight: string;
+  artOpacity: string;
+  /** Mobile (<=768px) overrides — same illustration, repositioned/dimmed. */
+  mobileWidth: string;
+  mobileRight: string;
+  mobileOpacity: string;
+  /** Dissolves the image to transparent at this edge — pass the edge the
+   *  adjacent text sits against, for text-dense sections. */
+  fadeEdge?: 'left' | 'right';
+}
+
+const {
+  src,
+  alt = '',
+  width,
+  height,
+  duration,
+  tileMin,
+  tileMax,
+  artWidth,
+  artRight,
+  artOpacity,
+  mobileWidth,
+  mobileRight,
+  mobileOpacity,
+  fadeEdge,
+} = Astro.props;
+
+// fadeEdge names the edge that should dissolve to transparent (the edge
+// text sits against); the gradient must point AWAY from that edge, since a
+// CSS linear-gradient's 0% stop sits at the side opposite its `to <dir>`.
+const gradientDirection = fadeEdge === 'left' ? 'right' : 'left';
+const maskImage = fadeEdge
+  ? `linear-gradient(to ${gradientDirection}, transparent, rgba(0,0,0,0.35) 30%, black 60%)`
+  : undefined;
+
+const vars = [
+  `--art-width:${artWidth}`,
+  `--art-right:${artRight}`,
+  `--art-opacity:${artOpacity}`,
+  `--art-mobile-width:${mobileWidth}`,
+  `--art-mobile-right:${mobileRight}`,
+  `--art-mobile-opacity:${mobileOpacity}`,
+  maskImage ? `--art-mask:${maskImage}` : '',
+].filter(Boolean).join(';');
+---
+
+<div class="section-art" style={vars} aria-hidden="true">
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading="lazy"
+    decoding="async"
+    class="section-art__img"
+    data-pixel-reveal
+    data-pixel-duration={duration}
+    data-pixel-tile-min={tileMin}
+    data-pixel-tile-max={tileMax}
+  />
+</div>
+
+<style>
+  .section-art {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: var(--art-right);
+    width: var(--art-width);
+    opacity: var(--art-opacity);
+    transform: translateY(-50%);
+    pointer-events: none;
+    user-select: none;
+    -webkit-mask-image: var(--art-mask, none);
+    mask-image: var(--art-mask, none);
+  }
+  .section-art__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (max-width: 768px) {
+    .section-art {
+      width: var(--art-mobile-width);
+      right: var(--art-mobile-right);
+      opacity: var(--art-mobile-opacity);
+    }
+  }
+</style>

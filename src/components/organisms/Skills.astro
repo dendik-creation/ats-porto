@@ -1,5 +1,6 @@
 ---
 import SectionHeader from '../molecules/SectionHeader.astro';
+import SectionIllustration from '../molecules/SectionIllustration.astro';
 import TagList from '../atoms/TagList.astro';
 import { getCV, t, resolveLocale } from '../../i18n';
 const locale = resolveLocale(Astro.currentLocale);
@@ -8,24 +9,52 @@ const ui = t(locale);
 ---
 
 <section class="skills shell" aria-labelledby="skills-title">
-  <SectionHeader index="02" id="skills-title" title={ui.sections.skills.title} kicker={ui.sections.skills.kicker} axis="WGHT 440 · OPSZ 50" />
+  <div class="section-heading-stage">
+    <SectionHeader index="02" id="skills-title" title={ui.sections.skills.title} kicker={ui.sections.skills.kicker} axis="WGHT 440 · OPSZ 50" />
+    <SectionIllustration
+      src="/static/arc/stack-technology-rack.webp"
+      width={1672}
+      height={941}
+      duration={700}
+      tileMin={14}
+      tileMax={56}
+      artWidth="clamp(360px, 40vw, 620px)"
+      artRight="-2%"
+      artOpacity="0.48"
+      mobileWidth="105vw"
+      mobileRight="-30%"
+      mobileOpacity="0.11"
+      fadeEdge="left"
+    />
+  </div>
 
-  <div class="skills__index">
-    {skills.map((group, i) => (
-      <div class="skills__row">
-        <div class="skills__row-label">
-          <span class="skills__row-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <h3 class="skills__row-name">{group.name}</h3>
+  <div class="skills__content">
+    <div class="skills__index">
+      {skills.map((group, i) => (
+        <div class="skills__row">
+          <div class="skills__row-label">
+            <span class="skills__row-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="skills__row-name">{group.name}</h3>
+          </div>
+          <div class="skills__row-tags">
+            <TagList items={group.keywords} label={`${group.name} stack`} />
+          </div>
         </div>
-        <div class="skills__row-tags">
-          <TagList items={group.keywords} label={`${group.name} stack`} />
-        </div>
-      </div>
-    ))}
+      ))}
+    </div>
   </div>
 </section>
 
 <style>
+  .skills {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+  }
+  .skills__content {
+    position: relative;
+    z-index: 1;
+  }
   .skills__index {
     border-top: 1px solid var(--line);
   }

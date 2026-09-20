@@ -30,7 +30,7 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? basics.url).toString();
-const ogImage = new URL('/og.svg', Astro.site ?? basics.url).toString();
+const ogImage = new URL('/og.webp', Astro.site ?? basics.url).toString();
 
 // hreflang alternates computed from the locale-stripped bare pathname, so
 // search engines pair the en/id versions of the same page.
@@ -94,7 +94,7 @@ const websiteLd = isHome
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/webp" href="/favicon.webp" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="en" href={enUrl} />
     <link rel="alternate" hreflang="id" href={idUrl} />
@@ -113,6 +113,9 @@ const websiteLd = isHome
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:width" content="1201" />
+    <meta property="og:image:height" content="631" />
     <meta property="og:locale" content={locale === 'id' ? 'id_ID' : 'en_US'} />
     <meta property="og:locale:alternate" content={locale === 'id' ? 'en_US' : 'id_ID'} />
     <meta property="profile:first_name" content="Dendi" />

@@ -14,17 +14,24 @@ const MAX_TILE = 40;
 const TILE_RATIO = 0.055; // ~5.5% of the smaller box dimension
 const MAX_DELAY_MS = 100; // spatial variation, not sequential stagger
 
-function tileSizeFor(width: number, height: number): number {
+function tileSizeFor(width: number, height: number, minTile: number, maxTile: number): number {
   const base = Math.min(width, height) * TILE_RATIO;
-  return Math.min(MAX_TILE, Math.max(MIN_TILE, base));
+  return Math.min(maxTile, Math.max(minTile, base));
 }
 
+// data-pixel-* overrides let a caller (e.g. SectionIllustration.astro) tune
+// duration/tile size per instance; omitted attributes fall back to the
+// project-card defaults above, so existing '.proj' images are untouched.
 function reveal(el: HTMLElement): void {
   const rect = el.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;
   el.style.opacity = '1';
 
-  const tileSize = Math.min(tileSizeFor(rect.width, rect.height), resolveTileSize(28, 20));
+  const duration = Number(el.dataset.pixelDuration) || DURATION_MS;
+  const minTile = Number(el.dataset.pixelTileMin) || MIN_TILE;
+  const maxTile = Number(el.dataset.pixelTileMax) || MAX_TILE;
+
+  const tileSize = Math.min(tileSizeFor(rect.width, rect.height, minTile, maxTile), resolveTileSize(maxTile, minTile));
   const plan = buildPixelPlan({ width: rect.width, height: rect.height, origin: { x: rect.width, y: 0 }, tileSize });
   const keyframes = buildClipKeyframes(plan, { buckets: BUCKETS });
 
@@ -33,7 +40,7 @@ function reveal(el: HTMLElement): void {
   // index * delay stagger.
   const delay = Math.round(hash(rect.left, rect.top + window.scrollY) * MAX_DELAY_MS);
 
-  el.animate(keyframes, { duration: DURATION_MS, delay, easing: PIXEL_EASE, fill: 'none' });
+  el.animate(keyframes, { duration, delay, easing: PIXEL_EASE, fill: 'none' });
 }
 
 function initAll(): void {

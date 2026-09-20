@@ -82,6 +82,17 @@ h3 {
   margin-inline: auto;
 }
 
+/* Wraps a SectionHeader so a decorative SectionIllustration can sit beside it
+   without affecting header measurements — see molecules/SectionIllustration.astro. */
+.section-heading-stage {
+  position: relative;
+  isolation: isolate;
+}
+.section-heading-stage .sec-head {
+  position: relative;
+  z-index: 2;
+}
+
 /* Mono eyebrow / label — recurring hallmark texture */
 .label {
   font-family: var(--font-mono);

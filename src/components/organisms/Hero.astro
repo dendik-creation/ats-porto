@@ -227,13 +227,10 @@ const last = 'Setiawan';
     position: absolute;
     inset: 0;
     scale: 1.2;
-    background-image: url('/static/sections/hero/work_setup_light.png');
+    background-image: url('/static/arc/hero-section.webp');
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-  }
-  :root[data-theme='dark'] .hero__stage {
-    background-image: url('/static/sections/hero/work_setup_dark.png');
   }
   /* Pixel mask: rests fully collapsed (zero-area clip-path) by default —
      plain CSS, no JS — so reduced-motion / no-JS visitors just see the
@@ -429,8 +426,8 @@ const last = 'Setiawan';
   const IMAGE_READY_TIMEOUT_MS = 400; // never let a slow fetch block the swap indefinitely
 
   const HERO_IMAGE_BY_THEME: Record<'light' | 'dark', string> = {
-    light: '/static/sections/hero/work_setup_light.png',
-    dark: '/static/sections/hero/work_setup_dark.png',
+    light: '/static/arc/hero-section.webp',
+    dark: '/static/arc/hero-section.webp',
   };
 
   // Persists across astro:page-load re-inits (module scope) — once an image
@@ -535,6 +532,7 @@ const last = 'Setiawan';
       const oldTheme = toTheme(mutation.oldValue);
       const newTheme = toTheme(document.documentElement.getAttribute('data-theme'));
       if (oldTheme === newTheme) return;
+      if (HERO_IMAGE_BY_THEME[oldTheme] === HERO_IMAGE_BY_THEME[newTheme]) return; // same asset both themes — nothing to reveal
 
       const token = ++swapToken;
       // Rapid re-toggle: cancel whatever's in flight and re-cover with a
