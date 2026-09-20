@@ -49,6 +49,9 @@ import SAP from './icons/SAP.astro'
 import Obsidian from './icons/Obsidian.astro';
 import GooglePlay from './icons/GooglePlay.astro';
 import Globe from './icons/Globe.astro';
+import Nginx from './icons/Nginx.astro';
+import Drizzle from './icons/Drizzle.astro';
+import Notion from './icons/Notion.astro';
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -106,6 +109,9 @@ const REGISTRY: Record<string, typeof Typescript> = {
   obsidian : Obsidian,
   googleplay : GooglePlay,
   globe : Globe,
+  drizzle : Drizzle,
+  nginx : Nginx,
+  notion : Notion,
 };
 
 interface Props {
@@ -117,16 +123,33 @@ const { name, size = 20, class: className } = Astro.props;
 const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
 const Icon = REGISTRY[key];
 
-// Icons drawn in a light/bright fill (white, neon) read the opposite of
-// dark/black icons: invisible on paper in light mode, invisible again
-// after the dark-mode invert. Negate the invert for these keys.
-const LIGHT_FILL_ICONS = new Set(['prisma', 'construct3', 'shadcnui', 'aws', 'restapi', 'globe']);
-const isLightFill = LIGHT_FILL_ICONS.has(key);
+// These use a white fill as internal detail/highlight, not a whole-icon
+// tint (e.g. Next.js' gradient "N" on a black disc, Postgres' eye dots).
+// Forcing brightness(0) crushes that white into the same black as the
+// rest of the mark, erasing the detail. Keep their native brand colors.
+const KEEP_COLOR_ICONS = new Set([
+  'nextjs',
+  'typescript',
+  'postgresql',
+  'redis',
+  'cloudflare',
+  'firebase',
+  'fcm',
+  'obsidian',
+  'bun',
+  'nodejs',
+  'docker',
+  'nginx' ,
+  'figma',
+  'notion',
+  'godot'
+]);
+const keepColor = KEEP_COLOR_ICONS.has(key);
 ---
 
 {
   Icon && (
-    <span class:list={['brand-icon', isLightFill && 'brand-icon--light', className]}>
+    <span class:list={['brand-icon', keepColor && 'brand-icon--color', className]}>
       <Icon width={size} height={size} role="img" aria-label={name} />
     </span>
   )
@@ -137,19 +160,18 @@ const isLightFill = LIGHT_FILL_ICONS.has(key);
   display: inline-block;
   flex: none;
   vertical-align: middle;
-  filter: grayscale(60%);
-  color: currentColor;
+  filter: brightness(0);
 }
 
 :root[data-theme='dark'] .brand-icon {
-  filter: grayscale(60%) invert(1);
+  filter: brightness(0) invert(1);
 }
 
-.brand-icon--light {
-  filter: grayscale(60%) invert(1);
+.brand-icon--color {
+  filter: none;
 }
 
-:root[data-theme='dark'] .brand-icon--light {
-  filter: grayscale(60%);
+:root[data-theme='dark'] .brand-icon--color {
+  filter: none;
 }
 </style>
