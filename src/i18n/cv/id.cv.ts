@@ -8,14 +8,14 @@ export const cv: CV = {
   basics: {
     name: "Dendi' Setiawan",
     siteName: "Dendi' Creation",
-    label: 'Fullstack Dev',
+    label: 'Fullstack Developer',
     email: 'setiawandendik0205@gmail.com',
     url: 'https://dendikcreation.dev',
     cvUrl: 'https://drive.google.com/file/d/1IC-G5b8WJTjGduhHqbUdW04bh5lSSKqL/view?usp=sharing',
     summary:
-      'Saya membangun produk fullstack secara end-to-end, dari desain database hingga antarmuka pengguna. Empat tahun pengalaman di pengembangan web dan mobile, menggunakan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter untuk menghadirkan software yang aman dan cepat.',
+      'Fullstack developer dengan empat tahun pengalaman membangun produk web dan mobile. Menangani desain database, API, antarmuka pengguna, dan deployment dengan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter. Pengalaman mencakup sistem bisnis, aplikasi layanan publik, dan produk pembelajaran interaktif.',
     seoDescription:
-      "Dendi' Setiawan adalah fullstack developer dari Indonesia yang membangun produk web dan mobile dengan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter.",
+      "Dendi' Setiawan adalah fullstack developer dari Indonesia yang berpengalaman membangun produk web dan mobile.",
     location: { city: 'Kudus', countryCode: 'ID', region: 'Jawa Tengah' },
     profiles: [
       { network: 'GitHub', username: 'dendik-creation', url: 'https://github.com/dendik-creation' },
@@ -31,12 +31,12 @@ export const cv: CV = {
     location: 'Jawa Tengah, Indonesia',
     startDate: '2026-03',
     endDate: 'Present',
-    summary: 'Memimpin arsitektur sistem inti, pengembangan platform SaaS, dan infrastruktur DevOps untuk membangun website UMKM secara otomatis melalui alur kerja LLM bertahap.',
+    summary: 'Memimpin arsitektur sistem inti, pengembangan platform SaaS, dan infrastruktur DevOps untuk website builder otomatis bagi UMKM Indonesia.',
     highlights: [
-    'Merancang arsitektur core system menggunakan Next.js, TypeScript, Prisma, PostgreSQL, Redis, dan BullMQ untuk mendukung proses pembuatan website yang terstruktur dan asynchronous.',
-    'Mengembangkan workflow berbasis LLM menggunakan DeepSeek API untuk mengubah profil bisnis terstruktur menjadi website statis yang siap dipublikasikan.',
-    'Merancang dan mengelola infrastruktur deployment berbasis Docker dan Caddy, termasuk konfigurasi domain, reverse proxy, serta integrasi Cloudflare.',
-    'Mengimplementasikan background job processing menggunakan Redis dan BullMQ untuk menjalankan proses pembuatan website secara reliable dan scalable.'
+    'Merancang arsitektur inti dengan Next.js, TypeScript, Prisma, PostgreSQL, Redis, dan BullMQ untuk pembuatan website yang terstruktur dan asynchronous.',
+    'Membangun workflow DeepSeek API yang mengubah profil bisnis terstruktur menjadi website statis siap publikasi.',
+    'Mengelola infrastruktur deployment berbasis Docker dan Caddy, termasuk konfigurasi domain, reverse proxy, dan integrasi Cloudflare.',
+    'Menyiapkan job Redis dan BullMQ untuk menjalankan proses pembuatan website.'
     ],
     keywords: [
     'Next.js',
@@ -57,10 +57,10 @@ export const cv: CV = {
       location: 'Remote',
       startDate: '2025-07',
       endDate: 'Present',
-      summary: 'Membangun dan merilis aplikasi web serta mobile untuk klien, mencakup layanan backend, antarmuka, dan deployment.',
+      summary: 'Membangun dan merilis aplikasi web serta mobile untuk klien, dari layanan backend dan antarmuka hingga deployment.',
       highlights: [
         'Merancang skema database, membangun REST API, dan membuat antarmuka responsif untuk aplikasi klien.',
-        'Men-deploy aplikasi fullstack dengan Node.js, Go, dan teknologi web yang sesuai kebutuhan proyek.'
+        'Men-deploy aplikasi fullstack dengan Node.js, Go, dan teknologi web sesuai kebutuhan proyek.'
       ],
       keywords: ['Laravel', 'Go', 'Node.js', 'React', 'Vue', 'Flutter', 'Docker', 'Next.js']
     },
@@ -71,7 +71,7 @@ export const cv: CV = {
       startDate: '2024-07',
       endDate: '2025-07',
       summary:
-        'Software bisnis untuk pemasaran produk dan penyaluran dana amal melalui WhatsApp for Business.',
+        'Membangun software bisnis untuk pemasaran produk dan penyaluran dana amal melalui WhatsApp Business.',
       highlights: [
         'Merilis kustomisasi template serta integrasi Meta WhatsApp API, Biteship, dan JNE untuk pemesanan dan pengiriman.',
         'Membangun alur broadcast yang menghubungkan pelanggan dan penjual melalui WhatsApp.',
@@ -85,7 +85,7 @@ export const cv: CV = {
       location: 'Jawa Tengah, Indonesia',
       startDate: '2024-02',
       endDate: '2024-05',
-      summary: 'Membangun dan memelihara aplikasi bisnis yang berjalan berdampingan dengan sistem yang sudah ada.',
+      summary: 'Mengembangkan aplikasi bisnis yang berjalan berdampingan dengan sistem yang sudah ada.',
       highlights: [
         'Membangun aplikasi manajemen data karyawan dengan PowerBuilder dan Oracle, termasuk administrasi database langsung.',
         'Mengembangkan sistem audit mutu internal dengan Laravel dan React untuk menjalankan serta merangkum audit per pengguna.',
@@ -98,7 +98,7 @@ export const cv: CV = {
       location: 'Jawa Tengah, Indonesia',
       startDate: '2023-06',
       endDate: '2023-08',
-      summary: 'Membangun dan memelihara aplikasi web untuk kebutuhan bisnis.',
+      summary: 'Mengembangkan aplikasi web untuk kebutuhan bisnis.',
       highlights: [
         'Membangun aplikasi voting Pilih Dhewe dengan integrasi REST API.',
         'Mengerjakan skema database, API backend, dan panel admin.',
@@ -113,10 +113,10 @@ export const cv: CV = {
       location: 'Kudus, Indonesia',
       startDate: '2023-02',
       endDate: '2024-07',
-      summary: 'Mengikuti berbagai kegiatan lomba dalam bidang teknologi.',
-      highlights: [
-        'Mengikuti berbagai lomba teknologi yang relevan dengan industri.',
-        'Berbagi pengalaman dan pengetahuan dengan orang lain dalam mengikuti lomba teknologi.'
+      summary: 'Mengikuti lomba teknologi untuk mengembangkan pengalaman teknis dan pemahaman industri.',
+    highlights: [
+        'Mengikuti lomba teknologi yang relevan dengan praktik industri.',
+        'Berbagi pengalaman dan pengetahuan lomba dengan rekan.'
       ]
     },
     {
@@ -125,11 +125,11 @@ export const cv: CV = {
       location: 'Kudus, Indonesia',
       startDate: '2025-05',
       endDate: 'Present',
-      summary: 'Mengajar dan membimbing anggota pada dasar-dasar pengembangan web yang praktis.',
+      summary: 'Mengajar dan membimbing anggota dalam pengembangan web praktis.',
       highlights: [
-        'Mengadakan sesi pelatihan tentang Laravel dan ekosistemnya.',
-        'Membimbing anggota lewat praktik alur kerja pengembangan dan arsitektur perangkat lunak.',
-        `Berperan sebagai juri dalam kompetisi “Vibe Coding” yang diikuti oleh mahasiswa tahun pertama, dengan proyek yang dikembangkan menggunakan Google AI Studio.`
+        'Mengadakan sesi pelatihan Laravel.',
+        'Membimbing anggota melalui praktik alur kerja pengembangan dan arsitektur perangkat lunak.',
+        'Berperan sebagai juri kompetisi "Vibe Coding", tempat mahasiswa tahun pertama mengembangkan proyek dengan Google AI Studio.'
       ]
     }
   ],
@@ -147,7 +147,7 @@ export const cv: CV = {
       isPin: false,
       name: 'Get The Matrix',
       description:
-        'Proyek pembelajaran interaktif oleh tiga orang yang mengubah materi matriks menjadi latihan singkat untuk web dan mobile.',
+        'Proyek pembelajaran oleh tiga orang yang mengubah materi matriks menjadi latihan interaktif singkat untuk web dan mobile.',
       seoDescription:
         'Get The Matrix adalah game pembelajaran matriks untuk web dan mobile yang dibuat dengan Construct 3 oleh tim tiga orang.',
       date: '2022-11',
@@ -165,7 +165,7 @@ export const cv: CV = {
       isPin: false,
       name: 'Gamelaneka',
       description:
-        'Aplikasi pembelajaran interaktif yang mengenalkan gamelan Jawa melalui audio instrumen dan materi sejarah singkat.',
+        'Aplikasi pembelajaran interaktif tentang gamelan Jawa dengan audio instrumen dan materi sejarah singkat.',
       seoDescription:
         'Gamelaneka adalah aplikasi pembelajaran interaktif tentang gamelan Jawa dengan audio instrumen dan materi sejarah.',
       date: '2023-11',
@@ -202,7 +202,7 @@ export const cv: CV = {
       isPin: false,
       name: 'Family Care Stunting',
       description:
-        'Aplikasi kesehatan masyarakat untuk mencatat dan menilai data terkait stunting, disertai modul pembelajaran digital bagi keluarga.',
+        'Aplikasi kesehatan masyarakat untuk pencatatan dan penilaian data terkait stunting, dengan modul pembelajaran digital bagi keluarga.',
       seoDescription:
         'Family Care Stunting adalah aplikasi Flutter dan Laravel untuk pencatatan asesmen dan distribusi modul pembelajaran.',
       date: '2024-09',
@@ -259,7 +259,7 @@ export const cv: CV = {
       isPin: true,
       name: 'KeRaS.',
       description:
-        'PWA open-source yang membantu mahasiswa mengirim permintaan KRS. Aplikasi ini tidak memakai database aplikasi dan mendukung scraping portal.',
+        'PWA open-source untuk mahasiswa yang mengirim permintaan KRS. Mendukung scraping portal tanpa database aplikasi.',
       seoDescription:
         'KeRaS adalah PWA open-source untuk pengisian KRS dengan scraping portal tanpa database aplikasi.',
       date: '2026-01',
@@ -287,7 +287,7 @@ export const cv: CV = {
       isPin: true,
       name: 'Bi Booster',
       description:
-        'SaaS pembuat website untuk UMKM Indonesia. Platform ini membuat situs statis dari profil bisnis melalui alur kerja LLM bertahap.',
+        'SaaS pembuat website untuk UMKM Indonesia yang menghasilkan situs statis dari profil bisnis terstruktur melalui alur kerja LLM bertahap.',
       seoDescription:
         'Bi Booster adalah SaaS pembuat website untuk UMKM Indonesia dengan profil bisnis terstruktur dan alur kerja LLM.',
       date: '2026-03',
@@ -316,19 +316,19 @@ export const cv: CV = {
     },
   ],
   certificates: [
-    { type: 'award', name: 'Juara 1, Kompetisi AWS Club', issuer: 'Jawa Tengah', date: '2023-11', summary: 'Membangun website profil sekolah yang menampilkan kegiatan dan administrasi, menggunakan WordPress dan mengonversinya jadi situs statis lewat plugin WordPress.', image: '/static/certifications/awards/1st_aws_project.webp' },
-    { type: 'award', name: 'Juara 3, LKS Web Technologies', issuer: 'Kabupaten Batang', date: '2023-05', summary: 'Ajang competitive programming tingkat provinsi: tugas HTML5/CSS/JS/PHP native, game clone Plants vs. Zombies, dan REST API pencari kerja yang dibangun dengan Laravel dan Vue di sisi frontend.', image: '/static/certifications/awards/3rd_province_web_tech.webp' },
-    { type: 'certification', name: 'Belajar Dasar Cloud dan Gen AI di AWS', issuer: 'Dicoding', date: '2026', summary: 'Dasar-dasar cloud computing AWS dan model prompt engineering AI generatif.', credentialId: '3XE1QNMVZRN', url: 'https://www.dicoding.com/certificates/53XE1QNMVZRN', image: '/static/certifications/certificate/dicoding_cloud_gen_ai.webp' },
-    { type: 'certification', name: 'Spec-Driven Development dengan Kiro', issuer: 'Dicoding', date: '2026', summary: 'Desain dan dokumentasi API backend berbasis spec menggunakan toolkit pengembangan modern.', credentialId: 'GRX5WOM4KZ0M', url: 'https://www.dicoding.com/certificates/GRX5WOM4KZ0M', image: '/static/certifications/certificate/dicoding_kiro_sdd.webp' },
-    { type: 'certification', name: 'Microsoft Office Specialist - Excel 2019', issuer: 'Microsoft', date: '2026', summary: 'Sertifikasi kompetensi profesional dalam pemodelan spreadsheet tingkat lanjut dan analisis data.', credentialId: 'wNMEx-2FNW', url: 'https://www.certiport.com/portal/pages/credentialverification.aspx', image: '/static/certifications/certificate/microsoft_office_specialsit.webp' },
-    { type: 'certification', name: 'Junior Web Programmer (BNSP)', issuer: 'LSP Teknologi Digital', date: '2023-11', endDate: '2026-11', summary: 'Kompetensi tersertifikasi nasional dalam administrasi database dengan framework Django.', credentialId: '11843220', url: 'https://drive.google.com/file/d/1YCEHNxRW3Ozu3bG5S3soIc36eec1U09N/view', image: '/static/certifications/certificate/lsp_juniorweb.webp' },
-    { type: 'certification', name: 'AWS Cloud Practitioner Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Dasar-dasar cloud: layanan inti AWS, skema harga, dan model shared-responsibility.', credentialId: '', url: 'https://drive.google.com/file/d/1kmqZlREcC-7_XKkVaYcYs3e3anfZKHgw/view?usp=sharing', image: '/static/certifications/certificate/aws_cloud_practitioner_essentials.webp' },
+    { type: 'award', name: 'Juara 1, Kompetisi AWS Club', issuer: 'Jawa Tengah', date: '2023-11', summary: 'Membangun website profil sekolah untuk kegiatan dan administrasi dengan WordPress, lalu mengonversinya menjadi situs statis melalui plugin WordPress.', image: '/static/certifications/awards/1st_aws_project.webp' },
+    { type: 'award', name: 'Juara 3, LKS Web Technologies', issuer: 'Kabupaten Batang', date: '2023-05', summary: 'Kompetisi web technologies tingkat provinsi yang mencakup tugas HTML5, CSS, JavaScript, dan PHP native, game clone Plants vs. Zombies, serta REST API pencari kerja dengan Laravel dan Vue.', image: '/static/certifications/awards/3rd_province_web_tech.webp' },
+    { type: 'certification', name: 'Belajar Dasar Cloud dan Gen AI di AWS', issuer: 'Dicoding', date: '2026', summary: 'Dasar-dasar AWS Cloud dan prompt engineering AI generatif.', credentialId: '3XE1QNMVZRN', url: 'https://www.dicoding.com/certificates/53XE1QNMVZRN', image: '/static/certifications/certificate/dicoding_cloud_gen_ai.webp' },
+    { type: 'certification', name: 'Spec-Driven Development dengan Kiro', issuer: 'Dicoding', date: '2026', summary: 'Desain dan dokumentasi API backend berbasis spec dengan alat pengembangan modern.', credentialId: 'GRX5WOM4KZ0M', url: 'https://www.dicoding.com/certificates/GRX5WOM4KZ0M', image: '/static/certifications/certificate/dicoding_kiro_sdd.webp' },
+    { type: 'certification', name: 'Microsoft Office Specialist - Excel 2019', issuer: 'Microsoft', date: '2026', summary: 'Pemodelan spreadsheet tingkat lanjut dan analisis data.', credentialId: 'wNMEx-2FNW', url: 'https://www.certiport.com/portal/pages/credentialverification.aspx', image: '/static/certifications/certificate/microsoft_office_specialsit.webp' },
+    { type: 'certification', name: 'Junior Web Programmer (BNSP)', issuer: 'LSP Teknologi Digital', date: '2023-11', endDate: '2026-11', summary: 'Sertifikasi nasional dalam administrasi database dengan framework Django.', credentialId: '11843220', url: 'https://drive.google.com/file/d/1YCEHNxRW3Ozu3bG5S3soIc36eec1U09N/view', image: '/static/certifications/certificate/lsp_juniorweb.webp' },
+    { type: 'certification', name: 'AWS Cloud Practitioner Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Layanan inti AWS, skema harga, dan model shared-responsibility.', credentialId: '', url: 'https://drive.google.com/file/d/1kmqZlREcC-7_XKkVaYcYs3e3anfZKHgw/view?usp=sharing', image: '/static/certifications/certificate/aws_cloud_practitioner_essentials.webp' },
     { type: 'certification', name: 'AWS Technical Essentials', issuer: 'AWS Training', date: '2023-06', summary: 'Praktik langsung dengan EC2, VPC, dan DynamoDB untuk compute, networking, dan managed data store.', credentialId: '', url: 'https://drive.google.com/file/d/1DPSi0J1MBvLrQ0gFh8OZwuhHBeR0Gs7H/view?usp=sharing', image: '/static/certifications/certificate/aws_technical_essentials.webp' },
     { type: 'certification', name: 'Architecting on AWS', issuer: 'AWS Training', date: '2023-06', summary: 'Pola arsitektur cloud untuk merancang dan melakukan troubleshooting solusi di ekosistem AWS.', credentialId: '', url: 'https://drive.google.com/file/d/1_AzOVgRNSHhYFN_Hrnxm8Be1X5wKlBHA/view?usp=sharing', image: '/static/certifications/certificate/aws_architecting.webp' },
-    { type: 'certification', name: 'Sertifikat Kemalasan', issuer: 'Ingin Menjadi Programmer Handal Namun Enggan Ngoding', date: '2025-07', summary: 'Sebagai penghargaan atas komitmen luar biasa dalam mempertahankan aktivitas Facebook selama periode kerja yang kritis. Konsistensi, fokus, dan dedikasi Anda untuk melakukan apa pun selain tugas yang diberikan sungguh patut diapresiasi.', image: '/static/certifications/certificate/imphnen_lazy.webp' },
+    { type: 'certification', name: 'Sertifikat Kemalasan', issuer: 'Ingin Menjadi Programmer Handal Namun Enggan Ngoding', date: '2025-07', summary: 'Penghargaan atas aktivitas Facebook selama periode kerja kritis, alih-alih menyelesaikan tugas yang diberikan.', image: '/static/certifications/certificate/imphnen_lazy.webp' },
   ],
   languages: [
-    { name: 'Bahasa Indonesia', level: 'Professional Maksimal' },
+    { name: 'Bahasa Indonesia', level: 'Penutur asli' },
     {
       name: 'Bahasa Inggris',
       level: 'Profesional, formal',

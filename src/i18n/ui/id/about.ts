@@ -3,9 +3,9 @@ import type { AboutStrings } from '../../ui.types';
 const about: AboutStrings = {
   ledeBefore: 'Berbasis di ',
   ledeAfter:
-    ', Berbasis di Jawa Tengah, Indonesia, saya membangun produk web dan mobile menggunakan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter. Saya menangani fitur mulai dari desain database dan API hingga antarmuka yang digunakan pengguna.',
+    ', saya adalah fullstack developer dengan empat tahun pengalaman membangun produk web dan mobile. Pekerjaan saya mencakup desain database, pengembangan API, antarmuka pengguna, deployment, model data, integrasi pihak ketiga, dan infrastruktur platform. Saya menggunakan Laravel, Go, Node.js, Vue, Next.js, Astro, dan Flutter sesuai kebutuhan produk. Fitur sering dikerjakan lintas full stack, dari rancangan data hingga antarmuka yang digunakan pengguna.',
   lede2:
-    'Pekerjaan saya mencakup sistem bisnis, aplikasi layanan publik, dan produk pembelajaran interaktif. Saya terus berkembang melalui proyek langsung, kompetisi, dan sertifikasi.',
+    'Pengalaman mencakup sistem bisnis, aplikasi layanan publik, dan produk pembelajaran interaktif. Saya mengutamakan keputusan teknis yang jelas serta software yang tetap mudah dipelihara setelah dirilis. Saya terbuka untuk peran fullstack, remote atau di Jawa Tengah, dengan kontribusi dari keputusan teknis awal hingga deployment.',
   stats: {
     years: 'thn',
     buildingSoftware: 'Membangun software',
