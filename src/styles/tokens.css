@@ -59,6 +59,7 @@
 
   /* ---- Theme-transition overlay (ThemeToggle) ---- */
   --z-overlay: 100;              /* above PageTransition's veil (z-90) */
+  --z-initial-curtain: 9999;     /* first-paint curtain — above everything, incl. the veil */
   --reveal-scale: 1.02;          /* small overshoot past farthest-corner so the clip edge never leaves a subpixel seam */
   --blur-start: 8px;             /* circle-blur variant: start blur, dissipates to 0 */
 

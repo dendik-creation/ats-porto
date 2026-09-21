@@ -4,15 +4,11 @@
 // swaps so the covering/uncovering animation is continuous rather than being
 // torn down mid-transition.
 //
-// Covers the viewport by default (see .pt-layer below) so it masks real
-// load time — fonts, images, the lot — rather than playing a flourish once
-// the page is already sitting there ready. page-transition.ts lifts it once
-// astro:page-load actually fires: a real navigation reveals through the
-// --ink pixel cascade below; the very first document load (no navigation
-// behind it) reveals through the same cascade but toggles [data-opposite]
-// on first, painting the cover in the OPPOSITE theme's tone — same
-// opposite-palette rule as Nav's menu ghost and the Lightbox ghost, restated
-// from tokens.css, never touching :root[data-theme] itself.
+// Covers the viewport by default (see .pt-layer below) so there's no gap
+// between first paint and JS taking over. Real navigations reveal through
+// the --ink pixel cascade below. The very first document load has no
+// navigation behind it, so page-transition.ts just drops this cover
+// instantly instead — InitialPixelCurtain.astro owns that reveal now.
 ---
 
 <div class="pt-veil" data-pt aria-hidden="true" transition:persist transition:name="page-veil">
@@ -37,16 +33,6 @@
     inset: 0;
     background: var(--ink);
     clip-path: inset(0 0 0 0); /* covering — the pre-JS, pre-load default */
-  }
-  /* Initial-load-only cover tone — opposite of the active theme, exactly
-     like Nav's .sm-ghost / Lightbox's .lb-ghost. Toggled by page-transition.ts
-     for the first document load only; a real navigation never sets this and
-     keeps the curtain's usual --ink. */
-  .pt-layer[data-opposite] {
-    background: #1a1814;
-  }
-  :root[data-theme='dark'] .pt-layer[data-opposite] {
-    background: #f0ece1;
   }
   /* Boundary accent trail for the fullscreen cascade — same reused-node
      technique as the theme toggle's .tt-pixel. */

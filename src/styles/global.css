@@ -114,6 +114,12 @@ h3 {
   color: var(--muted);
 }
 
+/* Scroll lock while the initial pixel curtain is active */
+html.is-initial-curtain-active,
+html.is-initial-curtain-active body {
+  overflow: hidden;
+}
+
 /* Screen-reader-only skip target */
 .visually-hidden {
   position: absolute;

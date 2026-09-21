@@ -13,6 +13,7 @@ import { getAbsoluteLocaleUrl } from 'astro:i18n';
 import { getCV, t, resolveLocale } from '../i18n';
 import Nav from '../components/organisms/Nav.astro';
 import PageTransition from '../components/organisms/PageTransition.astro';
+import InitialPixelCurtain from '../components/organisms/InitialPixelCurtain.astro';
 import ThemeTransitionOverlay from '../components/molecules/ThemeTransitionOverlay.astro';
 import PixelScrollProgress from '../components/molecules/PixelScrollProgress.astro';
 import ScrollToTop from '../components/molecules/ScrollToTop.astro';
@@ -219,6 +220,7 @@ const websiteLd = isHome
     <a class="skip" href="#main">{ui.common.skipToContent}</a>
 
     <PageTransition />
+    <InitialPixelCurtain />
     <ThemeTransitionOverlay />
     <PixelScrollProgress />
     <ScrollToTop label={ui.common.scrollToTop} />
@@ -231,6 +233,7 @@ const websiteLd = isHome
     <script>
       import '../scripts/animate';
       import '../scripts/page-transition';
+      import '../scripts/initial-pixel-curtain';
       import '../scripts/project-image-reveal';
       import '../scripts/scroll-to-section';
       import '../scripts/theme/index';

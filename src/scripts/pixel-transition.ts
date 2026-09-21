@@ -136,22 +136,35 @@ export function buildPixelPlan(opts: PixelPlanOptions): PixelPlan {
 /** Materializing sequence: bucket 0 is empty, the last bucket covers every
  *  tile. Each bucket only ever grows the accumulated path — a tile is
  *  appended once across the whole build, never re-scanned per bucket. */
+// Two keyframes land on almost every bucket boundary: a hold of the
+// previous tile set right up to the edge, then the new set. clip-path
+// path() only interpolates smoothly between shapes with matching subpath
+// counts — our accumulated paths rarely match between buckets, so without
+// the hold the browser morphs mismatched vertices into stray connecting
+// lines instead of snapping. Holding first means the only "interpolation"
+// that ever happens is a value onto itself; the real jump is squeezed into
+// an EPS-wide window, sub-frame at any real animation duration.
+const STEP_EPS = 1e-4;
+
 function buildMaterialize(plan: PixelPlan, buckets: number): Keyframe[] {
   const frames: Keyframe[] = [];
   let acc = '';
   let idx = 0;
   const tiles = plan.tiles;
+  const clip = (path: string) => `path('${path || 'M0 0h0v0h0Z'}')`;
+
   for (let f = 0; f <= buckets; f++) {
     const progress = f / buckets;
+    if (f > 0) frames.push({ clipPath: clip(acc), offset: progress - STEP_EPS });
     while (idx < tiles.length && tiles[idx].threshold <= progress) {
       acc += tiles[idx].path;
       idx++;
     }
-    frames.push({ clipPath: `path('${acc || 'M0 0h0v0h0Z'}')`, offset: progress });
+    frames.push({ clipPath: clip(acc), offset: progress });
   }
   if (idx < tiles.length) {
     for (; idx < tiles.length; idx++) acc += tiles[idx].path;
-    frames[frames.length - 1] = { clipPath: `path('${acc}')`, offset: 1 };
+    frames[frames.length - 1] = { clipPath: clip(acc), offset: 1 };
   }
   return frames;
 }
@@ -164,8 +177,15 @@ export function buildClipKeyframes(plan: PixelPlan, opts: { buckets?: number; re
   const { buckets = 36, reverse = false } = opts;
   const forward = buildMaterialize(plan, buckets);
   if (!reverse) return forward;
+  // Mirror each offset (1 - offset), not just its index position — the
+  // hold/jump pairs above are unevenly spaced (EPS-wide jumps between wide
+  // holds), so re-indexing linearly would scatter them and reopen the same
+  // morphing gap this function exists to close.
   const n = forward.length;
-  return forward.map((_, i) => ({ clipPath: forward[n - 1 - i].clipPath, offset: i / (n - 1) }));
+  return forward.map((_, i) => {
+    const src = forward[n - 1 - i];
+    return { clipPath: src.clipPath, offset: typeof src.offset === 'number' ? 1 - src.offset : i / (n - 1) };
+  });
 }
 
 /** Animates a real DOM element's own clip-path through a plan — the
