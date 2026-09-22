@@ -6,74 +6,73 @@
 // extra "has it run yet" flag is needed on top of that guarantee. A hard
 // browser refresh is a new document, so it runs again naturally.
 //
-// The pixelated edges reuse the project's generic Pixel Motion System
-// (./pixel-transition.ts, already isolated from PageTransition's own
-// lifecycle) — same tile/threshold engine the navigation curtain and Hero's
-// entrance use, just applied to a narrow strip at each panel's inner edge
-// instead of the whole viewport.
-import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion } from './pixel-transition';
+// Each half-panel IS the pixel layer — same fullscreen-cascade mechanism as
+// PageTransition (./pixel-transition.ts): the whole panel dissolves through
+// a chunky, discretely-stepped clip-path, not a solid block riding a smooth
+// CSS slide with pixelation confined to a thin fringe. The origin sits
+// beyond each panel's outer edge, so the erosion front starts at the center
+// seam (reading as the curtain "opening") and eats outward, tile by tile.
+import { buildPixelPlan, buildClipKeyframes, resolveTileSize, prefersReducedMotion, PIXEL_EASE } from './pixel-transition';
 
 const root = document.querySelector<HTMLElement>('[data-pixel-curtain]');
 
 if (root) {
   try {
-    const leftEdge = root.querySelector<HTMLElement>('[data-curtain-edge="left"]');
-    const rightEdge = root.querySelector<HTMLElement>('[data-curtain-edge="right"]');
-    if (!leftEdge || !rightEdge) throw new Error('curtain markup incomplete');
+    const leftPanel = root.querySelector<HTMLElement>('[data-curtain-panel="left"]');
+    const rightPanel = root.querySelector<HTMLElement>('[data-curtain-panel="right"]');
+    if (!leftPanel || !rightPanel) throw new Error('curtain markup incomplete');
 
     const reduced = prefersReducedMotion();
     const MIN_CLOSED_MS = 400;
     const OPEN_MS = reduced ? 160 : 1000;
     const FAILSAFE_MS = 5000;
     const CLEANUP_DELAY_MS = 80;
-    const EASE = 'cubic-bezier(0.76, 0, 0.24, 1)';
-    const COLS = 10; // wide enough that the pixel erosion reads at a glance, not just at the panel's inner edge
-    const DESKTOP_TILE = 12; // 8-16px desktop
-    const MOBILE_TILE = 14; // 10-18px mobile
-    const FAR = 200000; // flattens the erosion front across the strip's height
+    const DESKTOP_TILE = 24; // matches the rest of the Pixel Motion System (theme toggle, Hero, page nav)
+    const MOBILE_TILE = 16;
+    const MAX_TILES = 640; // caps each panel's tile count (auto-upscales tileSize if the viewport would exceed it) — a full-panel plan at 24px tiles runs ~1200 tiles/panel, and animating 45 keyframes of that size during initial load (competing with fonts/hero/hydration) stalls the animation's own start for seconds, so it never visibly plays; this keeps keyframe payload small enough to start on time regardless of viewport width
+    const BUCKETS = 14; // fewer, bigger discrete jumps — reads as staccato/patah-patah rather than a smooth dissolve, and keeps keyframe payload light
+    const FAR = 200000; // origin placed this far past each panel's outer edge — flattens the erosion front into a clean vertical sweep from seam to edge, independent of tile row
 
     document.documentElement.classList.add('is-initial-curtain-active');
     root.setAttribute('data-active', '');
 
-    // Reduced motion: no pixel erosion, just the panels' own fast CSS
-    // transition (see the component's prefers-reduced-motion block) — the
-    // edge strips stay solid and ride along with their panel unanimated.
-    let openEdges: (() => Animation[]) | null = null;
+    // Reduced motion: skip pixel erosion entirely, just an instant opacity
+    // drop (see the component's prefers-reduced-motion block).
+    let openPanels: (() => Animation[]) | null = null;
     if (!reduced) {
       const tileSize = resolveTileSize(DESKTOP_TILE, MOBILE_TILE);
-      const edgeWidth = COLS * tileSize;
-      root.style.setProperty('--curtain-edge-w', `${edgeWidth}px`);
+      const height = window.innerHeight;
+      const panelWidth = Math.ceil(window.innerWidth / 2) + 1; // matches the panel's own CSS width: calc(50% + 1px)
 
-      const buildFrames = (tip: 'left' | 'right', seed: number) => {
-        const height = window.innerHeight;
-        // Origin placed far to the side opposite the tip: distance from a
-        // point that far away is ~flat across this narrow strip's height,
-        // so tiles order by which end they're on (tip vs. bulk-attached
-        // side) rather than by vertical position.
-        const originX = tip === 'left' ? -FAR : edgeWidth + FAR;
+      const buildFrames = (side: 'left' | 'right', seed: number) => {
+        // Origin placed far beyond the panel's OUTER edge (away from the
+        // center seam): outer-edge tiles are nearest, seam tiles farthest.
+        // Combined with reverse:true below (farthest-from-origin tiles
+        // disappear first), the seam erodes first and the wave eats
+        // outward toward each panel's outer edge — reads as the curtain
+        // opening from the middle.
+        const originX = side === 'left' ? -FAR : panelWidth + FAR;
         const plan = buildPixelPlan({
-          width: edgeWidth,
+          width: panelWidth,
           height,
           origin: { x: originX + seed, y: height / 2 },
-          direction: { x: tip === 'left' ? 1 : -1, y: 0 },
+          direction: { x: side === 'left' ? 1 : -1, y: 0 },
           directionBias: 0.15,
           jitter: 0.12,
           tileSize,
+          maxTiles: MAX_TILES,
         });
-        // reverse: true -> solid strip at progress 0, shrinking as the
-        // farthest-from-origin tiles (the tip) drop out first, so each
-        // edge peels from its outer tip back toward the solid bulk.
-        return buildClipKeyframes(plan, { buckets: 26, reverse: true });
+        return buildClipKeyframes(plan, { buckets: BUCKETS, reverse: true });
       };
 
       const leftFrames = buildFrames('left', 0);
       const rightFrames = buildFrames('right', 37); // different seed — a deliberately imperfect mirror
-      leftEdge.style.clipPath = leftFrames[0].clipPath as string;
-      rightEdge.style.clipPath = rightFrames[0].clipPath as string;
+      leftPanel.style.clipPath = leftFrames[0].clipPath as string;
+      rightPanel.style.clipPath = rightFrames[0].clipPath as string;
 
-      openEdges = () => [
-        leftEdge.animate(leftFrames, { duration: OPEN_MS, easing: EASE, fill: 'forwards' }),
-        rightEdge.animate(rightFrames, { duration: OPEN_MS, easing: EASE, fill: 'forwards' }),
+      openPanels = () => [
+        leftPanel.animate(leftFrames, { duration: OPEN_MS, easing: PIXEL_EASE, fill: 'forwards' }),
+        rightPanel.animate(rightFrames, { duration: OPEN_MS, easing: PIXEL_EASE, fill: 'forwards' }),
       ];
     }
 
@@ -103,7 +102,7 @@ if (root) {
       clearTimeout(failsafe);
 
       root.setAttribute('data-opening', '');
-      const anims = openEdges?.() ?? [];
+      const anims = openPanels?.() ?? [];
       window.dispatchEvent(new CustomEvent('initial-curtain-opening'));
 
       const done =

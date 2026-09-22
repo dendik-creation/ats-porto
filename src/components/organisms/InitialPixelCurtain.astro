@@ -6,6 +6,11 @@
 // document (not re-run on client-side swaps), so no extra "has it run yet"
 // flag is needed — the platform already guarantees it.
 //
+// Each panel IS the pixel layer (no separate solid-block + thin-fringe
+// split) — same fullscreen clip-path cascade PageTransition uses, just
+// applied to two half-viewport panels instead of one full one, so the
+// "opens from the center" read comes purely from where the erosion starts.
+//
 // Fails open: hidden by default via CSS, only shown once the script confirms
 // it initialized (adds [data-active]) — so a JS failure never leaves a
 // permanent opaque overlay over the site. Purely decorative, so it's
@@ -13,14 +18,8 @@
 ---
 
 <div class="pixel-curtain" data-pixel-curtain aria-hidden="true">
-  <div class="pixel-curtain__panel pixel-curtain__panel--left">
-    <div class="pixel-curtain__bulk"></div>
-    <div class="pixel-curtain__edge" data-curtain-edge="left"></div>
-  </div>
-  <div class="pixel-curtain__panel pixel-curtain__panel--right">
-    <div class="pixel-curtain__bulk"></div>
-    <div class="pixel-curtain__edge" data-curtain-edge="right"></div>
-  </div>
+  <div class="pixel-curtain__panel pixel-curtain__panel--left" data-curtain-panel="left"></div>
+  <div class="pixel-curtain__panel pixel-curtain__panel--right" data-curtain-panel="right"></div>
 </div>
 
 <noscript>
@@ -48,14 +47,16 @@
     pointer-events: none;
   }
 
+  /* Each panel is the pixel layer itself — solid at rest, eroded via an
+     animated clip-path once opening starts (see initial-pixel-curtain.ts).
+     No transform: the reveal comes entirely from the clip-path erosion. */
   .pixel-curtain__panel {
     position: absolute;
     top: 0;
     bottom: 0;
     height: 100dvh;
     width: calc(50% + 1px); /* 1px overlap at center — no subpixel seam */
-    transform: translate3d(0, 0, 0);
-    transition: transform 1000ms cubic-bezier(0.76, 0, 0.24, 1);
+    background: var(--ink);
   }
   .pixel-curtain__panel--left {
     left: 0;
@@ -63,50 +64,11 @@
   .pixel-curtain__panel--right {
     right: 0;
   }
-  .pixel-curtain[data-opening] .pixel-curtain__panel--left {
-    transform: translate3d(calc(-100% - 8px), 0, 0);
-  }
-  .pixel-curtain[data-opening] .pixel-curtain__panel--right {
-    transform: translate3d(calc(100% + 8px), 0, 0);
-  }
-
-  /* Solid mass — stops short of the panel's inner edge, leaving room for
-     .pixel-curtain__edge to be the only thing covering that strip, so
-     eroding the edge's clip-path genuinely reveals the page beneath rather
-     than uncovering another solid layer. */
-  .pixel-curtain__bulk {
-    position: absolute;
-    inset: 0;
-    background: var(--ink);
-  }
-  .pixel-curtain__panel--left .pixel-curtain__bulk {
-    right: var(--curtain-edge-w, 72px);
-  }
-  .pixel-curtain__panel--right .pixel-curtain__bulk {
-    left: var(--curtain-edge-w, 72px);
-  }
-
-  /* Narrow strip at each panel's inner (center-facing) edge — solid at rest,
-     eroded via an animated clip-path once opening starts (see
-     initial-pixel-curtain.ts). Moves rigidly with its panel either way. */
-  .pixel-curtain__edge {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: var(--curtain-edge-w, 72px);
-    background: var(--ink);
-  }
-  .pixel-curtain__panel--left .pixel-curtain__edge {
-    right: 0;
-  }
-  .pixel-curtain__panel--right .pixel-curtain__edge {
-    left: 0;
-  }
 
   @media (prefers-reduced-motion: reduce) {
-    .pixel-curtain__panel {
-      transition-duration: 160ms;
-      transition-timing-function: linear;
+    .pixel-curtain[data-opening] .pixel-curtain__panel {
+      transition: opacity 160ms linear;
+      opacity: 0;
     }
   }
 </style>
