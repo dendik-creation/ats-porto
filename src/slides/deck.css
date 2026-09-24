@@ -1,0 +1,131 @@
+
+/* === THEME (Hallmark tokens from src/styles/tokens.css, scaled to the 1920x1080 stage) === */
+:root{--paper:#f0ece1;--paper-deep:#e6e0d1;--ink:#14130f;--accent:#f0330d;--accent-ink:#b81f00;
+--muted:color-mix(in oklab,var(--ink) 52%,var(--paper));--line:color-mix(in oklab,var(--ink) 20%,var(--paper));
+--display:'Fraunces',serif;--text:'Bricolage Grotesque',sans-serif;--mono:'JetBrains Mono',monospace;
+--ease:cubic-bezier(.22,1,.36,1);--stage-bg:#0c0b09;--slide-bg:#f0ece1}
+*{margin:0;padding:0;box-sizing:border-box}
+.slide{font-family:var(--text);color:var(--ink);padding:110px 130px;
+ background:radial-gradient(circle,color-mix(in oklab,var(--ink) 14%,transparent) 1.5px,transparent 2px) 0 0/36px 36px,var(--paper)}
+.slide.dark{--paper:#1a1814;--paper-deep:#12100d;--ink:#e8e2d3;--accent:#ff5722;--accent-ink:#ff7a4a;
+ background:radial-gradient(circle,color-mix(in oklab,var(--ink) 10%,transparent) 1.5px,transparent 2px) 0 0/36px 36px,var(--paper)}
+h1,h2,h3{font-family:var(--display);font-weight:600;font-variation-settings:'SOFT' 0,'WONK' 0;letter-spacing:-.02em;line-height:.95}
+h2{font-size:108px}
+.label,.mono{font-family:var(--mono);font-size:24px;color:var(--muted);letter-spacing:.02em}
+.lede{font-size:38px;line-height:1.35;max-width:920px}
+.org{font-size:28px;color:var(--muted)}
+/* motion: one staggered reveal per slide */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.slide.visible .reveal{opacity:1;transform:none;transition-delay:calc(var(--i,0)*.09s + .1s)}
+
+/* === TITLE === */
+.title h1{font-size:270px;margin-top:30px;font-variation-settings:'SOFT' 60,'WONK' 1}
+.title .role{position:absolute;right:130px;top:150px;font-family:var(--display);font-size:64px;font-style:italic;color:var(--accent-ink)}
+.title .kbd{position:absolute;right:-60px;bottom:30px;width:1180px;mix-blend-mode:multiply}
+.title .kbd.reveal{transform:translateY(28px) rotate(-6deg)}
+.slide.visible.title .kbd.reveal{transform:rotate(-6deg)}
+/* === ABOUT === */
+.about .big{position:absolute;left:110px;top:200px;font-family:var(--display);font-size:760px;line-height:.8;color:var(--accent);font-weight:700;letter-spacing:-.05em}
+.about .big span{display:block;font-size:64px;font-style:italic;color:var(--ink);letter-spacing:0;margin:30px 0 0 40px;font-weight:400}
+.abody{position:absolute;left:1000px;top:250px;width:790px}
+.abody h2{font-size:92px;margin-bottom:44px}
+/* === STACK / shared headers === */
+.stack h2,.more h2,.exp h2,.vol h2,.awards h2{margin-bottom:60px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr)}
+.cell{padding:44px 44px 44px 0;border-top:3px solid var(--ink);margin-right:44px}
+.cell h3{font-size:56px;margin-bottom:20px;color:var(--accent-ink)}.cell p{font-size:32px;line-height:1.5}
+/* === DIVIDER === */
+.divider{display:flex;flex-direction:column;justify-content:center}
+.divider h2{font-size:400px;color:var(--accent);font-variation-settings:'SOFT' 60,'WONK' 1;margin:10px 0 30px}
+/* === FEATURE === */
+.fcopy{position:absolute;left:110px;top:100px;width:640px}
+.fcopy h2{font-size:104px;margin:22px 0 34px}.fcopy .lede{font-size:32px}
+.tags{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin:36px 0 30px}
+.tags li{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:21px;padding:8px 16px;border:2px solid var(--ink);border-radius:999px}
+.pi{flex:none;width:26px;height:26px;filter:brightness(0)}.pi.keep{filter:none}
+.dark .pi{filter:brightness(0) invert(1)}.dark .pi.keep{filter:none}
+.pi svg{display:block;width:100%;height:100%}
+.links a{font-family:var(--mono);font-size:24px;color:var(--accent-ink);border-bottom:2px solid currentColor}
+.shots{position:absolute;left:800px;top:100px;width:1010px;height:880px}
+.shot{position:absolute;object-fit:cover;border:3px solid var(--ink);background:var(--paper-deep);box-shadow:16px 16px 0 var(--accent)}
+.shot.main{left:0;top:0;width:900px;height:478px}
+.shot.sub{width:480px;height:270px;box-shadow:12px 12px 0 var(--ink)}
+.shot.sub.a{left:0;top:570px}.shot.sub.b{left:520px;top:530px}
+.phones{position:absolute;left:820px;top:100px;width:1000px;height:880px;display:flex;gap:50px;align-items:flex-start;padding-left:20px}
+.phone{width:300px;height:auto;border:3px solid var(--ink);border-radius:32px;background:var(--paper-deep)}
+.phone:nth-child(even){margin-top:80px}
+/* === MORE === */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:44px 60px}
+.mcard{border-top:3px solid var(--ink);padding-top:26px}
+.mcard h3{font-size:60px;margin:14px 0 16px}.mcard p:last-child{font-size:29px;line-height:1.4}
+/* === EXPERIENCE === */
+.rows{list-style:none}
+.row{display:grid;grid-template-columns:230px 610px 1fr;gap:40px;padding:26px 0;border-top:2px solid var(--line);align-items:baseline}
+.row:first-child{border-top:3px solid var(--ink)}
+.yr{font-family:var(--mono);font-size:24px;color:var(--accent-ink)}
+.row h3{font-size:40px;line-height:1.05;margin-bottom:6px}.row .org{font-size:24px}.sum{font-size:27px;line-height:1.4}
+/* === VOLUNTEER === */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:100px}
+.two h3{font-size:70px;margin:14px 0 10px}.two ul{margin-top:34px;padding-left:34px;font-size:32px;line-height:1.5}.two li{margin-bottom:14px}
+.two li::marker{color:var(--accent)}
+/* === AWARDS === */
+.aw{display:grid;grid-template-columns:520px 520px 1fr;gap:44px;align-items:start}
+figure img{width:100%;height:370px;object-fit:cover;border:3px solid var(--ink);box-shadow:12px 12px 0 var(--accent)}
+figcaption{margin-top:30px;font-size:26px;line-height:1.4}
+figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bottom:6px}
+.certs{list-style:none;border-top:3px solid var(--ink);font-size:27px;line-height:1.3}
+.certs li{padding:14px 0;border-bottom:2px solid var(--line)}
+.certs em{display:block;font-family:var(--mono);font-style:normal;font-size:20px;color:var(--muted);margin-top:4px}
+/* === CONTACT === */
+.contact{display:flex;flex-direction:column;justify-content:center}
+.contact h2{font-size:250px;margin:24px 0 60px;font-variation-settings:'SOFT' 60,'WONK' 1}
+.contact ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:16px 60px;font-size:36px;max-width:1500px}
+.contact b{font-family:var(--mono);font-weight:400;font-size:22px;color:var(--accent);display:block}
+/* === CHROME (outside stage) === */
+.deck-controls{font:500 14px 'JetBrains Mono',monospace;color:#f0ece1;background:#14130fcc;padding:8px 16px;border-radius:999px;display:flex;gap:14px}
+/* === STACK ICONS (same treatment as BrandIcon: mono silhouette unless the mark needs its colours) === */
+.icons{list-style:none;display:flex;flex-wrap:wrap;gap:32px 30px}
+.icons li{width:92px;height:92px;filter:brightness(0)}
+.icons li.keep{filter:none}
+.dark .icons li{filter:brightness(0) invert(1)}.dark .icons li.keep{filter:none}
+.icons svg{width:100%;height:100%;display:block}
+.icons .txt{width:auto;font:24px var(--mono);filter:none;align-self:center}
+/* === PIXEL VEIL (site's .pt-veil: ink layer clipped by a pixel-tile path, accent pixels on the boundary) === */
+.pt-veil{position:absolute;inset:0;z-index:90;pointer-events:none}
+.pt-veil:not([hidden]){pointer-events:auto}
+.pt-veil[hidden]{display:none}
+.pt-layer{position:absolute;inset:0;background:#14130f;clip-path:inset(0 0 0 0)} /* covering by default, until JS reveals */
+.pt-pixel{position:absolute;width:32px;height:32px;background:#f0330d;opacity:0}
+@media print{.pt-veil{display:none!important}}
+/* === PIXEL PROGRESS BAR (top-bar take on src/components/molecules/PixelScrollProgress.astro) ===
+   5px tiles with 3px gaps; the fill steps forward in whole tiles and ends in one accent block.
+   The fill blends with "difference" so it reads on both the paper and the dark slides. */
+.pbar{--p:0}  /* wrapper stays unpositioned: a fixed/z-indexed parent would isolate the children's blend from the slides */
+.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;height:10px;z-index:1000;cursor:pointer}
+.pbar-track,.pbar-fill{width:100%;background-image:repeating-linear-gradient(to right,var(--c) 0 5px,transparent 5px 8px)}
+.pbar-track{--c:#8a8578;opacity:.3}
+.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 calc((1 - var(--p)) * 100%) 0 0);transition:clip-path .45s steps(8,end)}
+.pbar-tip{width:5px;margin-left:-5px;background:#f0330d;transform:translateX(calc(var(--p) * 100vw));transition:transform .45s steps(8,end)}
+@media (prefers-reduced-motion:reduce){.pbar-fill,.pbar-tip{transition:none}}
+/* slide counter pill sits bottom right */
+.deck-controls{left:auto;right:28px;bottom:24px;transform:none}
+/* === TITLE BACKGROUND: ink paths trace slowly, vermillion nodes pulse (from src/components/organisms/Hero.astro) === */
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.title .label,.title h1{position:relative}
+.hp{stroke:var(--ink);stroke-width:1.1;opacity:.52;stroke-dasharray:60 180;animation:hp-trace 44s cubic-bezier(.25,.46,.45,.94) infinite}
+.hp-a{animation-duration:42s}.hp-b{animation-duration:48s;animation-delay:-6s}
+.hp-c{animation-duration:54s;animation-delay:-18s;stroke-width:.9}.hp-d{animation-duration:50s;animation-delay:-10s}
+.hp-e{animation-duration:58s;animation-delay:-24s;stroke-width:.9}
+.hp-thin{stroke-width:.75;opacity:.3;stroke-dasharray:30 90}.hp-f{animation-duration:36s;animation-delay:-14s}
+.hp-swash{fill:var(--accent);opacity:.06}.hp-swash-b{fill:var(--ink);opacity:.05}
+.hn{fill:var(--accent);opacity:.2;animation:hn-pulse 6s cubic-bezier(.25,.46,.45,.94) infinite;animation-delay:var(--d,0s)}
+@keyframes hp-trace{from{stroke-dashoffset:0}to{stroke-dashoffset:-240}}
+@keyframes hn-pulse{0%,100%{opacity:.2;r:3.5px}50%{opacity:.9;r:5px}}
+@media (prefers-reduced-motion:reduce){.hp,.hn{animation:none}}
+/* === CLAUDE CODE MASCOT: animated svg (SMIL loops on its own inside <img>), bottom-left of slide 1 ===
+   The svg canvas is 2750x1850 and the critter only uses its lower band, so the box crops that band
+   (x 0..2600, y 650..1850 at 0.3 scale) and pins it to the slide's bottom-left corner. */
+.clawd-box{position:absolute;left:0;bottom:-170px;width:780px;height:360px;overflow:hidden;opacity:0;animation:cl-in .6s 1.4s forwards}
+.clawd{position:absolute;left:0;top:-195px;width:825px;height:auto;filter:drop-shadow(10px 12px 0 rgba(20,19,15,.16))}
+@keyframes cl-in{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.clawd-box{animation:none;opacity:1}}
