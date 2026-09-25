@@ -29,6 +29,7 @@ const nav: NavStrings = {
   menuLabel: 'Menu',
   closeLabel: 'Tutup',
   openMenuAria: 'Buka menu',
+  slidesAria: 'Lihat sebagai slide',
   closeMenuAria: 'Tutup menu',
   elsewhere: 'Lainnya',
   theme: {

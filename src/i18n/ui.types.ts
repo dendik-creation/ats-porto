@@ -30,6 +30,7 @@ export interface NavStrings {
   menuLabel: string;
   closeLabel: string;
   openMenuAria: string;
+  slidesAria: string;
   closeMenuAria: string;
   elsewhere: string;
   theme: {

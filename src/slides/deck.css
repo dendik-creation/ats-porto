@@ -20,7 +20,7 @@ h2{font-size:108px}
 
 /* === TITLE === */
 .title h1{font-size:270px;margin-top:30px;font-variation-settings:'SOFT' 60,'WONK' 1}
-.title .role{position:absolute;right:130px;top:150px;font-family:var(--display);font-size:32px;line-height:1.25;text-align:right;font-style:italic;color:var(--accent-ink)}
+.title .role{position:absolute;left:130px;top:700px;font-family:var(--display);font-size:44px;line-height:1.25;text-align:left;font-style:italic;color:var(--accent-ink)}
 .title .kbd{position:absolute;right:-60px;bottom:30px;width:1180px;mix-blend-mode:multiply}
 .title .kbd.reveal{transform:translateY(28px) rotate(-6deg)}
 .slide.visible.title .kbd.reveal{transform:rotate(-6deg)}
@@ -105,11 +105,11 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
    5px tiles with 3px gaps; the fill steps forward in whole tiles and ends in one accent block.
    The fill blends with "difference" so it reads on both the paper and the dark slides. */
 .pbar{--p:0}  /* wrapper stays unpositioned: a fixed/z-indexed parent would isolate the children's blend from the slides */
-.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;width:20px;z-index:1000;cursor:pointer}
-.pbar-track,.pbar-fill{height:100%;background-image:repeating-linear-gradient(to bottom,var(--c) 0 5px,transparent 5px 8px)}
+.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;height:20px;z-index:1000;cursor:pointer}
+.pbar-track,.pbar-fill{width:100%;background-image:repeating-linear-gradient(to right,var(--c) 0 5px,transparent 5px 8px)}
 .pbar-track{--c:#8a8578;opacity:.3}
-.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 0 calc((1 - var(--p)) * 100%) 0);transition:clip-path .45s steps(8,end)}
-.pbar-tip{height:5px;margin-top:-5px;background:#f0330d;transform:translateY(calc(var(--p) * 100vh));transition:transform .45s steps(8,end)}
+.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 calc((1 - var(--p)) * 100%) 0 0);transition:clip-path .45s steps(8,end)}
+.pbar-tip{width:5px;margin-left:-5px;background:#f0330d;transform:translateX(calc(var(--p) * 100vw));transition:transform .45s steps(8,end)}
 @media (prefers-reduced-motion:reduce){.pbar-fill,.pbar-tip{transition:none}}
 /* language pill + slide counter share the bottom-right corner, pill on the left */
 .deck-chrome{position:fixed;right:28px;bottom:24px;z-index:1000;display:flex;gap:10px;align-items:center}
@@ -143,3 +143,14 @@ html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
 .lang-pill button[aria-pressed=true]{background:#f0ece1;color:#14130f}
 .lang-pill button:focus-visible{outline:2px solid #f0ece1;outline-offset:2px}
 @media print{.lang-pill{display:none!important}}
+
+/* === EXIT TO WEBSITE === */
+.exit-web{position:fixed;top:24px;right:28px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#14130fcc;color:#f0ece1}
+.exit-web:hover{background:#14130f}
+.exit-web:focus-visible{outline:2px solid #f0ece1;outline-offset:2px}
+@media print{.exit-web{display:none!important}}
+
+/* === LOGO (light slides use the light mark, dark slides the dark one) === */
+.logo{position:absolute;height:130px;width:auto}
+.title .logo{right:130px;top:110px;height:300px}
+.contact .logo{right:130px;top:110px;height:220px}

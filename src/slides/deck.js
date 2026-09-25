@@ -154,7 +154,7 @@ addEventListener('touchend', e => {
   if (Math.abs(d) > 50) go(cur + (d < 0 ? 1 : -1));
   x0 = null;
 });
-bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientY / innerHeight * slides.length))));  // click the bar to seek
+bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientX / innerWidth * slides.length))));  // click the bar to seek
 let wl = 0;
 addEventListener('wheel', e => {
   if (Date.now() - wl < 600 || Math.abs(e.deltaY) < 20) return;
@@ -166,3 +166,10 @@ fit();
 show((parseInt(location.hash.slice(1)) || 1) - 1);
 if (reduced) clearVeil();
 else (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => sweep(true)).then(clearVeil);
+
+// Leaving for the website: drop the parent's fullscreen (the deck may be
+// framed by the website's presentation toggle; same origin, so reachable).
+document.querySelector('.exit-web')?.addEventListener('click', () => {
+  const d = top.document;
+  if (d.fullscreenElement) d.exitFullscreen().catch(() => {});
+});
