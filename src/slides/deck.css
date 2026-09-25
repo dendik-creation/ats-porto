@@ -20,20 +20,23 @@ h2{font-size:108px}
 
 /* === TITLE === */
 .title h1{font-size:270px;margin-top:30px;font-variation-settings:'SOFT' 60,'WONK' 1}
-.title .role{position:absolute;right:130px;top:150px;font-family:var(--display);font-size:64px;font-style:italic;color:var(--accent-ink)}
+.title .role{position:absolute;right:130px;top:150px;font-family:var(--display);font-size:32px;line-height:1.25;text-align:right;font-style:italic;color:var(--accent-ink)}
 .title .kbd{position:absolute;right:-60px;bottom:30px;width:1180px;mix-blend-mode:multiply}
 .title .kbd.reveal{transform:translateY(28px) rotate(-6deg)}
 .slide.visible.title .kbd.reveal{transform:rotate(-6deg)}
 /* === ABOUT === */
 .about .big{position:absolute;left:110px;top:200px;font-family:var(--display);font-size:760px;line-height:.8;color:var(--accent);font-weight:700;letter-spacing:-.05em}
-.about .big span{display:block;font-size:64px;font-style:italic;color:var(--ink);letter-spacing:0;margin:30px 0 0 40px;font-weight:400}
-.abody{position:absolute;left:1000px;top:250px;width:790px}
-.abody h2{font-size:92px;margin-bottom:44px}
+.about .big>span{display:block;font-size:64px;font-style:italic;color:var(--ink);letter-spacing:0;margin:30px 0 0 40px;font-weight:400}
+.abody{position:absolute;left:1000px;top:170px;width:820px}
+.abody h2{font-size:80px;margin-bottom:32px}.abody .lede{font-size:34px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:20px 40px;margin-top:36px}
+.facts dt{font-family:var(--mono);font-size:20px;color:var(--muted);letter-spacing:.02em}
+.facts dd{font-size:28px;margin:4px 0 0}
 /* === STACK / shared headers === */
-.stack h2,.more h2,.exp h2,.vol h2,.awards h2{margin-bottom:60px}
+.stack h2,.edu h2,.more h2,.exp h2,.vol h2,.awards h2{margin-bottom:60px}.stack h2{margin-bottom:36px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr)}
-.cell{padding:44px 44px 44px 0;border-top:3px solid var(--ink);margin-right:44px}
-.cell h3{font-size:56px;margin-bottom:20px;color:var(--accent-ink)}.cell p{font-size:32px;line-height:1.5}
+.cell{padding:28px 44px 28px 0;border-top:3px solid var(--ink);margin-right:44px}
+.cell h3{font-size:48px;margin-bottom:16px;color:var(--accent-ink)}.cell p{font-size:32px;line-height:1.5}
 /* === DIVIDER === */
 .divider{display:flex;flex-direction:column;justify-content:center}
 .divider h2{font-size:400px;color:var(--accent);font-variation-settings:'SOFT' 60,'WONK' 1;margin:10px 0 30px}
@@ -60,7 +63,7 @@ h2{font-size:108px}
 .mcard h3{font-size:60px;margin:14px 0 16px}.mcard p:last-child{font-size:29px;line-height:1.4}
 /* === EXPERIENCE === */
 .rows{list-style:none}
-.row{display:grid;grid-template-columns:230px 610px 1fr;gap:40px;padding:26px 0;border-top:2px solid var(--line);align-items:baseline}
+.row{display:grid;grid-template-columns:230px 610px 1fr;gap:40px;padding:20px 0;border-top:2px solid var(--line);align-items:baseline}
 .row:first-child{border-top:3px solid var(--ink)}
 .yr{font-family:var(--mono);font-size:24px;color:var(--accent-ink)}
 .row h3{font-size:40px;line-height:1.05;margin-bottom:6px}.row .org{font-size:24px}.sum{font-size:27px;line-height:1.4}
@@ -84,8 +87,8 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
 /* === CHROME (outside stage) === */
 .deck-controls{font:500 14px 'JetBrains Mono',monospace;color:#f0ece1;background:#14130fcc;padding:8px 16px;border-radius:999px;display:flex;gap:14px}
 /* === STACK ICONS (same treatment as BrandIcon: mono silhouette unless the mark needs its colours) === */
-.icons{list-style:none;display:flex;flex-wrap:wrap;gap:32px 30px}
-.icons li{width:92px;height:92px;filter:brightness(0)}
+.icons{list-style:none;display:flex;flex-wrap:wrap;gap:26px 26px}
+.icons li{width:80px;height:80px;filter:brightness(0)}
 .icons li.keep{filter:none}
 .dark .icons li{filter:brightness(0) invert(1)}.dark .icons li.keep{filter:none}
 .icons svg{width:100%;height:100%;display:block}
@@ -94,21 +97,23 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
 .pt-veil{position:absolute;inset:0;z-index:90;pointer-events:none}
 .pt-veil:not([hidden]){pointer-events:auto}
 .pt-veil[hidden]{display:none}
-.pt-layer{position:absolute;inset:0;background:#14130f;clip-path:inset(0 0 0 0)} /* covering by default, until JS reveals */
+.pt-veil{--veil:#14130f}.pt-veil.light-veil{--veil:#f0ece1}  /* veil is the inverse of the slide under it */
+.pt-layer{position:absolute;inset:0;background:var(--veil);transition:background-color .4s ease-out;clip-path:inset(0 0 0 0)} /* covering by default, until JS reveals */
 .pt-pixel{position:absolute;width:32px;height:32px;background:#f0330d;opacity:0}
 @media print{.pt-veil{display:none!important}}
 /* === PIXEL PROGRESS BAR (top-bar take on src/components/molecules/PixelScrollProgress.astro) ===
    5px tiles with 3px gaps; the fill steps forward in whole tiles and ends in one accent block.
    The fill blends with "difference" so it reads on both the paper and the dark slides. */
 .pbar{--p:0}  /* wrapper stays unpositioned: a fixed/z-indexed parent would isolate the children's blend from the slides */
-.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;height:10px;z-index:1000;cursor:pointer}
-.pbar-track,.pbar-fill{width:100%;background-image:repeating-linear-gradient(to right,var(--c) 0 5px,transparent 5px 8px)}
+.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;width:20px;z-index:1000;cursor:pointer}
+.pbar-track,.pbar-fill{height:100%;background-image:repeating-linear-gradient(to bottom,var(--c) 0 5px,transparent 5px 8px)}
 .pbar-track{--c:#8a8578;opacity:.3}
-.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 calc((1 - var(--p)) * 100%) 0 0);transition:clip-path .45s steps(8,end)}
-.pbar-tip{width:5px;margin-left:-5px;background:#f0330d;transform:translateX(calc(var(--p) * 100vw));transition:transform .45s steps(8,end)}
+.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 0 calc((1 - var(--p)) * 100%) 0);transition:clip-path .45s steps(8,end)}
+.pbar-tip{height:5px;margin-top:-5px;background:#f0330d;transform:translateY(calc(var(--p) * 100vh));transition:transform .45s steps(8,end)}
 @media (prefers-reduced-motion:reduce){.pbar-fill,.pbar-tip{transition:none}}
-/* slide counter pill sits bottom right */
-.deck-controls{left:auto;right:28px;bottom:24px;transform:none}
+/* language pill + slide counter share the bottom-right corner, pill on the left */
+.deck-chrome{position:fixed;right:28px;bottom:24px;z-index:1000;display:flex;gap:10px;align-items:center}
+.deck-chrome .deck-controls,.deck-chrome .lang-pill{position:static;transform:none}
 /* === TITLE BACKGROUND: ink paths trace slowly, vermillion nodes pulse (from src/components/organisms/Hero.astro) === */
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .title .label,.title h1{position:relative}
@@ -129,3 +134,12 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
 .clawd{position:absolute;left:0;top:-195px;width:825px;height:auto;filter:drop-shadow(10px 12px 0 rgba(20,19,15,.16))}
 @keyframes cl-in{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.clawd-box{animation:none;opacity:1}}
+
+/* === LOCALIZATION: build.py emits every string in EN and ID; the active <html lang> shows one === */
+.l{display:contents}
+html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
+.lang-pill{display:flex;gap:4px;padding:4px;border-radius:999px;background:#14130fcc;font:500 14px 'JetBrains Mono',monospace}
+.lang-pill button{font:inherit;color:#f0ece1;background:none;border:0;padding:4px 12px;border-radius:999px;cursor:pointer}
+.lang-pill button[aria-pressed=true]{background:#f0ece1;color:#14130f}
+.lang-pill button:focus-visible{outline:2px solid #f0ece1;outline-offset:2px}
+@media print{.lang-pill{display:none!important}}
