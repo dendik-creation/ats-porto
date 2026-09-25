@@ -38,23 +38,22 @@ function buildPixelPlan(width, height, origin, tileSize, { direction, jitter, cl
   return { tiles, tileSize, width, height };
 }
 
-/* Discrete clip-path keyframes: hold, then jump, on every bucket edge (avoids path() morphing). */
+/* Discrete clip-path keyframes: hold, then jump, on every bucket edge (avoids path() morphing).
+   cover  = tiles with threshold <= progress appear (veil grows from the origin side).
+   reveal = tiles with threshold  > progress remain (veil is eaten from the same origin side). */
 function buildClipKeyframes(plan, reverse) {
-  const clip = p => `path('${p || 'M0 0h0v0h0Z'}')`, frames = [];
-  let acc = '', idx = 0;
+  const clip = p => `path('${p || 'M0 0h0v0h0Z'}')`, paths = plan.tiles.map(t => t.path), n = paths.length, frames = [];
+  const upTo = new Array(BUCKETS + 1);   // tiles revealed by each bucket edge
+  for (let f = 0, idx = 0; f <= BUCKETS; f++) {
+    while (idx < n && (f === BUCKETS || plan.tiles[idx].threshold <= f / BUCKETS)) idx++;
+    upTo[f] = idx;
+  }
+  const shape = f => reverse ? paths.slice(upTo[f]).join('') : paths.slice(0, upTo[f]).join('');
   for (let f = 0; f <= BUCKETS; f++) {
-    const progress = f / BUCKETS;
-    if (f > 0) frames.push({ clipPath: clip(acc), offset: progress - STEP_EPS });
-    while (idx < plan.tiles.length && plan.tiles[idx].threshold <= progress) acc += plan.tiles[idx++].path;
-    frames.push({ clipPath: clip(acc), offset: progress });
+    if (f > 0) frames.push({ clipPath: clip(shape(f - 1)), offset: f / BUCKETS - STEP_EPS });
+    frames.push({ clipPath: clip(shape(f)), offset: f / BUCKETS });
   }
-  if (idx < plan.tiles.length) {
-    for (; idx < plan.tiles.length; idx++) acc += plan.tiles[idx].path;
-    frames[frames.length - 1] = { clipPath: clip(acc), offset: 1 };
-  }
-  if (!reverse) return frames;
-  const n = frames.length;
-  return frames.map((_, i) => ({ clipPath: frames[n - 1 - i].clipPath, offset: 1 - frames[n - 1 - i].offset }));
+  return frames;
 }
 
 /* Accent-colour boundary flashes, cycling a small pool of nodes (the site does this with gsap). */
@@ -79,29 +78,16 @@ function runAccentTrail(anim, plan) {
   raf = requestAnimationFrame(tick);
 }
 
-/* Random variant per slide change: origin, cascade direction, tile size, jitter, cluster and duration.
-   Cover and reveal share one plan, so each change still reads as a single gesture. */
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const ORIGINS = [[0, 0], [1920, 0], [0, 1080], [1920, 1080], [960, 540], [960, 0], [960, 1080], [0, 540], [1920, 540]];
-let plan = null, lastKey = '', durationMs = DURATION_MS;
-function randomPlan() {
-  let key, o, angle, tile;
-  do {  // never repeat the previous variant back to back
-    o = pick(ORIGINS); angle = pick([0, 45, 90, 135, 180, 225, 270, 315]); tile = pick([24, 32, 40, 64]);
-    key = `${o}|${angle}|${tile}`;
-  } while (key === lastKey);
-  lastKey = key;
-  const r = angle * Math.PI / 180;
-  // origin gets a little scatter so repeated corners still differ
-  const origin = { x: o[0] + (Math.random() - .5) * 240, y: o[1] + (Math.random() - .5) * 160 };
-  durationMs = DURATION_MS * (0.8 + Math.random() * 0.5);
-  plan = buildPixelPlan(1920, 1080, origin, tile, {
-    direction: { x: Math.cos(r), y: Math.sin(r) },
-    jitter: pick([0.05, 0.09, 0.14]), cluster: pick([1, 2, 3, 4]),
-  });
-}
+/* Two fixed plans. Next: pixels spawn at the right edge and sweep left to cover the old slide, then the same
+   right-to-left front eats the veil to open the new one. Prev mirrors it (left to right). The origin sits
+   far off-screen so the front is near vertical. */
+const durationMs = DURATION_MS;
+const makePlan = dir => buildPixelPlan(1920, 1080, { x: 960 - dir * 3960, y: 540 }, 40, {
+  direction: { x: dir, y: 0 }, jitter: 0.06, cluster: 2,
+});
+const plans = { next: makePlan(-1), prev: makePlan(1) };
+let plan = plans.next;
 function sweep(reverse) {
-  if (!plan) randomPlan();
   const anim = layer.animate(buildClipKeyframes(plan, reverse), { duration: durationMs, easing: PIXEL_EASE, fill: 'forwards' });
   runAccentTrail(anim, plan);
   return anim.finished.then(() => anim, () => anim);
@@ -116,6 +102,7 @@ const fit = () => {
 const show = i => {                       // instant swap (used while the veil covers the stage)
   cur = Math.max(0, Math.min(i, slides.length - 1));
   slides.forEach((s, k) => { s.classList.toggle('active', k === cur); s.classList.toggle('visible', k === cur); });
+  veil.classList.toggle('light-veil', slides[cur].classList.contains('dark'));   // veil inverts the active slide's theme
   count.textContent = `${cur + 1} / ${slides.length}`;
   bar.style.setProperty('--p', (cur + 1) / slides.length);
   history.replaceState(null, '', '#' + (cur + 1));
@@ -127,7 +114,7 @@ async function go(i) {
   if (i === cur) return;
   if (reduced) return show(i);
   busy = true;
-  randomPlan();
+  plan = i < cur ? plans.prev : plans.next;   // going back sweeps left to right
   veil.hidden = false;
   layer.style.clipPath = '';
   await sweep(false);                      // cover
@@ -139,8 +126,21 @@ async function go(i) {
   queued = null;
 }
 
+/* --- Language: EN/ID pill, choice persisted --- */
+const langBtns = [...document.querySelectorAll('.lang-pill button')];
+function setLang(l) {
+  document.documentElement.lang = l;
+  langBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l));
+  try { localStorage.setItem('deck-lang', l); } catch {}
+}
+langBtns.forEach(b => b.addEventListener('click', () => { setLang(b.dataset.lang); b.blur(); }));
+let saved = null;
+try { saved = localStorage.getItem('deck-lang'); } catch {}
+setLang(saved === 'id' ? 'id' : 'en');
+
 addEventListener('resize', fit);
 addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('.lang-pill')) return;   // pill buttons handle their own keys
   if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); go(cur + 1); }
   if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
   if (e.key === 'Home') go(0);
@@ -154,7 +154,7 @@ addEventListener('touchend', e => {
   if (Math.abs(d) > 50) go(cur + (d < 0 ? 1 : -1));
   x0 = null;
 });
-bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientX / innerWidth * slides.length))));  // click the bar to seek
+bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientY / innerHeight * slides.length))));  // click the bar to seek
 let wl = 0;
 addEventListener('wheel', e => {
   if (Date.now() - wl < 600 || Math.abs(e.deltaY) < 20) return;
