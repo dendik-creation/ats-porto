@@ -46,6 +46,7 @@ slides.append(f'''
   <svg class="hero-bg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round"><path class="hp hp-a" pathLength="240" d="M880,60 C1020,150 1120,90 1260,220 S1480,400 1400,540 S1180,700 1340,830"/><path class="hp hp-b" pathLength="240" d="M740,600 C890,510 1040,650 1170,560 S1400,470 1560,610"/><path class="hp hp-c" pathLength="240" d="M1080,860 C1230,790 1330,870 1500,800"/><path class="hp hp-d" pathLength="240" d="M140,560 C320,495 480,640 660,570 S900,480 1080,590"/><path class="hp hp-e" pathLength="240" d="M120,800 C360,725 560,860 800,780 S1180,700 1420,800"/><path class="hp hp-thin hp-f" pathLength="240" d="M420,640 C560,700 700,660 820,730"/><path class="hp-swash" d="M1290,300 C1320,255 1395,258 1425,310 C1452,362 1408,430 1350,422 C1302,415 1278,352 1290,300 Z"/><path class="hp-swash hp-swash-b" d="M630,580 C650,553 692,557 703,586 C713,614 686,637 659,629 C637,622 618,602 630,580 Z"/></g><g><circle class="hn" cx="1260" cy="220" r="3.5" style="--d:0s"/><circle class="hn" cx="1400" cy="540" r="3.5" style="--d:1.2s"/><circle class="hn" cx="1170" cy="560" r="3.5" style="--d:2.4s"/><circle class="hn" cx="1500" cy="800" r="3.5" style="--d:3.6s"/><circle class="hn" cx="1350" cy="422" r="3.5" style="--d:4.8s"/><circle class="hn" cx="660" cy="570" r="3" style="--d:0.8s"/><circle class="hn" cx="480" cy="640" r="2.5" style="--d:2s"/><circle class="hn" cx="800" cy="780" r="3" style="--d:3.2s"/><circle class="hn" cx="1080" cy="590" r="2.5" style="--d:5.4s"/></g></svg>
   <p class="label reveal" style="--i:0">{t('Portfolio 2026, Kudus, Central Java', 'Portofolio 2026, Kudus, Jawa Tengah')}</p>
   <h1 class="reveal" style="--i:1">Dendi’<br>Setiawan</h1>
+  <img class="logo reveal" style="--i:3" src="{P}/logo_in_dark.webp" alt="DC logo" width="321" height="358">
   <p class="role reveal" style="--i:3">202451181<br>Teknik Informatika</p>
   <div class="clawd-box"><img class="clawd" src="{P}/static/slides/slide-1/claude.svg" alt="Claude Code mascot waving hello"></div>
   <img class="kbd reveal" style="--i:2" src="{P}/static/arc/hero-section.webp" alt="Illustrated keyboard">
@@ -210,6 +211,7 @@ slides.append(f'''
 <section class="slide dark contact">
   <p class="label reveal" style="--i:0">{t('Open to freelance and full-time work', 'Terbuka untuk kerja freelance dan penuh waktu')}</p>
   <h2 class="reveal" style="--i:1">{t('Let’s build<br>something.', 'Ayo bangun<br>sesuatu.')}</h2>
+  <img class="logo reveal" style="--i:3" src="{P}/logo_in_dark.webp" alt="DC logo" width="321" height="358">
   <ul class="reveal" style="--i:2">
     <li><b>Email</b> setiawandendik0205@gmail.com</li>
     <li><b>Web</b> dendikcreation.dev</li>
@@ -232,6 +234,7 @@ html = f'''<!DOCTYPE html>
 <div class="deck-viewport"><main class="deck-stage" id="deckStage">{''.join(slides)}
 <div class="pt-veil" id="ptVeil" aria-hidden="true"><div class="pt-layer"></div>{'<span class="pt-pixel"></span>' * 8}</div>
 </main></div>
+<a class="exit-web" href="/" target="_top" aria-label="Back to website / Kembali ke website"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></a>
 <div class="deck-chrome">
 <div class="lang-pill" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="id">ID</button></div>
 <div class="deck-controls"><span id="count"></span><span>← →</span></div>

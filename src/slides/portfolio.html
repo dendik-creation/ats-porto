@@ -158,7 +158,7 @@ h2{font-size:108px}
 
 /* === TITLE === */
 .title h1{font-size:270px;margin-top:30px;font-variation-settings:'SOFT' 60,'WONK' 1}
-.title .role{position:absolute;right:130px;top:150px;font-family:var(--display);font-size:32px;line-height:1.25;text-align:right;font-style:italic;color:var(--accent-ink)}
+.title .role{position:absolute;left:130px;top:700px;font-family:var(--display);font-size:44px;line-height:1.25;text-align:left;font-style:italic;color:var(--accent-ink)}
 .title .kbd{position:absolute;right:-60px;bottom:30px;width:1180px;mix-blend-mode:multiply}
 .title .kbd.reveal{transform:translateY(28px) rotate(-6deg)}
 .slide.visible.title .kbd.reveal{transform:rotate(-6deg)}
@@ -243,11 +243,11 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
    5px tiles with 3px gaps; the fill steps forward in whole tiles and ends in one accent block.
    The fill blends with "difference" so it reads on both the paper and the dark slides. */
 .pbar{--p:0}  /* wrapper stays unpositioned: a fixed/z-indexed parent would isolate the children's blend from the slides */
-.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;width:20px;z-index:1000;cursor:pointer}
-.pbar-track,.pbar-fill{height:100%;background-image:repeating-linear-gradient(to bottom,var(--c) 0 5px,transparent 5px 8px)}
+.pbar-track,.pbar-fill,.pbar-tip{position:fixed;top:0;left:0;height:20px;z-index:1000;cursor:pointer}
+.pbar-track,.pbar-fill{width:100%;background-image:repeating-linear-gradient(to right,var(--c) 0 5px,transparent 5px 8px)}
 .pbar-track{--c:#8a8578;opacity:.3}
-.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 0 calc((1 - var(--p)) * 100%) 0);transition:clip-path .45s steps(8,end)}
-.pbar-tip{height:5px;margin-top:-5px;background:#f0330d;transform:translateY(calc(var(--p) * 100vh));transition:transform .45s steps(8,end)}
+.pbar-fill{--c:#fff;mix-blend-mode:difference;opacity:.85;clip-path:inset(0 calc((1 - var(--p)) * 100%) 0 0);transition:clip-path .45s steps(8,end)}
+.pbar-tip{width:5px;margin-left:-5px;background:#f0330d;transform:translateX(calc(var(--p) * 100vw));transition:transform .45s steps(8,end)}
 @media (prefers-reduced-motion:reduce){.pbar-fill,.pbar-tip{transition:none}}
 /* language pill + slide counter share the bottom-right corner, pill on the left */
 .deck-chrome{position:fixed;right:28px;bottom:24px;z-index:1000;display:flex;gap:10px;align-items:center}
@@ -281,6 +281,17 @@ html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
 .lang-pill button[aria-pressed=true]{background:#f0ece1;color:#14130f}
 .lang-pill button:focus-visible{outline:2px solid #f0ece1;outline-offset:2px}
 @media print{.lang-pill{display:none!important}}
+
+/* === EXIT TO WEBSITE === */
+.exit-web{position:fixed;top:24px;right:28px;z-index:1000;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#14130fcc;color:#f0ece1}
+.exit-web:hover{background:#14130f}
+.exit-web:focus-visible{outline:2px solid #f0ece1;outline-offset:2px}
+@media print{.exit-web{display:none!important}}
+
+/* === LOGO (light slides use the light mark, dark slides the dark one) === */
+.logo{position:absolute;height:130px;width:auto}
+.title .logo{right:130px;top:110px;height:300px}
+.contact .logo{right:130px;top:110px;height:220px}
 </style></head>
 <body>
 <div class="pbar" id="bar" aria-hidden="true"><div class="pbar-track"></div><div class="pbar-fill"></div><i class="pbar-tip"></i></div>
@@ -289,6 +300,7 @@ html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
   <svg class="hero-bg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round"><path class="hp hp-a" pathLength="240" d="M880,60 C1020,150 1120,90 1260,220 S1480,400 1400,540 S1180,700 1340,830"/><path class="hp hp-b" pathLength="240" d="M740,600 C890,510 1040,650 1170,560 S1400,470 1560,610"/><path class="hp hp-c" pathLength="240" d="M1080,860 C1230,790 1330,870 1500,800"/><path class="hp hp-d" pathLength="240" d="M140,560 C320,495 480,640 660,570 S900,480 1080,590"/><path class="hp hp-e" pathLength="240" d="M120,800 C360,725 560,860 800,780 S1180,700 1420,800"/><path class="hp hp-thin hp-f" pathLength="240" d="M420,640 C560,700 700,660 820,730"/><path class="hp-swash" d="M1290,300 C1320,255 1395,258 1425,310 C1452,362 1408,430 1350,422 C1302,415 1278,352 1290,300 Z"/><path class="hp-swash hp-swash-b" d="M630,580 C650,553 692,557 703,586 C713,614 686,637 659,629 C637,622 618,602 630,580 Z"/></g><g><circle class="hn" cx="1260" cy="220" r="3.5" style="--d:0s"/><circle class="hn" cx="1400" cy="540" r="3.5" style="--d:1.2s"/><circle class="hn" cx="1170" cy="560" r="3.5" style="--d:2.4s"/><circle class="hn" cx="1500" cy="800" r="3.5" style="--d:3.6s"/><circle class="hn" cx="1350" cy="422" r="3.5" style="--d:4.8s"/><circle class="hn" cx="660" cy="570" r="3" style="--d:0.8s"/><circle class="hn" cx="480" cy="640" r="2.5" style="--d:2s"/><circle class="hn" cx="800" cy="780" r="3" style="--d:3.2s"/><circle class="hn" cx="1080" cy="590" r="2.5" style="--d:5.4s"/></g></svg>
   <p class="label reveal" style="--i:0"><span class="l" lang="en">Portfolio 2026, Kudus, Central Java</span><span class="l" lang="id">Portofolio 2026, Kudus, Jawa Tengah</span></p>
   <h1 class="reveal" style="--i:1">Dendi’<br>Setiawan</h1>
+  <img class="logo reveal" style="--i:3" src="../../public/logo_in_light.webp" alt="DC logo" width="321" height="358">
   <p class="role reveal" style="--i:3">202451181<br>Teknik Informatika</p>
   <div class="clawd-box"><img class="clawd" src="../../public/static/slides/slide-1/claude.svg" alt="Claude Code mascot waving hello"></div>
   <img class="kbd reveal" style="--i:2" src="../../public/static/arc/hero-section.webp" alt="Illustrated keyboard">
@@ -457,6 +469,7 @@ html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
 <section class="slide dark contact">
   <p class="label reveal" style="--i:0"><span class="l" lang="en">Open to freelance and full-time work</span><span class="l" lang="id">Terbuka untuk kerja freelance dan penuh waktu</span></p>
   <h2 class="reveal" style="--i:1"><span class="l" lang="en">Let’s build<br>something.</span><span class="l" lang="id">Ayo bangun<br>sesuatu.</span></h2>
+  <img class="logo reveal" style="--i:3" src="../../public/logo_in_dark.webp" alt="DC logo" width="321" height="358">
   <ul class="reveal" style="--i:2">
     <li><b>Email</b> setiawandendik0205@gmail.com</li>
     <li><b>Web</b> dendikcreation.dev</li>
@@ -466,6 +479,7 @@ html[lang=en] .l[lang=id],html[lang=id] .l[lang=en]{display:none}
 </section>
 <div class="pt-veil" id="ptVeil" aria-hidden="true"><div class="pt-layer"></div><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span><span class="pt-pixel"></span></div>
 </main></div>
+<a class="exit-web" href="/" target="_top" aria-label="Back to website / Kembali ke website"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></a>
 <div class="deck-chrome">
 <div class="lang-pill" role="group" aria-label="Language"><button type="button" data-lang="en">EN</button><button type="button" data-lang="id">ID</button></div>
 <div class="deck-controls"><span id="count"></span><span>← →</span></div>
@@ -626,7 +640,7 @@ addEventListener('touchend', e => {
   if (Math.abs(d) > 50) go(cur + (d < 0 ? 1 : -1));
   x0 = null;
 });
-bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientY / innerHeight * slides.length))));  // click the bar to seek
+bar.addEventListener('click', e => go(Math.min(slides.length - 1, Math.floor(e.clientX / innerWidth * slides.length))));  // click the bar to seek
 let wl = 0;
 addEventListener('wheel', e => {
   if (Date.now() - wl < 600 || Math.abs(e.deltaY) < 20) return;
@@ -638,5 +652,12 @@ fit();
 show((parseInt(location.hash.slice(1)) || 1) - 1);
 if (reduced) clearVeil();
 else (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => sweep(true)).then(clearVeil);
+
+// Leaving for the website: drop the parent's fullscreen (the deck may be
+// framed by the website's presentation toggle; same origin, so reachable).
+document.querySelector('.exit-web')?.addEventListener('click', () => {
+  const d = top.document;
+  if (d.fullscreenElement) d.exitFullscreen().catch(() => {});
+});
 </script>
 </body></html>

@@ -60,6 +60,9 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     </a>
 
     <div class="sm-header-controls">
+      <a class="sm-slides tt-btn flex items-center justify-center rounded-full" href="/slides" data-astro-reload aria-label={ui.nav.slidesAria}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/></svg>
+      </a>
       <ThemeToggle toDarkLabel={ui.nav.theme.toggleToDark} toLightLabel={ui.nav.theme.toggleToLight} />
 
       <button
@@ -227,6 +230,21 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
     .sm-logo-mark {
       transition: none;
     }
+  }
+
+  /* Shares .tt-btn's look (ThemeToggle's scoped rule doesn't reach here) */
+  .sm-slides {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--ink);
+    transition: background var(--dur-1) var(--ease);
+  }
+  .sm-slides:hover {
+    background: var(--line);
+  }
+  .sm-slides svg {
+    width: 20px;
+    height: 20px;
   }
 
   .sm-toggle {
@@ -599,10 +617,10 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
       // which here could be seconds after page-load (waiting on the event
       // below). gsap.set() + a later gsap.to() is what makes it hidden from
       // the very first frame instead of flashing visible until the reveal.
-      gsap.set('.sm-logo, .tt-btn, .sm-toggle', { y: -40, opacity: 0 });
+      gsap.set('.sm-logo, .sm-slides, .tt-btn, .sm-toggle', { y: -40, opacity: 0 });
 
       const playBarEntrance = () => {
-        gsap.to('.sm-logo, .tt-btn, .sm-toggle', {
+        gsap.to('.sm-logo, .sm-slides, .tt-btn, .sm-toggle', {
           y: 0,
           opacity: 1,
           duration: 0.85,
@@ -709,6 +727,28 @@ const socials = basics.profiles.map((p) => ({ label: p.network, link: p.url }));
           animating = false;
         });
     };
+
+    // Fullscreen only survives inside the same document (a hard load to
+    // /slides would drop it), so play the deck in a fullscreen iframe overlay.
+    // Leaving happens from inside the deck (its globe link navigates the top
+    // window to /), or Esc, which just removes the overlay.
+    root.querySelector('.sm-slides')?.addEventListener('click', (e) => {
+      if (!document.fullscreenEnabled) return; // fall back to plain navigation
+      e.preventDefault();
+      const stage = document.createElement('div');
+      stage.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#0c0b09';
+      const frame = document.createElement('iframe');
+      frame.src = '/slides';
+      frame.title = 'Slides';
+      frame.style.cssText = 'width:100%;height:100%;border:0;display:block';
+      frame.addEventListener('load', () => frame.contentWindow?.focus());
+      stage.append(frame);
+      document.body.append(stage);
+      stage.requestFullscreen().catch(() => stage.remove());
+      stage.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) stage.remove();
+      });
+    }, { signal });
 
     btn.addEventListener('click', () => setOpen(!open), { signal });
     root.querySelectorAll('.sm-panel-item').forEach((a) =>
