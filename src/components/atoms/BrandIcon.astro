@@ -52,6 +52,9 @@ import Globe from './icons/Globe.astro';
 import Nginx from './icons/Nginx.astro';
 import Drizzle from './icons/Drizzle.astro';
 import Notion from './icons/Notion.astro';
+import Javascript from './icons/Javascript.astro';
+import Claude from './icons/Claude.astro';
+import Xampp from './icons/Xampp.astro';
 
 const REGISTRY: Record<string, typeof Typescript> = {
   typescript: Typescript,
@@ -112,6 +115,9 @@ const REGISTRY: Record<string, typeof Typescript> = {
   drizzle : Drizzle,
   nginx : Nginx,
   notion : Notion,
+  claude : Claude,
+  javascript : Javascript,
+  xampp : Xampp,
 };
 
 interface Props {
@@ -142,7 +148,10 @@ const KEEP_COLOR_ICONS = new Set([
   'nginx' ,
   'figma',
   'notion',
-  'godot'
+  'godot',
+  'javascript',
+  'xampp',
+  'claude'
 ]);
 const keepColor = KEEP_COLOR_ICONS.has(key);
 ---

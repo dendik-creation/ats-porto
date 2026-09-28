@@ -128,18 +128,42 @@ def pill(name):
     return f'<li><span class="pi{" keep" if keep else ""}">{svg}</span>{name}</li>'
 
 
-groups = [('Frontend', ['TypeScript', 'Next.js', 'Astro', 'Vue', 'React', 'Flutter', 'shadcn/ui']),
-          ('Backend', ['PHP', 'Laravel', 'Django', 'Node.js', 'Go', 'Bun', 'Prisma', 'Drizzle']),
+# Step 0 shows one mixed, untitled section (.flat) with the basics; step 1 pixelates it out and every section in.
+# Sections start hidden (.hid: no rule line, every h3/icon is a step-1 .x) and keep their slot, so nothing shifts.
+FLAT = ['JavaScript', 'PHP', 'MySQL', 'XAMPP']
+groups = [('Frontend', ['TypeScript', 'React', 'Next.js', 'Astro', 'Vue', 'Flutter', 'shadcn/ui']),
+          ('Backend', ['PHP', 'Go', 'Laravel', 'Node.js', 'Django', 'Bun', 'Prisma', 'Drizzle']),
           ('Database', ['MySQL', 'PostgreSQL', 'SQLite', 'Oracle']),
-          ('Cloud', ['AWS', 'Firebase', 'Pusher', 'Digital Ocean', 'Nginx', 'Caddy']),
+          ('Cloud', ['AWS', 'Nginx', 'Firebase', 'Pusher', 'Digital Ocean', 'Caddy']),
           ('Game engine', ['Godot', 'Construct 3']),
-          ('Tools', ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker', 'Obsidian', 'Notion'])]
+          ('Tools', ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker', 'Obsidian', 'Notion', 'Claude'])]
 GROUP_ID = {'Game engine': 'Mesin game', 'Tools': 'Alat'}
-cells = ''.join(f'<div class="cell reveal" style="--i:{i+1}"><h3>{t(n, GROUP_ID.get(n, n))}</h3><ul class="icons">{"".join(icon(k) for k in ks)}</ul></div>' for i, (n, ks) in enumerate(groups))
+
+
+def mark_x(li):
+    """Tag an icon <li> as a step-1 element (.x): hidden at step 0, pixelated in by deck.js."""
+    return li.replace('<li class="', '<li class="x ', 1)
+
+
+def cell(i, name, items):
+    lis = ''.join(mark_x(icon(k)) for k in items)
+    # explicit slot: the .flat cell shares row 1 col 1 with Frontend, so auto-placement can't be trusted
+    return f'<div class="cell hid reveal" style="--i:{i+1};grid-area:{i//3+1}/{i%3+1}"><h3 class="x">{t(name, GROUP_ID.get(name, name))}</h3><ul class="icons">{lis}</ul></div>'
+
+
+flat = f'<div class="cell flat reveal" style="--i:1"><ul class="icons">{"".join(icon(k) for k in FLAT)}</ul></div>'
+cells = flat + ''.join(cell(i, *g) for i, g in enumerate(groups))
+# hidden pixelate filters (block sizes 20/10/5px) used by the stack slide's step animation
+def pixel_filters(prefix, w, h):
+    return ''.join(f'<filter id="{prefix}{b}" x="0" y="0" width="{w}" height="{h}" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood x="{b//2-1}" y="{b//2-1}" width="2" height="2"/><feComposite width="{b}" height="{b}"/><feTile result="a"/><feComposite in="SourceGraphic" in2="a" operator="in"/><feMorphology operator="dilate" radius="{b//2}"/></filter>' for b in (20, 10, 5))
+
+
+PX = pixel_filters('px', 400, 80) + pixel_filters('cx', 640, 200)   # cx: sized for the .flat cell
 slides.append(f'''
-<section class="slide light stack">
+<section class="slide light stack" data-steps="1">
   <h2 class="reveal" style="--i:0">{t('The stack', 'Teknologi')}</h2>
   <div class="grid3">{cells}</div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>{PX}</defs></svg>
 </section>''')
 
 # 4 divider

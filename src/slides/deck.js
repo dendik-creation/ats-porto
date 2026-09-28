@@ -6,7 +6,7 @@ const slides = [...document.querySelectorAll('.slide')], stage = document.getEle
   count = document.getElementById('count'), bar = document.getElementById('bar'),
   veil = document.getElementById('ptVeil'), layer = veil.querySelector('.pt-layer'),
   pixels = [...veil.querySelectorAll('.pt-pixel')];
-let cur = 0;
+let cur = 0, step = 0;   // step: sub-state inside a slide (data-steps="n"); stepping never plays the pixel transition
 
 /* --- Pixel engine (ported from src/scripts/pixel-transition.ts) --- */
 const PIXEL_EASE = 'cubic-bezier(0.45, 0, 0.2, 1)';
@@ -99,18 +99,43 @@ const fit = () => {
   const f = Math.min(innerWidth / 1920, innerHeight / 1080);
   stage.style.transform = `translate(${(innerWidth - 1920 * f) / 2}px,${(innerHeight - 1080 * f) / 2}px) scale(${f})`;
 };
+const stepMax = i => +(slides[i].dataset.steps || 0);
 const show = i => {                       // instant swap (used while the veil covers the stage)
+  const from = cur;
   cur = Math.max(0, Math.min(i, slides.length - 1));
+  step = cur < from ? stepMax(cur) : 0;   // arriving from ahead lands on the finished state, so prev peels it back
+  slides[cur].dataset.step = step;
   slides.forEach((s, k) => { s.classList.toggle('active', k === cur); s.classList.toggle('visible', k === cur); });
   veil.classList.toggle('light-veil', slides[cur].classList.contains('dark'));   // veil inverts the active slide's theme
   count.textContent = `${cur + 1} / ${slides.length}`;
   bar.style.setProperty('--p', (cur + 1) / slides.length);
   history.replaceState(null, '', '#' + (cur + 1));
 };
+/* Step change: a .flat block (step 0's mixed section) pixelates out, then every .x on the slide pixelates in one after
+   another. Going back is the mirror: the .x's pixelate out, then .flat pixelates in. Block size steps 20 > 10 > 5px > clean. */
+const DUR = 420, GAP = 16;
+function pixel(el, up, delay) {
+  const id = el.classList.contains('flat') ? 'cx' : 'px';   // cx: filter region sized for the whole flat cell
+  const base = getComputedStyle(el).filter, b = base === 'none' ? '' : base + ' ';
+  const f = px => ({ filter: (b + (px ? `url(#${id}${px})` : '')).trim() || 'none', opacity: 1 });
+  const frames = up ? [{ ...f(20), opacity: 0 }, f(20), f(10), f(5), f(0)] : [f(0), f(5), f(10), f(20), { ...f(20), opacity: 0 }];
+  return el.animate(frames, { duration: DUR, delay, easing: 'steps(5, jump-none)', fill: 'both' });
+}
+function setStep(n) {
+  const s = slides[cur], up = n > step, xs = [...s.querySelectorAll('.x')], flat = s.querySelector('.flat');
+  s.querySelectorAll('.x, .flat').forEach(el => el.getAnimations().forEach(a => a.cancel()));
+  step = n; s.dataset.step = n;
+  if (reduced) return;
+  const delays = xs.map((el, k) => up ? (flat ? DUR : 0) + k * GAP : (xs.length - 1 - k) * GAP);
+  xs.forEach((el, k) => pixel(el, up, delays[k]));
+  if (flat) pixel(flat, !up, up ? 0 : Math.max(0, ...delays) + DUR);
+}
 let busy = false, queued = null;
 async function go(i) {
   i = Math.max(0, Math.min(i, slides.length - 1));
   if (busy) { queued = i; return; }        // keep only the latest request while a transition runs
+  if (i === cur + 1 && step < stepMax(cur)) return setStep(step + 1);
+  if (i === cur - 1 && step > 0) return setStep(step - 1);
   if (i === cur) return;
   if (reduced) return show(i);
   busy = true;
