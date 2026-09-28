@@ -138,7 +138,7 @@ export const cv: CV = {
     { name: 'Database', keywords: ['MySQL', 'PostgreSQL', 'SQLite', 'Oracle'] },
     { name: 'Cloud', keywords: ['AWS', 'Firebase', 'FCM', 'Pusher', 'Digital Ocean', 'Nginx', 'Caddy'] },
     { name: 'Game Engine', keywords: ['Godot', 'Construct 3'] },
-    { name: 'Tools', keywords: ['Git', 'GitHub', 'Figma', 'WordPress', 'Docker', 'Obsidian', 'Notion'] },
+    { name: 'Tools', keywords: ['Git', 'Figma', 'WordPress', 'Docker', 'Obsidian', 'Notion', 'Claude'] },
   ],
   projects: [
     {

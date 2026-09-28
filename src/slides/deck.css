@@ -35,7 +35,7 @@ h2{font-size:108px}
 /* === STACK / shared headers === */
 .stack h2,.edu h2,.more h2,.exp h2,.vol h2,.awards h2{margin-bottom:60px}.stack h2{margin-bottom:36px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr)}
-.cell{padding:28px 44px 28px 0;border-top:3px solid var(--ink);margin-right:44px}
+.cell{padding:28px 0;border-top:3px solid var(--ink);margin-right:44px}
 .cell h3{font-size:48px;margin-bottom:16px;color:var(--accent-ink)}.cell p{font-size:32px;line-height:1.5}
 /* === DIVIDER === */
 .divider{display:flex;flex-direction:column;justify-content:center}
@@ -87,11 +87,15 @@ figcaption b{display:block;font-family:var(--display);font-size:40px;margin-bott
 /* === CHROME (outside stage) === */
 .deck-controls{font:500 14px 'JetBrains Mono',monospace;color:#f0ece1;background:#14130fcc;padding:8px 16px;border-radius:999px;display:flex;gap:14px}
 /* === STACK ICONS (same treatment as BrandIcon: mono silhouette unless the mark needs its colours) === */
-.icons{list-style:none;display:flex;flex-wrap:wrap;gap:26px 26px}
+.icons{list-style:none;display:flex;flex-wrap:wrap;gap:26px 24px}
 .icons li{width:80px;height:80px;filter:brightness(0)}
 .icons li.keep{filter:none}
 .dark .icons li{filter:brightness(0) invert(1)}.dark .icons li.keep{filter:none}
 .icons svg{width:100%;height:100%;display:block}
+/* step 0 hides the extras and any all-extra group (they keep their slot); deck.js pixelates them in/out on step change */
+.stack:not([data-step="1"]) .x{opacity:0;transition:none}
+.cell.flat{grid-area:1/1}.stack[data-step="1"] .cell.flat{opacity:0;transition:none}   /* step 0's mixed section; deck.js pixelates it out/in */
+.cell.reveal{transition:opacity .7s var(--ease),transform .7s var(--ease),border-color .5s}.stack:not([data-step="1"]) .cell.hid{border-top-color:transparent}
 .icons .txt{width:auto;font:24px var(--mono);filter:none;align-self:center}
 /* === PIXEL VEIL (site's .pt-veil: ink layer clipped by a pixel-tile path, accent pixels on the boundary) === */
 .pt-veil{position:absolute;inset:0;z-index:90;pointer-events:none}
